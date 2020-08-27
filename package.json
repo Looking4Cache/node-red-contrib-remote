@@ -1,0 +1,20 @@
+{
+  "name": "node-red-contrib-remote",
+  "version": "1.0.0",
+  "description": "Remote services for Node-RED including remote access and push notifications.",
+  "main": "remote-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Thorsten Heilmann",
+  "license": "ISC",
+  "node-red" : {
+    "nodes": {
+      "remote-config": "remote-config.js",
+      "remote-access": "remote-access.js"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+<script type="text/javascript">
+  RED.nodes.registerType('remote-config',{
+    category: 'config',
+    color: '#C0DEED',
+    defaults: {
+      name: {value:"Remote config"},
+      installhash: {value:"123"}
+    },
+    label: function() {
+        return this.name;
+    }
+  });
+</script>
+
+<script type="text/html" data-template-name="remote-config">
+  <div class="form-row">
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-config-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-installhash"><i class="fa fa-tag"></i> Hash</label>
+    <input type="text" id="node-config-input-installhash" placeholder="Hash">
+  </div>
+</script>
