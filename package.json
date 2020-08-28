@@ -11,10 +11,13 @@
   },
   "author": "Thorsten Heilmann",
   "license": "ISC",
-  "node-red" : {
+  "node-red": {
     "nodes": {
       "remote-config": "remote-config.js",
       "remote-access": "remote-access.js"
     }
+  },
+  "dependencies": {
+    "axios": "^0.20.0"
   }
 }

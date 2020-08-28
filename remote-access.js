@@ -1,5 +1,8 @@
 module.exports = function(RED) {
-  var child_process = require('child_process');
+  const https = require('https')
+  const axios = require('axios')
+  const fs = require('fs');
+  const child_process = require('child_process');
 
   function makeid(length) {
     var result           = '';
@@ -11,40 +14,98 @@ module.exports = function(RED) {
     return result;
   }
 
+  function startSSH(node, server, port) {
+    try {
+      node.log("exec ssh");
+      const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':localhost:1880', 'forward@' + server, '-N']);
+      // TODO: Herausfinden ob wirklich verbunden
+      node.status({fill:"green",shape:"dot",text:"serving"});
+      node.serving = true
+
+      sshprocess.stdout.on('data', (data) => {
+        node.log("ssh process stdout: " + data);
+      });
+
+      sshprocess.stderr.on('data', (data) => {
+        node.log("ssh process stderr: " + data);
+      });
+
+      sshprocess.on('close', (code, signal) => {
+        node.status({fill:"red",shape:"dot",text:"stopped"});
+        node.serving = false
+        node.log("ssh process stopped");
+      });
+
+      node.on('close', function() {
+        node.status({fill:"red",shape:"dot",text:"stopping"});
+        node.log("stopping ssh process");
+        sshprocess.kill();
+      });
+    } catch (e) {
+      // TODO: Error: socket hang up
+      node.error('startSSH error: ' + error);
+    }
+  }
+
+  function requestInstanceSlot(node) {
+    // Call API for announce the instacehash and authentication, retrive server and port.
+    const httpsAgent = new https.Agent({
+      ca: fs.readFileSync(__dirname + '/resources/ca.cer')
+    });
+    const axiosInstance = axios.create({ httpsAgent: httpsAgent });
+    axiosInstance.post('https://api.noderedcomms.de/instanceSlotRequest', {
+      "instancehash": node.confignode.instancehash,
+      "authentication" : node.confignode.authentication,
+    })
+    .then(response => {
+      // Start SSH
+      const server = response.data.server;
+      const port = response.data.port;
+      node.log(`Using ${server} on port ${port}`);
+      startSSH(node, server, port);
+    })
+    .catch((error) => {
+      node.error('axios error: ' + error);
+      node.status({fill:"red",shape:"dot",text:"Error communicating with server."});
+      return;
+    })
+  }
+
+  function servingTimer(node) {
+    // Request new instance slot and connect ssh if not connected
+    // console.log(`timer`);
+    if (!node.serving) {
+      requestInstanceSlot(node)
+    }
+  }
+
   function RemoteAccessNode(config) {
     RED.nodes.createNode(this,config);
+    const node = this;
+    node.serving = false;
 
     // Retrieve the config node
-    this.confignode = RED.nodes.getNode(config.confignode);
+    node.confignode = RED.nodes.getNode(config.confignode);
     if ( this.confignode ) {
-      this.log("this.confignode.name: " + this.confignode.name);
-      this.log("this.confignode.installhash: " + this.confignode.installhash);
+      node.log("this.confignode.name: " + node.confignode.name);
+      node.log("this.confignode.instancehash: " + node.confignode.instancehash);
+      node.log("this.confignode.authentication: " + node.confignode.authentication);
     } else {
-      this.log("this.confignode missing");
+      node.log("No configuration found.");
+      node.status({fill:"red",shape:"dot",text:"No configuration found."});
+      return;
+    }
+    if ( node.confignode.instancehash === undefined || node.confignode.instancehash === '' || node.confignode.authentication === undefined || node.confignode.authentication === '') {
+      node.log("Configuration incomplete.");
+      node.status({fill:"red",shape:"dot",text:"Configuration incomplete."});
+      return;
     }
 
-    this.log("exec ssh");
-    const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', '9999:localhost:1880', 'forward@88.198.112.131', '-N']);
-    this.status({fill:"green",shape:"dot",text:"serving"});
+    // Timeout for connection check
+    setInterval(servingTimer, 1000*10, node);
 
-    sshprocess.stdout.on('data', (data) => {
-      console.log("ssh process stdout: " + data);
-    });
-
-    sshprocess.stderr.on('data', (data) => {
-      console.error("ssh process stderr: " + data);
-    });
-
-    sshprocess.on('close', (code, signal) => {
-      this.status({fill:"red",shape:"dot",text:"stopped"});
-      this.log("ssh process stopped");
-    });
-
-    this.on('close', function() {
-      this.status({fill:"red",shape:"dot",text:"stopping"});
-      this.log("stopping ssh process");
-      sshprocess.kill();
-    });
+    // Call API for announce the instacehash and authentication, retrive server and port.
+    requestInstanceSlot(node);
 
     // node.log("this.credentials.installhash: " + this.credentials.installhash);
     // var installhash = this.credentials.installhash;
