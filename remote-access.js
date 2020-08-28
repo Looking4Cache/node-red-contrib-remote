@@ -73,7 +73,7 @@ module.exports = function(RED) {
 
   function servingTimer(node) {
     // Request new instance slot and connect ssh if not connected
-    // console.log(`timer`);
+    console.log(`timer`);
     if (!node.serving) {
       requestInstanceSlot(node)
     }
@@ -83,6 +83,9 @@ module.exports = function(RED) {
     RED.nodes.createNode(this,config);
     const node = this;
     node.serving = false;
+
+    // Status
+    node.status({fill:"orange",shape:"dot",text:"starting"});
 
     // Retrieve the config node
     node.confignode = RED.nodes.getNode(config.confignode);
@@ -102,10 +105,15 @@ module.exports = function(RED) {
     }
 
     // Timeout for connection check
-    setInterval(servingTimer, 1000*10, node);
+    node.servingInterval = setInterval(servingTimer, 1000*10, node);
 
     // Call API for announce the instacehash and authentication, retrive server and port.
     requestInstanceSlot(node);
+
+    // Cleanup on close
+    node.on('close', function() {
+      clearInterval(node.servingInterval);
+    });
 
     // node.log("this.credentials.installhash: " + this.credentials.installhash);
     // var installhash = this.credentials.installhash;
