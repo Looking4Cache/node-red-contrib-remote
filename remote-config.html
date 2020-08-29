@@ -4,13 +4,62 @@
     color: '#C0DEED',
     defaults: {
       name: {value:"Remote config"},
-      instancehash: {value:"123"},
-      authentication: {value:"123"}
+      instancehash: {value:""}
+    },
+    credentials: {
+      instanceauth: {value:""}
+    },
+    oneditprepare: function() {
+        document.getElementById('node-config-input-instancehash').disabled = true;
+        document.getElementById('node-config-input-instanceauth').disabled = true;
+        document.getElementById('remoteInstanceinputs').visibility = 'collapsed';
     },
     label: function() {
         return this.name;
     }
   });
+
+  function registerInstance() {
+    // Request InstanceHash when empty
+    $.getJSON('contrib-remote/requestInstanceHash',function(data) {
+      // Fill ui
+      document.getElementById('node-config-input-instancehash').value = data.instancehash;
+      document.getElementById('node-config-input-instanceauth').value = data.instanceauth;
+
+      // Next step
+      registerApp()
+    });
+  }
+
+  function registerApp() {
+    // Request app register QR code
+    const instancehash = document.getElementById('node-config-input-instancehash').value;
+    const instanceauth = document.getElementById('node-config-input-instanceauth').value;
+
+    $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}`,function(data) {
+      // Show QR Code
+      document.getElementById('registerRemoteAppQRCode').src = data.qrcode;
+
+      // Enable button
+      document.getElementById('registerRemoteAppButton').disabled = false;
+    });
+  }
+
+  function registerButtonClicked() {
+    // Disable Button
+    document.getElementById('registerRemoteAppButton').disabled = true;
+
+    // Get InstanceHash from UI
+    var instanceHash = document.getElementById('node-config-input-instancehash').value;
+
+    // Request InstanceHash when empty
+    if ( instanceHash === undefined || instanceHash === '' ) {
+      registerInstance();
+    } else {
+      // Register app
+      registerApp();
+    }
+  }
 </script>
 
 <script type="text/html" data-template-name="remote-config">
@@ -18,12 +67,21 @@
     <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-config-input-name" placeholder="Name">
   </div>
-  <div class="form-row">
-    <label for="node-config-input-instancehash"><i class="fa fa-tag"></i> Hash</label>
-    <input type="text" id="node-config-input-instancehash" placeholder="Hash">
-  </div>
-  <div class="form-row">
-    <label for="node-config-input-authentication"><i class="fa fa-tag"></i> Hash</label>
-    <input type="text" id="node-config-input-authentication" placeholder="Hash">
+
+  <br>
+  <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">Register Remote App</button>
+  <br>
+
+  <img id="registerRemoteAppQRCode" src=""></img>
+
+  <div id="remoteInstanceinputs">
+    <div class="form-row">
+      <label for="node-config-input-instancehash"><i class="fa fa-tag"></i> Instance</label>
+      <input type="text" id="node-config-input-instancehash" placeholder="Wird automatisch berechnet.">
+    </div>
+    <div class="form-row">
+      <label for="node-config-input-instanceauth"><i class="fa fa-tag"></i> Authentication</label>
+      <input type="text" id="node-config-input-instanceauth" placeholder="Wird automatisch berechnet.">
+    </div>
   </div>
 </script>

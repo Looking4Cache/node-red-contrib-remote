@@ -4,16 +4,6 @@ module.exports = function(RED) {
   const fs = require('fs');
   const child_process = require('child_process');
 
-  function makeid(length) {
-    var result           = '';
-    var characters       = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-  }
-
   function startSSH(node, server, port) {
     try {
       node.log("exec ssh");
@@ -48,14 +38,13 @@ module.exports = function(RED) {
   }
 
   function requestInstanceSlot(node) {
-    // Call API for announce the instacehash and authentication, retrive server and port.
+    // Call API to retrive server and port.
     const httpsAgent = new https.Agent({
       ca: fs.readFileSync(__dirname + '/resources/ca.cer')
     });
     const axiosInstance = axios.create({ httpsAgent: httpsAgent });
     axiosInstance.post('https://api.noderedcomms.de/instanceSlotRequest', {
-      "instancehash": node.confignode.instancehash,
-      "authentication" : node.confignode.authentication,
+      "instancehash": node.confignode.instancehash
     })
     .then(response => {
       // Start SSH
@@ -68,12 +57,11 @@ module.exports = function(RED) {
       node.error('axios error: ' + error);
       node.status({fill:"red",shape:"dot",text:"Error communicating with server."});
       return;
-    })
+    });
   }
 
   function servingTimer(node) {
     // Request new instance slot and connect ssh if not connected
-    console.log(`timer`);
     if (!node.serving) {
       requestInstanceSlot(node)
     }
@@ -92,13 +80,12 @@ module.exports = function(RED) {
     if ( this.confignode ) {
       node.log("this.confignode.name: " + node.confignode.name);
       node.log("this.confignode.instancehash: " + node.confignode.instancehash);
-      node.log("this.confignode.authentication: " + node.confignode.authentication);
     } else {
       node.log("No configuration found.");
       node.status({fill:"red",shape:"dot",text:"No configuration found."});
       return;
     }
-    if ( node.confignode.instancehash === undefined || node.confignode.instancehash === '' || node.confignode.authentication === undefined || node.confignode.authentication === '') {
+    if ( node.confignode.instancehash === undefined || node.confignode.instancehash === '' ) {
       node.log("Configuration incomplete.");
       node.status({fill:"red",shape:"dot",text:"Configuration incomplete."});
       return;

@@ -18,6 +18,7 @@
     }
   },
   "dependencies": {
-    "axios": "^0.20.0"
+    "axios": "^0.20.0",
+    "qrcode": "^1.4.4"
   }
 }
