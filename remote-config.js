@@ -44,7 +44,7 @@ module.exports = function(RED) {
     .then(response => {
       console.log(response.data);
       const qrCodeData = {
-        //'instancehash': response.data.instancehash,
+        'instancehash': response.data.instancehash,
         'apphash': response.data.apphash,
         'password': response.data.password,
         'server': response.data.server,
