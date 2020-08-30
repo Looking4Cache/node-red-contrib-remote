@@ -14,7 +14,8 @@
   "node-red": {
     "nodes": {
       "remote-config": "remote-config.js",
-      "remote-access": "remote-access.js"
+      "remote-access": "remote-access.js",
+      "remote-notification": "remote-notification.js"
     }
   },
   "dependencies": {

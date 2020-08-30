@@ -1,20 +1,20 @@
 <script type="text/javascript">
-  RED.nodes.registerType('remote-access',{
+  RED.nodes.registerType('remote-notification',{
     category: 'Remote',
     color: '#C0DEED',
     defaults: {
       confignode: {value:"", type:"remote-config",required:true}
     },
-    inputs: 0,
-    outputs: 0,
+    inputs: 1,
+    outputs: 1,
     icon: "file.png",
     label: function() {
-        return "remote access";
+        return "remote notification";
     }
   });
 </script>
 
-<script type="text/html" data-template-name="remote-access">
+<script type="text/html" data-template-name="remote-notification">
   <div class="form-row">
     <label for="node-input-confignode"><i class="fa fa-tag"></i> Config</label>
     <input type="text" id="node-input-confignode" placeholder="Config">

@@ -77,7 +77,7 @@ module.exports = function(RED) {
 
     // Retrieve the config node
     node.confignode = RED.nodes.getNode(config.confignode);
-    if ( this.confignode ) {
+    if ( node.confignode ) {
       node.log("this.confignode.name: " + node.confignode.name);
       node.log("this.confignode.instancehash: " + node.confignode.instancehash);
     } else {
