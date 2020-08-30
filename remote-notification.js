@@ -14,6 +14,9 @@ module.exports = function(RED) {
     }
 
     node.on('input', function(msg) {
+      const title = RED.util.evaluateNodeProperty(config.notificationTitle, config.notificationTitleType, node, msg);
+      const body = RED.util.evaluateNodeProperty(config.notificationBody, config.notificationBodyType, node, msg);
+
       // Call API to send notification
       const httpsAgent = new https.Agent({
         ca: fs.readFileSync(__dirname + '/resources/ca.cer')
@@ -22,18 +25,32 @@ module.exports = function(RED) {
       axiosInstance.post('https://api.noderedcomms.de/sendNotification', {
         'instancehash': node.confignode.instancehash,
         'instanceauth': node.confignode.instanceauth,
-        'notificationtitle': msg.payload,
-        'notificationbody': ''
+        'notificationtitle': title,
+        'notificationbody': body
       })
       .then(response => {
         node.log(response.data);
+
+        // Output status if configured so
+        if ( config.output == 2 ) {
+          msg.payload = true;
+          node.send(msg);
+        }
       })
       .catch((error) => {
         node.error("ERROR: " + error);
+
+        // Output status if configured so
+        if ( config.output == 2 ) {
+          msg.payload = false;
+          node.send(msg);
+        }
       });
 
-      // msg.payload = msg.payload.toLowerCase();
-      node.send(msg);
+      // Output message if configured so
+      if ( config.output == 1 ) {
+        node.send(msg);
+      }
     });
   }
 

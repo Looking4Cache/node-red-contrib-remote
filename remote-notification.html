@@ -3,11 +3,29 @@
     category: 'Remote',
     color: '#C0DEED',
     defaults: {
-      confignode: {value:"", type:"remote-config",required:true}
+      confignode: {value:"", type:"remote-config",required:true},
+      notificationTitle: {value:"payload.title"},
+      notificationTitleType: {value:"msg"},
+      notificationBody: {value:"payload.body"},
+      notificationBodyType: {value:"msg"},
+      output: {value:1},
     },
     inputs: 1,
     outputs: 1,
-    icon: "file.png",
+    icon: "envelope.svg",
+    oneditprepare: function() {
+      var node = this;
+      $("#node-input-notificationTitle").typedInput({
+        default: 'msg',
+        typeField: $("#node-input-notificationTitleType"),
+        types: ['msg', 'str', 'flow', 'global'],
+      });
+      $("#node-input-notificationBody").typedInput({
+        default: 'msg',
+        typeField: $("#node-input-notificationBodyType"),
+        types: ['msg', 'str', 'flow', 'global'],
+      });
+    },
     label: function() {
         return "remote notification";
     }
@@ -18,6 +36,25 @@
   <div class="form-row">
     <label for="node-input-confignode"><i class="fa fa-tag"></i> Config</label>
     <input type="text" id="node-input-confignode" placeholder="Config">
+  </div>
+  <br>
+  <div class="form-row">
+    <label for="node-input-notificationTitle"><i class="fa fa-tag"></i> Title</label>
+    <input type="text" id="node-input-notificationTitle" placeholder="">
+    <input type="hidden" id="node-input-notificationTitleType">
+  </div>
+  <div class="form-row">
+    <label for="node-input-notificationBody"><i class="fa fa-tag"></i> Body</label>
+    <input type="text" id="node-input-notificationBody" placeholder="">
+    <input type="hidden" id="node-input-notificationBodyType">
+  </div>
+  <br>
+  <div class="form-row">
+    <label for="node-input-output"><i class="fa fa-tag"></i> Output</label>
+    <select id="node-input-output">
+      <option value=1>Forward msg</option>
+      <option value=2>Output status (true=success / false=error)</option>
+    </select>
   </div>
 </script>
 
