@@ -3,9 +3,11 @@
     category: 'config',
     color: '#C0DEED',
     defaults: {
-      name: {value:"Remote config"},
-      instancehash: {value:""},
-      instanceauth: {value:""}
+      name: {value:"Node-RED UI"},
+      instancehash: {value:""}
+    },
+    credentials: {
+      instanceauth: {type:"text"}
     },
     oneditprepare: function() {
         document.getElementById('node-config-input-instancehash').disabled = true;
@@ -64,6 +66,9 @@
   <div class="form-row">
     <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-config-input-name" placeholder="Name">
+  </div>
+  <div class="form-row">
+    <label><i class="fa fa-info-circle"></i> The name will be displayed later in the app.</label>
   </div>
 
   <br>

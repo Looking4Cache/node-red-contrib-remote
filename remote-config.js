@@ -9,11 +9,14 @@ module.exports = function(RED) {
 
     this.name = n.name;
     this.instancehash = n.instancehash;
-    this.instanceauth = n.instanceauth;
-    console.log("instanceauth: " + n.instanceauth)
+    this.instanceauth = this.credentials.instanceauth;
   }
 
-  RED.nodes.registerType("remote-config",RemoteConfigNode);
+  RED.nodes.registerType("remote-config",RemoteConfigNode, {
+    credentials: {
+      instanceauth: {type:"text"}
+    }
+  });
 
   RED.httpAdmin.get("/contrib-remote/requestInstanceHash", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
