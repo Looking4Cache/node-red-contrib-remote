@@ -34,7 +34,7 @@ module.exports = function(RED) {
     });
   });
 
-  RED.httpAdmin.get("/contrib-remote/registerApp/:instancehash/:instanceauth", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+  RED.httpAdmin.get("/contrib-remote/registerApp/:instancehash/:instanceauth/:name", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
     const httpsAgent = new https.Agent({
       ca: fs.readFileSync(__dirname + '/resources/ca.cer')
@@ -47,6 +47,7 @@ module.exports = function(RED) {
     .then(response => {
       console.log(response.data);
       const qrCodeData = {
+        'name': req.params.name,
         'instancehash': response.data.instancehash,
         'apphash': response.data.apphash,
         'password': response.data.password,

@@ -35,8 +35,9 @@
     // Request app register QR code
     const instancehash = document.getElementById('node-config-input-instancehash').value;
     const instanceauth = document.getElementById('node-config-input-instanceauth').value;
+    const name = document.getElementById('node-config-input-name').value;
 
-    $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}`,function(data) {
+    $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${encodeURIComponent(name)}`,function(data) {
       // Show QR Code
       document.getElementById('registerRemoteAppQRCode').src = data.qrcode;
 
@@ -67,9 +68,7 @@
     <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
     <input type="text" id="node-config-input-name" placeholder="Name">
   </div>
-  <div class="form-row">
-    <label><i class="fa fa-info-circle"></i> The name will be displayed later in the app.</label>
-  </div>
+  <label><i class="fa fa-info-circle"></i> This name will be displayed in the app.</label>
 
   <br>
   <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">Register Remote App</button>
