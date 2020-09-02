@@ -9,6 +9,7 @@ module.exports = function(RED) {
 
     this.name = n.name;
     this.instancehash = n.instancehash;
+    this.server = n.server;
     this.instanceauth = this.credentials.instanceauth;
   }
 
@@ -24,23 +25,25 @@ module.exports = function(RED) {
       ca: fs.readFileSync(__dirname + '/resources/ca.cer')
     });
     const axiosInstance = axios.create({ httpsAgent: httpsAgent });
-    axiosInstance.post('https://api.noderedcomms.de/instanceHashRequest', {})
+    axiosInstance.post('https://contact.remote-red.com/instanceHashRequest', {})
     .then(response => {
       console.log(response.data);
       res.json(response.data);
     })
     .catch((error) => {
-      console.log("ERROR: " + error);
+      console.log("ERROR: requestInstanceHash: " + error);
+      res.json({ 'error': error.message });
     });
   });
 
-  RED.httpAdmin.get("/contrib-remote/registerApp/:instancehash/:instanceauth/:name", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+  RED.httpAdmin.get("/contrib-remote/registerApp/:instancehash/:instanceauth/:server/:name", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
     const httpsAgent = new https.Agent({
       ca: fs.readFileSync(__dirname + '/resources/ca.cer')
     });
     const axiosInstance = axios.create({ httpsAgent: httpsAgent });
-    axiosInstance.post('https://api.noderedcomms.de/registerApp', {
+    console.log(`https://api-${req.params.server}/registerApp`);
+    axiosInstance.post(`https://api-${req.params.server}/registerApp`, {
       'instancehash': req.params.instancehash,
       'instanceauth': req.params.instanceauth
     })
@@ -64,7 +67,8 @@ module.exports = function(RED) {
       });
     })
     .catch((error) => {
-      console.log("ERROR: " + error);
+      console.log("ERROR: registerApp: " + error);
+      res.json({ 'error': error.message });
     });
   });
 

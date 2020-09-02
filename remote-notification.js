@@ -22,7 +22,7 @@ module.exports = function(RED) {
         ca: fs.readFileSync(__dirname + '/resources/ca.cer')
       });
       const axiosInstance = axios.create({ httpsAgent: httpsAgent });
-      axiosInstance.post('https://api.noderedcomms.de/sendNotification', {
+      axiosInstance.post(`https://api-${node.confignode.server}.de/sendNotification`, {
         'instancehash': node.confignode.instancehash,
         'instanceauth': node.confignode.instanceauth,
         'notificationtitle': title,

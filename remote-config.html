@@ -4,7 +4,8 @@
     color: '#C0DEED',
     defaults: {
       name: {value:"Node-RED UI"},
-      instancehash: {value:""}
+      instancehash: {value:""},
+      server: {value:""}
     },
     credentials: {
       instanceauth: {type:"text"}
@@ -12,6 +13,7 @@
     oneditprepare: function() {
         document.getElementById('node-config-input-instancehash').disabled = true;
         document.getElementById('node-config-input-instanceauth').disabled = true;
+        document.getElementById('node-config-input-server').disabled = true;
         document.getElementById('remoteInstanceinputs').visibility = 'collapsed';
     },
     label: function() {
@@ -22,9 +24,15 @@
   function registerInstance() {
     // Request InstanceHash when empty
     $.getJSON('contrib-remote/requestInstanceHash',function(data) {
-      // Fill ui
-      document.getElementById('node-config-input-instancehash').value = data.instancehash;
-      document.getElementById('node-config-input-instanceauth').value = data.instanceauth;
+      if ( data.error == undefined ) {
+        // Fill UI
+        document.getElementById('node-config-input-instancehash').value = data.instancehash;
+        document.getElementById('node-config-input-instanceauth').value = data.instanceauth;
+        document.getElementById('node-config-input-server').value = data.server;
+      } else {
+        // Show error
+        alert('registerInstance: ' + data.error);
+      }
 
       // Next step
       registerApp()
@@ -35,11 +43,17 @@
     // Request app register QR code
     const instancehash = document.getElementById('node-config-input-instancehash').value;
     const instanceauth = document.getElementById('node-config-input-instanceauth').value;
+    const server = document.getElementById('node-config-input-server').value;
     const name = document.getElementById('node-config-input-name').value;
 
-    $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${encodeURIComponent(name)}`,function(data) {
-      // Show QR Code
-      document.getElementById('registerRemoteAppQRCode').src = data.qrcode;
+    $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${server}/${encodeURIComponent(name)}`,function(data) {
+      if ( data.error == undefined ) {
+        // Show QR Code
+        document.getElementById('registerRemoteAppQRCode').src = data.qrcode;
+      } else {
+        // Show error
+        alert('registerApp: ' + data.error);
+      }
 
       // Enable button
       document.getElementById('registerRemoteAppButton').disabled = false;
@@ -84,6 +98,10 @@
     <div class="form-row">
       <label for="node-config-input-instanceauth"><i class="fa fa-tag"></i> Authentication</label>
       <input type="text" id="node-config-input-instanceauth" placeholder="Wird automatisch berechnet.">
+    </div>
+    <div class="form-row">
+      <label for="node-config-input-server"><i class="fa fa-tag"></i> Server</label>
+      <input type="text" id="node-config-input-server" placeholder="Wird automatisch berechnet.">
     </div>
   </div>
 </script>

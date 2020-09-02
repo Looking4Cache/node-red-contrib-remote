@@ -7,7 +7,7 @@ module.exports = function(RED) {
   function startSSH(node, server, port) {
     try {
       node.log("exec ssh");
-      const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':localhost:1880', 'forward@' + server, '-N']);
+      const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':localhost:1880', 'forward@proxy-' + server, '-N']);
       // TODO: Herausfinden ob wirklich verbunden
       node.status({fill:"green",shape:"dot",text:"serving"});
       node.serving = true
@@ -43,15 +43,14 @@ module.exports = function(RED) {
       ca: fs.readFileSync(__dirname + '/resources/ca.cer')
     });
     const axiosInstance = axios.create({ httpsAgent: httpsAgent });
-    axiosInstance.post('https://api.noderedcomms.de/instanceSlotRequest', {
+    axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
       "instancehash": node.confignode.instancehash
     })
     .then(response => {
       // Start SSH
-      const server = response.data.server;
       const port = response.data.port;
-      node.log(`Using ${server} on port ${port}`);
-      startSSH(node, server, port);
+      node.log(`Using ${node.confignode.server} on port ${port}`);
+      startSSH(node, node.confignode.server, port);
     })
     .catch((error) => {
       node.error('axios error: ' + error);
@@ -80,6 +79,7 @@ module.exports = function(RED) {
     if ( node.confignode ) {
       node.log("this.confignode.name: " + node.confignode.name);
       node.log("this.confignode.instancehash: " + node.confignode.instancehash);
+      node.log("this.confignode.server: " + node.confignode.server);
     } else {
       node.log("No configuration found.");
       node.status({fill:"red",shape:"dot",text:"No configuration found."});
