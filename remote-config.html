@@ -4,6 +4,9 @@
     color: '#C0DEED',
     defaults: {
       name: {value:"Node-RED UI"},
+      host: {value:"localhost"},
+      port: {value:1880, validate:RED.validators.number()},
+      baseurl: {value:"/ui"},
       instancehash: {value:""},
       server: {value:""}
     },
@@ -45,8 +48,17 @@
     const instanceauth = document.getElementById('node-config-input-instanceauth').value;
     const server = document.getElementById('node-config-input-server').value;
     const name = document.getElementById('node-config-input-name').value;
+    const baseurl = document.getElementById('node-config-input-baseurl').value;
 
-    $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${server}/${encodeURIComponent(name)}`,function(data) {
+    // $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${server}/${encodeURIComponent(name)}`,function(data) {
+    const data = {
+      'instancehash': instancehash,
+      'instanceauth': instanceauth,
+      'server': server,
+      'name': name,
+      'baseurl': baseurl
+    }
+    $.post(`contrib-remote/registerApp`, data, function(data) {
       if ( data.error == undefined ) {
         // Show QR Code
         document.getElementById('registerRemoteAppQRCode').src = data.qrcode;
@@ -83,6 +95,20 @@
     <input type="text" id="node-config-input-name" placeholder="Name">
   </div>
   <label><i class="fa fa-info-circle"></i> This name will be displayed in the app.</label>
+  <br>
+
+  <div class="form-row">
+    <label for="node-config-input-host"><i class="fa fa-tag"></i> Serving Host</label>
+    <input type="text" id="node-config-input-host" placeholder="">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-port"><i class="fa fa-tag"></i> Serving Port</label>
+    <input type="text" id="node-config-input-port" placeholder="">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-baseurl"><i class="fa fa-tag"></i> Base URL</label>
+    <input type="text" id="node-config-input-baseurl" placeholder="">
+  </div>
 
   <br>
   <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">Register Remote App</button>

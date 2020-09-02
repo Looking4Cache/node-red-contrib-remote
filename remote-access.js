@@ -7,7 +7,9 @@ module.exports = function(RED) {
   function startSSH(node, server, port) {
     try {
       node.log("exec ssh");
-      const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':localhost:1880', 'forward@proxy-' + server, '-N']);
+      // const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + node.confignode.url, 'forward@proxy-' + server, '-N']);
+      const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString(), 'forward@proxy-' + server, '-N']);
+      // const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':localhost:1880', 'forward@proxy-' + server, '-N']);
       // TODO: Herausfinden ob wirklich verbunden
       node.status({fill:"green",shape:"dot",text:"serving"});
       node.serving = true
