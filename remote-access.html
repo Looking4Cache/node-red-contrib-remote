@@ -3,13 +3,14 @@
     category: 'Remote',
     color: '#C0DEED',
     defaults: {
-      confignode: {value:"", type:"remote-config",required:true}
+      confignode: {value:"", type:"remote-config",required:true},
+      name: {value:""},
     },
     inputs: 0,
     outputs: 0,
     icon: "file.png",
     label: function() {
-        return "remote access";
+        return this.name || "remote access";
     }
   });
 </script>
@@ -18,6 +19,10 @@
   <div class="form-row">
     <label for="node-input-confignode"><i class="fa fa-tag"></i> Config</label>
     <input type="text" id="node-input-confignode" placeholder="Config">
+  </div>
+  <div class="form-row">
+    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <input type="text" id="node-input-name" placeholder="Name">
   </div>
 </script>
 
