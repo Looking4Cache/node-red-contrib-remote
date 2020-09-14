@@ -72,6 +72,7 @@
     const server = document.getElementById('node-config-input-server').value;
     const name = document.getElementById('node-config-input-name').value;
     const host = document.getElementById('node-config-input-host').value;
+    const localport = document.getElementById('node-config-input-port').value;
     const baseurl = document.getElementById('node-config-input-baseurl').value;
 
     // $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${server}/${encodeURIComponent(name)}`,function(data) {
@@ -81,6 +82,7 @@
       'server': server,
       'name': name,
       'host': host,
+      'localport': localport,
       'baseurl': baseurl
     }
     $.post(`contrib-remote/registerApp`, data, function(data) {

@@ -70,6 +70,7 @@ module.exports = function(RED) {
         'name': req.body.name,
         'server': req.body.server,
         'localip': localip,
+        'localport': req.body.localport,
         'baseurl': req.body.baseurl,
         'instancehash': response.data.instancehash,
         'apphash': response.data.apphash,
