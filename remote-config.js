@@ -2,6 +2,7 @@ module.exports = function(RED) {
   const https = require('https')
   const axios = require('axios')
   const fs = require('fs');
+  const internalIp = require('internal-ip');
   var QRCode = require('qrcode');
 
   function RemoteConfigNode(n) {
@@ -20,6 +21,14 @@ module.exports = function(RED) {
     credentials: {
       instanceauth: {type:"text"}
     }
+  });
+
+  RED.httpAdmin.get("/contrib-remote/internalIpV4", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+    // Return the internal IP
+    const ipData = {
+      'ipv4': internalIp.v4.sync()
+    }
+    res.json(ipData);
   });
 
   RED.httpAdmin.get("/contrib-remote/requestInstanceHash", RED.auth.needsPermission('remote-config.read'), function(req,res) {
@@ -51,9 +60,16 @@ module.exports = function(RED) {
     })
     .then(response => {
       console.log(response.data);
+
+      var localip = req.body.host;
+      if (localip.toLowerCase() == 'localhost') {
+        localip = internalIp.v4.sync();
+      }
+
       const qrCodeData = {
         'name': req.body.name,
         'server': req.body.server,
+        'localip': localip,
         'baseurl': req.body.baseurl,
         'instancehash': response.data.instancehash,
         'apphash': response.data.apphash,

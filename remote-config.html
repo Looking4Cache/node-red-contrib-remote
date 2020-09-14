@@ -13,16 +13,39 @@
     credentials: {
       instanceauth: {type:"text"}
     },
+    internalIpV4: '',
     oneditprepare: function() {
         document.getElementById('node-config-input-instancehash').disabled = true;
         document.getElementById('node-config-input-instanceauth').disabled = true;
         document.getElementById('node-config-input-server').disabled = true;
-        document.getElementById('remoteInstanceinputs').visibility = 'collapsed';
+        document.getElementById('remoteInstanceInputs').style.visibility = 'collapse';
+
+        $.getJSON('contrib-remote/internalIpV4',function(data) {
+          internalIpV4 = data.ipv4;
+          updateLocalhostInfo();
+
+          document.getElementById('node-config-input-host').onchange = function() {
+            updateLocalhostInfo();
+          };
+        });
+
     },
     label: function() {
         return this.name;
     }
   });
+
+  function updateLocalhostInfo() {
+    // Gives infos about localhost, maybe hides it.
+    if (document.getElementById('node-config-input-host').value.toLowerCase() == 'localhost') {
+      document.getElementById('localhostInfo').style.visibility = 'visible';
+      document.getElementById('localhostInfo').style.height = '20px';
+      document.getElementById('localhostInfo').innerHTML = ` localhost = Host of Node-RED, ${internalIpV4} for internal use`;
+    } else {
+      document.getElementById('localhostInfo').style.visibility = 'collapse';
+      document.getElementById('localhostInfo').style.height = '0px';
+    }
+  }
 
   function registerInstance() {
     // Request InstanceHash when empty
@@ -48,6 +71,7 @@
     const instanceauth = document.getElementById('node-config-input-instanceauth').value;
     const server = document.getElementById('node-config-input-server').value;
     const name = document.getElementById('node-config-input-name').value;
+    const host = document.getElementById('node-config-input-host').value;
     const baseurl = document.getElementById('node-config-input-baseurl').value;
 
     // $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${server}/${encodeURIComponent(name)}`,function(data) {
@@ -56,6 +80,7 @@
       'instanceauth': instanceauth,
       'server': server,
       'name': name,
+      'host': host,
       'baseurl': baseurl
     }
     $.post(`contrib-remote/registerApp`, data, function(data) {
@@ -101,6 +126,9 @@
     <label for="node-config-input-host"><i class="fa fa-tag"></i> Serving Host</label>
     <input type="text" id="node-config-input-host" placeholder="">
   </div>
+  <label id='localhostInfo'><i class="fa fa-info-circle"></i> localhost = Host of Node-RED</label>
+  <br>
+
   <div class="form-row">
     <label for="node-config-input-port"><i class="fa fa-tag"></i> Serving Port</label>
     <input type="text" id="node-config-input-port" placeholder="">
@@ -116,7 +144,7 @@
 
   <img id="registerRemoteAppQRCode" src=""></img>
 
-  <div id="remoteInstanceinputs">
+  <div id="remoteInstanceInputs">
     <div class="form-row">
       <label for="node-config-input-instancehash"><i class="fa fa-tag"></i> Instance</label>
       <input type="text" id="node-config-input-instancehash" placeholder="Wird automatisch berechnet.">
