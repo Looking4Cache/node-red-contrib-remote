@@ -15,6 +15,7 @@ module.exports = function(RED) {
     this.instancehash = n.instancehash;
     this.server = n.server;
     this.instanceauth = this.credentials.instanceauth;
+    this.region = n.region;
   }
 
   RED.nodes.registerType("remote-config",RemoteConfigNode, {
@@ -31,13 +32,13 @@ module.exports = function(RED) {
     res.json(ipData);
   });
 
-  RED.httpAdmin.get("/contrib-remote/requestInstanceHash", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+  RED.httpAdmin.get("/contrib-remote/requestInstanceHash/:region", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
     const httpsAgent = new https.Agent({
       ca: fs.readFileSync(__dirname + '/resources/ca.cer')
     });
     const axiosInstance = axios.create({ httpsAgent: httpsAgent });
-    axiosInstance.post('https://contact.remote-red.com/instanceHashRequest', {})
+    axiosInstance.post('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest', {})
     .then(response => {
       console.log(response.data);
       res.json(response.data);

@@ -8,27 +8,34 @@
       port: {value:1880, validate:RED.validators.number()},
       baseurl: {value:"/ui"},
       instancehash: {value:""},
-      server: {value:""}
+      server: {value:""},
+      region: {value:"de"}
     },
     credentials: {
       instanceauth: {type:"text"}
     },
     internalIpV4: '',
     oneditprepare: function() {
-        document.getElementById('node-config-input-instancehash').disabled = true;
-        document.getElementById('node-config-input-instanceauth').disabled = true;
-        document.getElementById('node-config-input-server').disabled = true;
-        document.getElementById('remoteInstanceInputs').style.visibility = 'collapse';
+      // Hide instance-variables
+      document.getElementById('node-config-input-instancehash').disabled = true;
+      document.getElementById('node-config-input-instanceauth').disabled = true;
+      document.getElementById('node-config-input-server').disabled = true;
+      document.getElementById('remoteInstanceInputs').style.visibility = 'collapse';
 
-        $.getJSON('contrib-remote/internalIpV4',function(data) {
-          internalIpV4 = data.ipv4;
+      // Deactivate region if already registered
+      if (document.getElementById('node-config-input-instancehash').value != "") {
+        document.getElementById('node-config-input-region').disabled = true;
+      }
+
+      // Get internal IP, fill localhost infos
+      $.getJSON('contrib-remote/internalIpV4',function(data) {
+        internalIpV4 = data.ipv4;
+        updateLocalhostInfo();
+
+        document.getElementById('node-config-input-host').onchange = function() {
           updateLocalhostInfo();
-
-          document.getElementById('node-config-input-host').onchange = function() {
-            updateLocalhostInfo();
-          };
-        });
-
+        };
+      });
     },
     label: function() {
         return this.name;
@@ -49,7 +56,8 @@
 
   function registerInstance() {
     // Request InstanceHash when empty
-    $.getJSON('contrib-remote/requestInstanceHash',function(data) {
+    const region = document.getElementById('node-config-input-region').value;
+    $.getJSON('contrib-remote/requestInstanceHash/' + region, function(data) {
       if ( data.error == undefined ) {
         // Fill UI
         document.getElementById('node-config-input-instancehash').value = data.instancehash;
@@ -139,6 +147,16 @@
     <label for="node-config-input-baseurl"><i class="fa fa-tag"></i> Base URL</label>
     <input type="text" id="node-config-input-baseurl" placeholder="">
   </div>
+
+
+  <div class="form-row">
+    <label for="node-config-input-region"><i class="fa fa-tag"></i> Server location</label>
+    <select id="node-config-input-region">
+        <option value="de">Europe (Germany)</option>
+        <option value="us">America (USA)</option>
+    </select>
+  </div>
+  <label><i class="fa fa-info-circle"></i> The region can´t be changed after registering an app.</label>
 
   <br>
   <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">Register Remote App</button>
