@@ -47,7 +47,10 @@
     if (document.getElementById('node-config-input-host').value.toLowerCase() == 'localhost') {
       document.getElementById('localhostInfo').style.visibility = 'visible';
       document.getElementById('localhostInfo').style.height = '20px';
-      document.getElementById('localhostInfo').innerHTML = ` localhost = Host of Node-RED, ${internalIpV4} for internal use`;
+
+      const hostDescTemplate = document.getElementById('host_desc_template').innerHTML;
+      document.getElementById('localhostInfo').innerHTML = eval('`' + hostDescTemplate + '`');
+      // ` localhost = Host of Node-RED, ${internalIpV4} for internal use`;
     } else {
       document.getElementById('localhostInfo').style.visibility = 'collapse';
       document.getElementById('localhostInfo').style.height = '0px';
@@ -83,7 +86,6 @@
     const localport = document.getElementById('node-config-input-port').value;
     const baseurl = document.getElementById('node-config-input-baseurl').value;
 
-    // $.getJSON(`contrib-remote/registerApp/${instancehash}/${instanceauth}/${server}/${encodeURIComponent(name)}`,function(data) {
     const data = {
       'instancehash': instancehash,
       'instanceauth': instanceauth,
@@ -126,40 +128,43 @@
 
 <script type="text/html" data-template-name="remote-config">
   <div class="form-row">
-    <label for="node-config-input-name"><i class="fa fa-tag"></i> Name</label>
+    <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="remote-config.label.name"></span></label>
     <input type="text" id="node-config-input-name" placeholder="Name">
   </div>
-  <label><i class="fa fa-info-circle"></i> This name will be displayed in the app.</label>
+  <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.name_desc"></span></label>
   <br>
 
   <div class="form-row">
-    <label for="node-config-input-host"><i class="fa fa-server"></i> Serving Host</label>
+    <label for="node-config-input-host"><i class="fa fa-server"></i> <span data-i18n="remote-config.label.host"></label>
     <input type="text" id="node-config-input-host" placeholder="">
   </div>
-  <label id='localhostInfo'><i class="fa fa-info-circle"></i> localhost = Host of Node-RED</label>
+  <label id='localhostInfo'><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.host_desc_default"></label>
+  <span id='host_desc_template' data-i18n="remote-config.label.host_desc_template" style="visibility: collapse;"></span>
   <br>
 
   <div class="form-row">
-    <label for="node-config-input-port"><i class="fa fa-tag"></i> Serving Port</label>
+    <label for="node-config-input-port"><i class="fa fa-tag"></i> <span data-i18n="remote-config.label.port"></label>
     <input type="text" id="node-config-input-port" placeholder="">
   </div>
   <div class="form-row">
-    <label for="node-config-input-baseurl"><i class="fa fa-tag"></i> Base URL</label>
+    <label for="node-config-input-baseurl"><i class="fa fa-tag"></i> <span data-i18n="remote-config.label.baseurl"></label>
     <input type="text" id="node-config-input-baseurl" placeholder="">
   </div>
 
 
   <div class="form-row">
-    <label for="node-config-input-region"><i class="fa fa-globe"></i> Server location</label>
+    <label for="node-config-input-region"><i class="fa fa-globe"></i> <span data-i18n="remote-config.label.region"></label>
     <select id="node-config-input-region">
-        <option value="de">Europe (Germany)</option>
-        <option value="us">America (USA)</option>
+        <option value="us" data-i18n="remote-config.label.region_us"></option>
+        <option value="de" data-i18n="remote-config.label.region_de"></option>
     </select>
   </div>
-  <label><i class="fa fa-info-circle"></i> The region can´t be changed after registering an app.</label>
+  <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.region_desc"></label>
 
   <br>
-  <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">Register Remote App</button>
+  <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">
+    <span data-i18n="remote-config.actions.register_app">
+  </button>
   <br>
 
   <img id="registerRemoteAppQRCode" src=""></img>

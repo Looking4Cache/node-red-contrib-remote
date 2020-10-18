@@ -1,0 +1,20 @@
+{
+    "remote-config" : {
+        "label" : {
+          "name": "Name",
+          "name_desc": "This name will be displayed in the app.",
+          "host": "Serving Host",
+          "host_desc_default": "localhost = Host of Node-RED",
+          "host_desc_template": "localhost = Host of Node-RED, ${internalIpV4} for internal use",
+          "port": "Serving Port",
+          "baseurl": "Base URL",
+          "region": "Server location",
+          "region_us": "America (USA)",
+          "region_de": "Europe (Germany)",
+          "region_desc": "The region can´t be changed after registering an app."
+        },
+        "actions" : {
+          "register_app": "Connect Remote-RED App"
+        }
+    }
+}

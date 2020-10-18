@@ -35,30 +35,30 @@
 
 <script type="text/html" data-template-name="remote-notification">
   <div class="form-row">
-    <label for="node-input-confignode"><i class="fa fa-tag"></i> Config</label>
+    <label for="node-input-confignode"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.config"></span></label>
     <input type="text" id="node-input-confignode" placeholder="Config">
   </div>
   <div class="form-row">
-    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.name"></span></label>
     <input type="text" id="node-input-name" placeholder="Name">
   </div>
   <br>
   <div class="form-row">
-    <label for="node-input-notificationTitle"><i class="fa fa-tag"></i> Title</label>
+    <label for="node-input-notificationTitle"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.title"></span></label>
     <input type="text" id="node-input-notificationTitle" placeholder="">
     <input type="hidden" id="node-input-notificationTitleType">
   </div>
   <div class="form-row">
-    <label for="node-input-notificationBody"><i class="fa fa-tag"></i> Body</label>
+    <label for="node-input-notificationBody"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.body"></span></label>
     <input type="text" id="node-input-notificationBody" placeholder="">
     <input type="hidden" id="node-input-notificationBodyType">
   </div>
   <br>
   <div class="form-row">
-    <label for="node-input-output"><i class="fa fa-tag"></i> Output</label>
+    <label for="node-input-output"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.output"></span></label>
     <select id="node-input-output">
-      <option value=1>Forward msg</option>
-      <option value=2>Output status (true=success / false=error)</option>
+      <option value=1 data-i18n="remote-notification.label.output_forward"></option>
+      <option value=2 data-i18n="remote-notification.label.output_status"></option>
     </select>
   </div>
 </script>

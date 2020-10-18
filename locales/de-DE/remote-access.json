@@ -1,0 +1,17 @@
+{
+    "remote-access" : {
+        "label" : {
+          "config": "Konfig",
+          "name": "Name"
+        },
+        "status" : {
+          "starting": "starte",
+          "serving": "aktiv",
+          "stopping": "stoppe",
+          "stopped": "gestoppt",
+          "commerror": "Fehler bei der Kommunikation mit dem Server.",
+          "noconfig": "Keine Konfiguration gefunden.",
+          "incompleteconfig": "Konfiguration unvollständig."
+        }
+    }
+}

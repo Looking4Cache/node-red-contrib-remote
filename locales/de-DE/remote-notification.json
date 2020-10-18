@@ -1,0 +1,13 @@
+{
+    "remote-notification" : {
+        "label" : {
+          "config": "Konfig",
+          "name": "Name",
+          "title": "Titel",
+          "body": "Inhalt",
+          "output": "Ausgabe",
+          "output_forward": "Weiterleiten der msg",
+          "output_status": "Status (true=erfolgreich / false=fehlgeschlagen)"
+        }
+    }
+}
