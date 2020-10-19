@@ -12,6 +12,11 @@
           "commerror": "Fehler bei der Kommunikation mit dem Server.",
           "noconfig": "Keine Konfiguration gefunden.",
           "incompleteconfig": "Konfiguration unvollständig."
+        },
+        "help": {
+          "title": "Hilfe",
+          "para1": "Die Access-Node ermöglicht Dir von der App lokal oder auch remote aus der Ferne auf eine Webseite zuzugreifen. In der Regel ist dies Dein Dashboard oder eine Seite des UI-Builders.",
+          "para2": "Erstelle eine Node vom Typ “remote access” für jede Seite, auf die Du zugreifen möchtest. Neben dem Namen enthält diese Node lediglich eine Config-Node. Die Konfiguration ist in die Config-Node ausgelagert, da diese Einstellungen auch für weitere Funktionen wie Push Notifications genutzt werden."
         }
     }
 }

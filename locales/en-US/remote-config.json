@@ -14,7 +14,22 @@
           "region_desc": "The region can´t be changed after registering an app."
         },
         "actions" : {
-          "register_app": "Connect Remote-RED App"
+          "register_app": "Connect Remote-RED App",
+          "register_app_next": "Connect another Remote-RED App"
+        },
+        "help": {
+          "title": "Help",
+          "para1": "For each Access Node you create a corresponding Config Node. In this Config Node you define with which host, port and URL the connection will be established. The default values shows the dashboard as an example. It is also possible to configure other pages from the local network, as long as the Node-RED server can access them.",
+          "field1": "Name: With this title the page will be displayed later in the app.",
+          "field2": "Serving Host: The local IP of the host whose website is to be shared. “localhost” uses the Node-RED server on which the Access Node is running.",
+          "field3": "Serving Port: The port that will be forwarded. For Node-RED this is usually 1880, for other websites usually 80.",
+          "field4": "Base URL: The initial page to be called.",
+          "para2": "You can only edit the “Server location” once. Here you can specify in which corner of the world the server is located, which will be used for routing your website. For a fast connection choose the location that is closest to you.",
+          "para3": "Once you have defined these settings and installed the iOS or Android app, you can connect to an app by clicking the “Connect Remote-RED App” button."
+        },
+        "apphelp": {
+          "title": "App Help",
+          "para1": "Download the Remote-RED app from the Apple AppStore or Google PlayStore. Use the function “Add Node-RED Instance” in the app to scan this QR Code."
         }
     }
 }

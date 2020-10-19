@@ -8,6 +8,12 @@
           "output": "Output",
           "output_forward": "Forward msg",
           "output_status": "Status (true=success / false=error)"
+        },
+        "help": {
+          "title": "Help",
+          "para1": "With this node you can send a push notification to the devices connected to the selected config node. Select a config node that you already use in an access node. You can use the same config node in several notification nodes.",
+          "para2": "Configure the title and the text of the notification. The default values assume that the payload of the incoming notification contains the strings “title” and “body”. You can also enter fixed texts or use flow or global variables.",
+          "para3": "Whenever a message arrives at the notification node, a notification is sent to your devices."
         }
     }
 }

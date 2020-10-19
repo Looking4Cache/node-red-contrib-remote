@@ -99,6 +99,9 @@
       if ( data.error == undefined ) {
         // Show QR Code
         document.getElementById('registerRemoteAppQRCode').src = data.qrcode;
+        document.getElementById('registerRemoteAppQRCodeContainer').style.removeProperty('visibility');
+        document.getElementById('registerRemoteAppQRCodeContainer').style.removeProperty('height');
+        document.getElementById('registerRemoteAppButtonText').innerHTML = document.getElementById('registerRemoteAppButton_next_text').innerHTML;
       } else {
         // Show error
         alert('registerApp: ' + data.error);
@@ -112,6 +115,9 @@
   function registerButtonClicked() {
     // Disable Button
     document.getElementById('registerRemoteAppButton').disabled = true;
+
+    // Remove last QR-Code
+    document.getElementById('registerRemoteAppQRCode').src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==";
 
     // Get InstanceHash from UI
     var instanceHash = document.getElementById('node-config-input-instancehash').value;
@@ -163,13 +169,20 @@
 
   <br>
   <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">
-    <span data-i18n="remote-config.actions.register_app">
+    <span id="registerRemoteAppButtonText" data-i18n="remote-config.actions.register_app">
   </button>
+  <span id='registerRemoteAppButton_next_text' data-i18n="remote-config.actions.register_app_next" style="visibility: collapse;"></span>
   <br>
 
-  <img id="registerRemoteAppQRCode" src=""></img>
+  <div id="registerRemoteAppQRCodeContainer" style="visibility: collapse; height: 0px;">
+    <img id="registerRemoteAppQRCode" src=""></img>
+    <div id="apphelp" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 6px; margin-bottom: 20px;">
+      <label data-i18n="remote-config.apphelp.title" style="font-weight: bold;"></label>
+      <label data-i18n="remote-config.apphelp.para1"></label>
+    </div>
+  </div>
 
-  <div id="remoteInstanceInputs">
+  <div id="remoteInstanceInputs" style="max-height: 0px;">
     <div class="form-row">
       <label for="node-config-input-instancehash"><i class="fa fa-tag"></i> Instance</label>
       <input type="text" id="node-config-input-instancehash" placeholder="Wird automatisch berechnet.">
@@ -182,5 +195,18 @@
       <label for="node-config-input-server"><i class="fa fa-tag"></i> Server</label>
       <input type="text" id="node-config-input-server" placeholder="Wird automatisch berechnet.">
     </div>
+  </div>
+
+  <div id="help" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 40px; margin-bottom: 20px;">
+    <label data-i18n="remote-config.help.title" style="font-weight: bold;"></label>
+    <label data-i18n="remote-config.help.para1"></label>
+    <ul>
+      <li data-i18n="remote-config.help.field1"></li>
+      <li data-i18n="remote-config.help.field2"></li>
+      <li data-i18n="remote-config.help.field3"></li>
+      <li data-i18n="remote-config.help.field4"></li>
+    </ul>
+    <label data-i18n="remote-config.help.para2"></label>
+    <label data-i18n="remote-config.help.para3"></label>
   </div>
 </script>

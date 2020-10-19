@@ -39,7 +39,6 @@ module.exports = function(RED) {
     const axiosInstance = axios.create({ httpsAgent: httpsAgent });
     axiosInstance.post('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest', {})
     .then(response => {
-      console.log(response.data);
       res.json(response.data);
     })
     .catch((error) => {
@@ -59,8 +58,6 @@ module.exports = function(RED) {
       'instanceauth': req.body.instanceauth
     })
     .then(response => {
-      console.log(response.data);
-
       var localip = req.body.host;
       if (localip.toLowerCase() == 'localhost') {
         localip = internalIp.v4.sync();
