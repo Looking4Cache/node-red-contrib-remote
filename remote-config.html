@@ -66,13 +66,13 @@
         document.getElementById('node-config-input-instancehash').value = data.instancehash;
         document.getElementById('node-config-input-instanceauth').value = data.instanceauth;
         document.getElementById('node-config-input-server').value = data.server;
+
+        // Next step
+        registerApp()
       } else {
         // Show error
-        alert('registerInstance: ' + data.error);
+        alert('Error while registering instance: ' + data.error);
       }
-
-      // Next step
-      registerApp()
     });
   }
 
@@ -104,7 +104,7 @@
         document.getElementById('registerRemoteAppButtonText').innerHTML = document.getElementById('registerRemoteAppButton_next_text').innerHTML;
       } else {
         // Show error
-        alert('registerApp: ' + data.error);
+        alert('Error while registering app: ' + data.error);
       }
 
       // Enable button
@@ -163,6 +163,7 @@
     <select id="node-config-input-region">
         <option value="us" data-i18n="remote-config.label.region_us"></option>
         <option value="de" data-i18n="remote-config.label.region_de"></option>
+        <option value="dev" data-i18n="remote-config.label.region_dev"></option>
     </select>
   </div>
   <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.region_desc"></label>

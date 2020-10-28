@@ -11,6 +11,7 @@
           "region": "Server location",
           "region_us": "America (USA)",
           "region_de": "Europe (Germany)",
+          "region_dev": "Development host",
           "region_desc": "The region can´t be changed after registering an app."
         },
         "actions" : {

@@ -37,6 +37,7 @@ module.exports = function(RED) {
       ca: fs.readFileSync(__dirname + '/resources/ca.cer')
     });
     const axiosInstance = axios.create({ httpsAgent: httpsAgent });
+    console.log('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest')
     axiosInstance.post('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest', {})
     .then(response => {
       res.json(response.data);
