@@ -1,8 +1,6 @@
 module.exports = function(RED) {
-  const https = require('https')
-  const axios = require('axios')
-  const fs = require('fs');
-
+  const commons = require('./remote-commons');
+  
   function RemoteNotificationNode(config) {
     RED.nodes.createNode(this,config);
     const node = this;
@@ -18,10 +16,7 @@ module.exports = function(RED) {
       const body = RED.util.evaluateNodeProperty(config.notificationBody, config.notificationBodyType, node, msg);
 
       // Call API to send notification
-      const httpsAgent = new https.Agent({
-        ca: fs.readFileSync(__dirname + '/resources/ca.cer')
-      });
-      const axiosInstance = axios.create({ httpsAgent: httpsAgent });
+      const axiosInstance = commons.createAxiosInstance();
       axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
         'instancehash': node.confignode.instancehash,
         'instanceauth': node.confignode.instanceauth,

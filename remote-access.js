@@ -1,7 +1,5 @@
 module.exports = function(RED) {
-  const https = require('https')
-  const axios = require('axios')
-  const fs = require('fs');
+  const commons = require('./remote-commons');
   const child_process = require('child_process');
 
   function startSSH(node, server, port) {
@@ -41,10 +39,7 @@ module.exports = function(RED) {
 
   function requestInstanceSlot(node) {
     // Call API to retrive server and port.
-    const httpsAgent = new https.Agent({
-      ca: fs.readFileSync(__dirname + '/resources/ca.cer')
-    });
-    const axiosInstance = axios.create({ httpsAgent: httpsAgent });
+    const axiosInstance = commons.createAxiosInstance();
     axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
       "instancehash": node.confignode.instancehash
     })

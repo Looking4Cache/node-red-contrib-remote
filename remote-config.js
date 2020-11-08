@@ -1,7 +1,5 @@
 module.exports = function(RED) {
-  const https = require('https')
-  const axios = require('axios')
-  const fs = require('fs');
+  const commons = require('./remote-commons');
   const internalIp = require('internal-ip');
   var QRCode = require('qrcode');
 
@@ -33,10 +31,7 @@ module.exports = function(RED) {
 
   RED.httpAdmin.get("/contrib-remote/requestInstanceHash/:region", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
-    const httpsAgent = new https.Agent({
-      ca: fs.readFileSync(__dirname + '/resources/ca.cer')
-    });
-    const axiosInstance = axios.create({ httpsAgent: httpsAgent });
+    const axiosInstance = commons.createAxiosInstance();
     console.log('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest')
     axiosInstance.post('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest', {})
     .then(response => {
@@ -50,10 +45,7 @@ module.exports = function(RED) {
 
   RED.httpAdmin.post("/contrib-remote/registerApp", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
-    const httpsAgent = new https.Agent({
-      ca: fs.readFileSync(__dirname + '/resources/ca.cer')
-    });
-    const axiosInstance = axios.create({ httpsAgent: httpsAgent });
+    const axiosInstance = commons.createAxiosInstance();
     axiosInstance.post(`https://api-${req.body.server}/registerApp`, {
       'instancehash': req.body.instancehash,
       'instanceauth': req.body.instanceauth
