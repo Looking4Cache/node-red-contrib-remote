@@ -27,6 +27,9 @@
         document.getElementById('node-config-input-region').disabled = true;
       }
 
+      // Insert legal link urls
+      setTimeout(insertLinkUrls, 250);
+
       // Get internal IP, fill localhost infos
       $.getJSON('contrib-remote/internalIpV4',function(data) {
         internalIpV4 = data.ipv4;
@@ -41,6 +44,12 @@
         return this.name;
     }
   });
+
+  function insertLinkUrls() {
+    // Insert legal link urls
+    document.getElementById('legalPrivacypolicyLink').setAttribute('href', document.getElementById('privacypolicy_url_template').innerHTML);
+    document.getElementById('legalTermsLink').setAttribute('href', document.getElementById('terms_url_template').innerHTML);
+  }
 
   function updateLocalhostInfo() {
     // Gives infos about localhost, maybe hides it.
@@ -145,7 +154,7 @@
     <input type="text" id="node-config-input-host" placeholder="">
   </div>
   <label id='localhostInfo'><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.host_desc_default"></label>
-  <span id='host_desc_template' data-i18n="remote-config.label.host_desc_template" style="visibility: collapse;"></span>
+  <span id='host_desc_template' data-i18n="remote-config.label.host_desc_template" style="display: none;"></span>
   <br>
 
   <div class="form-row">
@@ -173,7 +182,17 @@
     <span id="registerRemoteAppButtonText" data-i18n="remote-config.actions.register_app">
   </button>
   <span id='registerRemoteAppButton_next_text' data-i18n="remote-config.actions.register_app_next" style="visibility: collapse;"></span>
-  <br>
+
+  <div id="legal" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 10px;">
+    <label data-i18n="remote-config.legal.title" style="font-weight: bold;"></label>
+    <label data-i18n="remote-config.legal.info1" style="display: inline;"></label>
+    <a id="legalPrivacypolicyLink" href="https://www.remote-red.com/en/privacypolicy" target="_blank"><i><label data-i18n="remote-config.legal.privacypolicy" style="display: inline; color: #AD1626;"></label></i></a>
+    <label data-i18n="remote-config.legal.info2" style="display: inline;"></label>
+    <a id="legalTermsLink" href="https://www.remote-red.com/en/terms" target="_blank"><i><label data-i18n="remote-config.legal.terms" style="display: inline; color: #AD1626;"></label></i></a>
+    <label data-i18n="remote-config.legal.info3" style="display: inline;"></label>
+  </div>
+  <span id='privacypolicy_url_template' data-i18n="remote-config.legal.privacypolicyurl" style="display: none;"></span>
+  <span id='terms_url_template' data-i18n="remote-config.legal.termsurl" style="display: none;"></span>
 
   <div id="registerRemoteAppQRCodeContainer" style="visibility: collapse; height: 0px;">
     <img id="registerRemoteAppQRCode" src=""></img>
@@ -210,4 +229,5 @@
     <label data-i18n="remote-config.help.para2"></label>
     <label data-i18n="remote-config.help.para3"></label>
   </div>
+  <br>
 </script>

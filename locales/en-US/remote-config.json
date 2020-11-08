@@ -18,6 +18,16 @@
           "register_app": "Connect Remote-RED App",
           "register_app_next": "Connect another Remote-RED App"
         },
+        "legal": {
+          "title": "Privacy Policy / Terms of Use",
+          "info1": "By connecting an app, you agree to the ",
+          "info2": " and the ",
+          "info3": ".",
+          "privacypolicy": "Privacy Policy",
+          "terms": "Terms of Use",
+          "privacypolicyurl": "https://www.remote-red.com/en/privacypolicy",
+          "termsurl": "https://www.remote-red.com/en/terms"
+        },
         "help": {
           "title": "Help",
           "para1": "For each Access Node you create a corresponding Config Node. In this Config Node you define with which host, port and URL the connection will be established. The default values shows the dashboard as an example. It is also possible to configure other pages from the local network, as long as the Node-RED server can access them.",

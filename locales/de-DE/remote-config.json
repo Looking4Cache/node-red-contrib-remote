@@ -18,6 +18,16 @@
           "register_app": "Remote-RED App verbinden",
           "register_app_next": "Weitere Remote-RED App verbinden"
         },
+        "legal": {
+          "title": "Datenschutzerklärung / Nutzungsvereinbarung",
+          "info1": "Durch das Verbinden einer App stimmst Du der ",
+          "info2": " und der ",
+          "info3": " zu.",
+          "privacypolicy": "Datenschutzerklärung",
+          "terms": "Nutzungsvereinbarung",
+          "privacypolicyurl": "https://www.remote-red.com/de/datenschutz",
+          "termsurl": "https://www.remote-red.com/de/nutzung"
+        },
         "help": {
           "title": "Hilfe",
           "para1": "Pro Access-Node erstellt Du eine entsprechende Config-Node. In dieser wird hinterlegt, mit welchem Host, Port und URL die Verbindung stattfindet. Die Vorgabewerte zeigen als Beispiel das Dashboard. Es ist aber auch möglich weitere Seiten aus dem lokalen Netzwerk zu konfigurieren, insofern der Server auf dem Node-RED installiert ist darauf zugreifen kann.",
