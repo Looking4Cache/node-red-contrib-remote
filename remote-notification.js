@@ -1,6 +1,6 @@
 module.exports = function(RED) {
   const commons = require('./remote-commons');
-  
+
   function RemoteNotificationNode(config) {
     RED.nodes.createNode(this,config);
     const node = this;
@@ -24,8 +24,6 @@ module.exports = function(RED) {
         'notificationbody': body
       })
       .then(response => {
-        node.log(response.data);
-
         // Output status if configured so
         if ( config.output == 2 ) {
           msg.payload = true;
