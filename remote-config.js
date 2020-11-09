@@ -55,6 +55,9 @@ module.exports = function(RED) {
       if (localip.toLowerCase() == 'localhost') {
         localip = internalIp.v4.sync();
       }
+      if (localip === undefined) {
+        localip = "";
+      }
 
       const qrCodeData = {
         'name': req.body.name,

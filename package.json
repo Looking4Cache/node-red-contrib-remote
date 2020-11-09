@@ -1,9 +1,9 @@
 {
   "name": "node-red-contrib-remote",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Remote services for Node-RED including remote access and push notifications.",
   "author": "Thorsten Heilmann",
-  "license": "GPLv3",
+  "license": "GPL-3.0",
   "node-red": {
     "nodes": {
       "remote-config": "remote-config.js",
@@ -15,5 +15,21 @@
     "axios": "^0.20.0",
     "internal-ip": "^6.1.0",
     "qrcode": "^1.4.4"
-  }
+  },
+  "main": "remote-config.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Looking4Cache/node-red-contrib-remote.git"
+  },
+  "keywords": [
+    "node-red"
+  ],
+  "bugs": {
+    "url": "https://github.com/Looking4Cache/node-red-contrib-remote/issues"
+  },
+  "homepage": "https://github.com/Looking4Cache/node-red-contrib-remote#readme"
 }

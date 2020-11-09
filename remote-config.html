@@ -53,13 +53,12 @@
 
   function updateLocalhostInfo() {
     // Gives infos about localhost, maybe hides it.
-    if (document.getElementById('node-config-input-host').value.toLowerCase() == 'localhost') {
+    if (document.getElementById('node-config-input-host').value.toLowerCase() == 'localhost' && internalIpV4 !== undefined) {
       document.getElementById('localhostInfo').style.visibility = 'visible';
       document.getElementById('localhostInfo').style.height = '20px';
 
       const hostDescTemplate = document.getElementById('host_desc_template').innerHTML;
       document.getElementById('localhostInfo').innerHTML = eval('`' + hostDescTemplate + '`');
-      // ` localhost = Host of Node-RED, ${internalIpV4} for internal use`;
     } else {
       document.getElementById('localhostInfo').style.visibility = 'collapse';
       document.getElementById('localhostInfo').style.height = '0px';
