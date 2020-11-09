@@ -53,12 +53,16 @@
 
   function updateLocalhostInfo() {
     // Gives infos about localhost, maybe hides it.
-    if (document.getElementById('node-config-input-host').value.toLowerCase() == 'localhost' && internalIpV4 !== undefined) {
+    if (document.getElementById('node-config-input-host').value.toLowerCase() == 'localhost') {
       document.getElementById('localhostInfo').style.visibility = 'visible';
       document.getElementById('localhostInfo').style.height = '20px';
 
-      const hostDescTemplate = document.getElementById('host_desc_template').innerHTML;
-      document.getElementById('localhostInfo').innerHTML = eval('`' + hostDescTemplate + '`');
+      if (internalIpV4 !== undefined) {
+        const hostDescTemplate = document.getElementById('host_desc_template').innerHTML;
+        document.getElementById('localhostInfo').innerHTML = eval('`' + hostDescTemplate + '`');
+      } else {
+        document.getElementById('localhostInfo').innerHTML = document.getElementById('host_desc_default').innerHTML;
+      }
     } else {
       document.getElementById('localhostInfo').style.visibility = 'collapse';
       document.getElementById('localhostInfo').style.height = '0px';
@@ -154,6 +158,7 @@
   </div>
   <label id='localhostInfo'><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.host_desc_default"></label>
   <span id='host_desc_template' data-i18n="remote-config.label.host_desc_template" style="display: none;"></span>
+  <span id='host_desc_default' data-i18n="remote-config.label.host_desc_default" style="display: none;"></span>
   <br>
 
   <div class="form-row">
