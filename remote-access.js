@@ -41,7 +41,8 @@ module.exports = function(RED) {
     // Call API to retrive server and port.
     const axiosInstance = commons.createAxiosInstance();
     axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
-      "instancehash": node.confignode.instancehash
+      "instancehash": node.confignode.instancehash,
+      "protocol": node.confignode.protocol
     })
     .then(response => {
       // Start SSH

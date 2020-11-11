@@ -7,6 +7,7 @@ module.exports = function(RED) {
     RED.nodes.createNode(this,n);
     this.name = n.name;
     this.host = n.host;
+    this.protocol = n.protocol;
     this.port = n.port;
     this.baseurl = n.baseurl;
     this.instancehash = n.instancehash;

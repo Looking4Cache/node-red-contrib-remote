@@ -5,6 +5,7 @@
     defaults: {
       name: {value:"Node-RED UI"},
       host: {value:"localhost"},
+      protocol: {value:"http"},
       port: {value:1880, validate:RED.validators.number()},
       baseurl: {value:"/ui"},
       instancehash: {value:""},
@@ -162,6 +163,13 @@
   <br>
 
   <div class="form-row">
+    <label for="node-config-input-protocol"><i class="fa fa-tag"></i> <span data-i18n="remote-config.label.protocol"></label>
+    <select id="node-config-input-protocol">
+        <option value="http">http</option>
+        <option value="https">https</option>
+    </select>
+  </div>
+  <div class="form-row">
     <label for="node-config-input-port"><i class="fa fa-tag"></i> <span data-i18n="remote-config.label.port"></label>
     <input type="text" id="node-config-input-port" placeholder="">
   </div>
@@ -229,6 +237,7 @@
       <li data-i18n="remote-config.help.field2"></li>
       <li data-i18n="remote-config.help.field3"></li>
       <li data-i18n="remote-config.help.field4"></li>
+      <li data-i18n="remote-config.help.field5"></li>
     </ul>
     <label data-i18n="remote-config.help.para2"></label>
     <label data-i18n="remote-config.help.para3"></label>
