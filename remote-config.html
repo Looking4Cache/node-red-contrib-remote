@@ -46,6 +46,10 @@
       const instanceauth = document.getElementById('node-config-input-instanceauth').value;
       if (instancehash !== "" && instanceauth === "") {
         document.getElementById('backupInfo').style.visibility = 'visible';
+        document.getElementById('backupInfo').style.marginTop = '40px';
+        document.getElementById('backupInfo').style.marginBottom = '60px';
+        document.getElementById('backupInfo').style.padding = '10px';
+        document.getElementById('backupInfo').style.removeProperty('max-height');
       }
     },
     label: function() {
@@ -153,7 +157,7 @@
 </script>
 
 <script type="text/html" data-template-name="remote-config">
-  <div id="backupInfo" style="visibility: collapse; max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 40px; margin-bottom: 60px;">
+  <div id="backupInfo" style="visibility: collapse; max-height: 0px; max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666;">
     <label data-i18n="remote-config.label.backup_info" style="font-weight: bold;"></label>
   </div>
 
