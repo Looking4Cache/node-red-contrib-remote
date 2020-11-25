@@ -40,6 +40,13 @@
           updateLocalhostInfo();
         };
       });
+
+      // Show backup info?
+      const instancehash = document.getElementById('node-config-input-instancehash').value;
+      const instanceauth = document.getElementById('node-config-input-instanceauth').value;
+      if (instancehash !== "" && instanceauth === "") {
+        document.getElementById('backupInfo').style.visibility = 'visible';
+      }
     },
     label: function() {
         return this.name;
@@ -146,6 +153,10 @@
 </script>
 
 <script type="text/html" data-template-name="remote-config">
+  <div id="backupInfo" style="visibility: collapse; max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 40px; margin-bottom: 60px;">
+    <label data-i18n="remote-config.label.backup_info" style="font-weight: bold;"></label>
+  </div>
+
   <div class="form-row">
     <label for="node-config-input-name"><i class="fa fa-tag"></i> <span data-i18n="remote-config.label.name"></span></label>
     <input type="text" id="node-config-input-name" placeholder="Name">

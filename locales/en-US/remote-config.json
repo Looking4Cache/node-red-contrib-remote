@@ -13,7 +13,8 @@
           "region_us": "America (USA)",
           "region_de": "Europe (Germany)",
           "region_dev": "Development host",
-          "region_desc": "The region can´t be changed after registering an app."
+          "region_desc": "The region can´t be changed after registering an app.",
+          "backup_info": "This config node was restored from a backup. Therefore security relevant information are not included. Please delete this config-node and the connections in your Remote-RED apps. Create a new config-node, connect it to the apps and select this new config node in all dependent nodes."
         },
         "actions" : {
           "register_app": "Connect Remote-RED App",

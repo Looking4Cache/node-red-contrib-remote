@@ -4,7 +4,7 @@ module.exports = function(RED) {
 
   function startSSH(node, server, port) {
     try {
-      node.log("exec ssh");
+      node.debug("starting ssh process");
       //node.log('ssh -o StrictHostKeyChecking=no -R ' + port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString() + ' forward@proxy-' + server + ' -N');
       const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString(), 'forward@proxy-' + server, '-N']);
 
@@ -13,11 +13,11 @@ module.exports = function(RED) {
       node.serving = true
 
       sshprocess.stdout.on('data', (data) => {
-        node.log("ssh process stdout: " + data);
+        node.debug("ssh process stdout: " + data);
       });
 
       sshprocess.stderr.on('data', (data) => {
-        node.log("ssh process stderr: " + data);
+        node.debug("ssh process stderr: " + data);
       });
 
       sshprocess.on('close', (code, signal) => {
@@ -42,6 +42,7 @@ module.exports = function(RED) {
     const axiosInstance = commons.createAxiosInstance();
     axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
       "instancehash": node.confignode.instancehash,
+      "instanceauth": node.confignode.instanceauth,
       "protocol": node.confignode.protocol
     })
     .then(response => {
@@ -75,9 +76,7 @@ module.exports = function(RED) {
     // Retrieve the config node
     node.confignode = RED.nodes.getNode(config.confignode);
     if ( node.confignode ) {
-      node.log("this.confignode.name: " + node.confignode.name);
-      node.log("this.confignode.instancehash: " + node.confignode.instancehash);
-      node.log("this.confignode.server: " + node.confignode.server);
+      node.log("Server: " + node.confignode.server + " InstanceHash: " + node.confignode.instancehash );
     } else {
       node.log("No configuration found.");
       node.status({fill:"red",shape:"dot",text:"remote-access.status.noconfig"});
@@ -86,6 +85,11 @@ module.exports = function(RED) {
     if ( node.confignode.instancehash === undefined || node.confignode.instancehash === '' ) {
       node.log("Configuration incomplete.");
       node.status({fill:"red",shape:"dot",text:"remote-access.status.incompleteconfig"});
+      return;
+    }
+    if ( node.confignode.instancehash !== undefined && node.confignode.instanceauth === undefined ) {
+      node.log("Configuration has no instanceauth. Maybe restored backup!");
+      node.status({fill:"red",shape:"dot",text:"remote-access.status.backupconfig"});
       return;
     }
 

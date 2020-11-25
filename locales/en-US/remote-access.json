@@ -11,7 +11,8 @@
           "stopped": "stopped",
           "commerror": "Error communicating with server.",
           "noconfig": "No configuration found.",
-          "incompleteconfig": "Configuration incomplete."
+          "incompleteconfig": "Configuration incomplete.",
+          "backupconfig": "Configuration from backup."
         },
         "help": {
           "title": "Help",
