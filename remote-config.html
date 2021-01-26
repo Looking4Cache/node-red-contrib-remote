@@ -154,6 +154,14 @@
       registerApp();
     }
   }
+
+  function openSupportMailButtonClicked() {
+    // Get InstanceHash and Server from UI
+    const instanceHash = document.getElementById('node-config-input-instancehash').value;
+    const server = document.getElementById('node-config-input-server').value;
+    var link = 'mailto:info@remote-red.com?subject=Remote-RED%20Support%20-%20InstanceHash:%20' + instanceHash + '%20Server:%20' + server;
+    location.href = link;
+  }
 </script>
 
 <script type="text/html" data-template-name="remote-config">
@@ -257,5 +265,9 @@
     <label data-i18n="remote-config.help.para2"></label>
     <label data-i18n="remote-config.help.para3"></label>
   </div>
+  <button id="openSupportMailButton" type="button" class="red-ui-button" onclick="openSupportMailButtonClicked()">
+    <span id="openSupportMailButtonText" data-i18n="remote-config.actions.support_mail">
+  </button>
+  <br>
   <br>
 </script>

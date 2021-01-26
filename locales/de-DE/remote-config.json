@@ -18,7 +18,8 @@
         },
         "actions" : {
           "register_app": "Remote-RED App verbinden",
-          "register_app_next": "Weitere Remote-RED App verbinden"
+          "register_app_next": "Weitere Remote-RED App verbinden",
+          "support_mail": "Mail an Support öffnen"
         },
         "legal": {
           "title": "Datenschutzerklärung / Nutzungsvereinbarung",
