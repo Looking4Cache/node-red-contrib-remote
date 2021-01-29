@@ -5,6 +5,7 @@
     defaults: {
       confignode: {value:"", type:"remote-config",required:true},
       name: {value:""},
+      verbose: {value:0}
     },
     inputs: 0,
     outputs: 0,
@@ -23,6 +24,15 @@
   <div class="form-row">
     <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="remote-access.label.name"></span></label>
     <input type="text" id="node-input-name" placeholder="Name">
+  </div>
+  <br>
+  <div class="form-row">
+    <label for="node-input-verbose"><i class="fa fa-bug"></i> <span data-i18n="remote-access.label.verbose"></span></label>
+    <span>
+      <input type="checkbox" id="node-input-verbose" style="display:inline-block; width:22px; vertical-align:top;">
+      <span data-i18n="remote-access.label.verbosefield"></span>
+    </span>
+    </input>
   </div>
 
   <div id="help" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 40px; margin-bottom: 20px;">

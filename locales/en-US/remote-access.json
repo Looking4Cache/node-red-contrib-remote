@@ -2,7 +2,9 @@
     "remote-access" : {
         "label" : {
           "config": "Config",
-          "name": "Name"
+          "name": "Name",
+          "verbose": "SSH log",
+          "verbosefield": "Activate verbose logging"
         },
         "status" : {
           "starting": "starting",

@@ -4,20 +4,24 @@ module.exports = function(RED) {
 
   function startSSH(node, server, port) {
     try {
-      node.debug("starting ssh process");
+      node.log("starting ssh process");
       //node.log('ssh -o StrictHostKeyChecking=no -R ' + port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString() + ' forward@proxy-' + server + ' -N');
-      const sshprocess = child_process.spawn("ssh", ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString(), 'forward@proxy-' + server, '-N']);
+      var sshparameters = ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString(), 'forward@proxy-' + server, '-N'];
+      if ( node.verbose ) {
+        sshparameters.push('-v');
+      }
+      const sshprocess = child_process.spawn("ssh", sshparameters);
 
       // TODO: Herausfinden ob wirklich verbunden
       node.status({fill:"green",shape:"dot",text:"remote-access.status.serving"});
       node.serving = true
 
       sshprocess.stdout.on('data', (data) => {
-        node.debug("ssh process stdout: " + data);
+        logSSHBuffer(node, data, 'ssh process stdout');
       });
 
       sshprocess.stderr.on('data', (data) => {
-        node.debug("ssh process stderr: " + data);
+        logSSHBuffer(node, data, 'ssh process stderr');
       });
 
       sshprocess.on('close', (code, signal) => {
@@ -34,6 +38,17 @@ module.exports = function(RED) {
     } catch (e) {
       // TODO: Error: socket hang up
       node.error('startSSH error: ' + error);
+    }
+  }
+
+  function logSSHBuffer(node, data, prefix) {
+    // Logs the output from the ssh process if enabled
+    if ( node.verbose ) {
+      data.toString().split('\n').forEach(function(line) {
+        if ( line !== '' ) {
+          node.log(prefix + ': ' + line)
+        }
+      });
     }
   }
 
@@ -60,7 +75,7 @@ module.exports = function(RED) {
 
   function servingTimer(node) {
     // Request new instance slot and connect ssh if not connected
-    if (!node.serving) {
+    if ( !node.serving ) {
       requestInstanceSlot(node)
     }
   }
@@ -69,6 +84,7 @@ module.exports = function(RED) {
     RED.nodes.createNode(this,config);
     const node = this;
     node.serving = false;
+    node.verbose = config.verbose;
 
     // Status
     node.status({fill:"orange",shape:"dot",text:"remote-access.status.starting"});
