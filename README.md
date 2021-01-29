@@ -21,3 +21,15 @@ While the beta phase the apps will be available through Apple TestFlight and Goo
 There is a help page describing how the the nodes work together and how to connect the apps.
 [Help in English](https://www.remote-red.com/en/help/)
 [Hilfe in deutsch](https://www.remote-red.com/de/hilfe/)
+
+
+## Version History
+
+Version 1.0.3:
+- Added the function to activate verbose logging of the SSH tunnel.
+
+Version 1.0.2:
+- Added a button to create a support mail in the config node.
+
+Version 1.0.1:
+- Initial release
