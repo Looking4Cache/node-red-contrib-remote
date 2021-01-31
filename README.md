@@ -27,7 +27,7 @@ There is a help page describing how the the nodes work together and how to conne
 
 ## Contact
 
-You can get more information on [www.remote-red-com](https://www.remote-red.com). You can contact me by mail through info@remote-red.com.
+You will find more information on [www.remote-red-com](https://www.remote-red.com). You can contact me by mail through info@remote-red.com.
 
 
 ## Version History
