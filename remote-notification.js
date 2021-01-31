@@ -14,6 +14,7 @@ module.exports = function(RED) {
     node.on('input', function(msg) {
       const title = RED.util.evaluateNodeProperty(config.notificationTitle, config.notificationTitleType, node, msg);
       const body = RED.util.evaluateNodeProperty(config.notificationBody, config.notificationBodyType, node, msg);
+      node.log(`Send notication: ${title} - ${body}`)
 
       // Call API to send notification
       const axiosInstance = commons.createAxiosInstance();
@@ -24,6 +25,8 @@ module.exports = function(RED) {
         'notificationbody': body
       })
       .then(response => {
+        node.debug(`Notication send successfull`)
+
         // Output status if configured so
         if ( config.output == 2 ) {
           msg.payload = true;

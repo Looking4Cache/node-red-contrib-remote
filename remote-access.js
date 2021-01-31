@@ -27,7 +27,17 @@ module.exports = function(RED) {
       sshprocess.on('close', (code, signal) => {
         node.status({fill:"red",shape:"dot",text:"remote-access.status.stopped"});
         node.serving = false
-        node.log("ssh process stopped");
+        node.log("ssh process stopped (close: " + code + " / " + signal + ")");
+      });
+
+      sshprocess.on('exit', (code, signal) => {
+        node.status({fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+        node.serving = false
+        node.log("ssh process stopped (exit: " + code + " / " + signal + ")");
+      });
+
+      sshprocess.on('error', (err) => {
+        node.log("ssh process error:" + err.name + ": " + err.message);
       });
 
       node.on('close', function() {

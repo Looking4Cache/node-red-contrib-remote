@@ -9,10 +9,22 @@
       questionTitleType: {value:"msg"},
       questionBody: {value:"payload.body"},
       questionBodyType: {value:"msg"},
+      questionAnswerOne: {value:""},
+      questionAnswerOneType: {value:"str"},
+      questionAnswerOneValue: {value:true},
+      questionAnswerOneValueType: {value:"bool"},
+      questionAnswerTwo: {value:""},
+      questionAnswerTwoType: {value:"str"},
+      questionAnswerTwoValue: {value:true},
+      questionAnswerTwoValueType: {value:"bool"},
+      questionAnswerThree: {value:""},
+      questionAnswerThreeType: {value:"str"},
+      questionAnswerThreeValue: {value:true},
+      questionAnswerThreeValueType: {value:"bool"},
     },
     inputs: 1,
     outputs: 1,
-    icon: "envelope.svg",
+    icon: "font-awesome/fa-question",
     oneditprepare: function() {
       var node = this;
       $("#node-input-questionTitle").typedInput({
@@ -25,6 +37,36 @@
         typeField: $("#node-input-questionBodyType"),
         types: ['msg', 'str', 'flow', 'global'],
       });
+      $("#node-input-questionAnswerOne").typedInput({
+        default: 'str',
+        typeField: $("#node-input-questionAnswerOneType"),
+        types: ['msg', 'str', 'flow', 'global'],
+      });
+      $("#node-input-questionAnswerOneValue").typedInput({
+        default: 'bool',
+        typeField: $("#node-input-questionAnswerOneValueType"),
+        types: ['msg', 'str', 'num', 'bool', 'flow', 'global'],
+      });
+      $("#node-input-questionAnswerTwo").typedInput({
+        default: 'str',
+        typeField: $("#node-input-questionAnswerTwoType"),
+        types: ['msg', 'str', 'flow', 'global'],
+      });
+      $("#node-input-questionAnswerTwoValue").typedInput({
+        default: 'bool',
+        typeField: $("#node-input-questionAnswerTwoValueType"),
+        types: ['msg', 'str', 'num', 'bool', 'flow', 'global'],
+      });
+      $("#node-input-questionAnswerThree").typedInput({
+        default: 'str',
+        typeField: $("#node-input-questionAnswerThreeType"),
+        types: ['msg', 'str', 'flow', 'global'],
+      });
+      $("#node-input-questionAnswerThreeValue").typedInput({
+        default: 'bool',
+        typeField: $("#node-input-questionAnswerThreeValueType"),
+        types: ['msg', 'str', 'num', 'bool', 'flow', 'global'],
+      });
     },
     label: function() {
         return this.name || "remote question";
@@ -34,26 +76,68 @@
 
 <script type="text/html" data-template-name="remote-question">
   <div class="form-row">
-    <label for="node-input-confignode"><i class="fa fa-tag"></i> Config</label>
+    <label for="node-input-confignode"><i class="fa fa-tag"></i> <span data-i18n="remote-question.label.config"></span></label>
     <input type="text" id="node-input-confignode" placeholder="Config">
   </div>
   <div class="form-row">
-    <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+    <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="remote-question.label.name"></span></label>
     <input type="text" id="node-input-name" placeholder="Name">
   </div>
   <br>
   <div class="form-row">
-    <label for="node-input-questionTitle"><i class="fa fa-tag"></i> Title</label>
+    <label for="node-input-questionTitle"><i class="fa fa-comment-o"></i> <span data-i18n="remote-question.label.title"></span></label>
     <input type="text" id="node-input-questionTitle" placeholder="">
     <input type="hidden" id="node-input-questionTitleType">
   </div>
   <div class="form-row">
-    <label for="node-input-questionBody"><i class="fa fa-tag"></i> Body</label>
+    <label for="node-input-questionBody"><i class="fa fa-commenting-o"></i> <span data-i18n="remote-question.label.body"></span></label>
     <input type="text" id="node-input-questionBody" placeholder="">
     <input type="hidden" id="node-input-questionBodyType">
   </div>
-</script>
+  <br>
+  <label><i class="fa fa-pencil-square-o"></i> <span data-i18n="remote-question.label.answer_one"></span></label>
+  <div class="form-row">
+    <label for="node-input-questionAnswerOne" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-font"></i> <span data-i18n="remote-question.label.answer_text"></label>
+    <input type="text" id="node-input-questionAnswerOne" placeholder="">
+    <input type="hidden" id="node-input-questionAnswerOneType">
+  </div>
+  <div class="form-row">
+    <label for="node-input-questionAnswerOneValue" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-database"></i> <span data-i18n="remote-question.label.answer_value"></label>
+    <input type="text" id="node-input-questionAnswerOneValue" placeholder="">
+    <input type="hidden" id="node-input-questionAnswerOneValueType">
+  </div>
+  <br>
+  <label><i class="fa fa-pencil-square-o"></i> <span data-i18n="remote-question.label.answer_two"></span></label>
+  <div class="form-row">
+    <label for="node-input-questionAnswerTwo" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-font"></i> <span data-i18n="remote-question.label.answer_text"></label>
+    <input type="text" id="node-input-questionAnswerTwo" placeholder="">
+    <input type="hidden" id="node-input-questionAnswerTwoType">
+  </div>
+  <div class="form-row">
+    <label for="node-input-questionAnswerTwoValue" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-database"></i> <span data-i18n="remote-question.label.answer_value"></label>
+    <input type="text" id="node-input-questionAnswerTwoValue" placeholder="">
+    <input type="hidden" id="node-input-questionAnswerTwoValueType">
+  </div>
+  <br>
+  <label><i class="fa fa-pencil-square-o"></i> <span data-i18n="remote-question.label.answer_three"></span></label>
+  <div class="form-row">
+    <label for="node-input-questionAnswerThree" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-font"></i> <span data-i18n="remote-question.label.answer_text"></label>
+    <input type="text" id="node-input-questionAnswerThree" placeholder="">
+    <input type="hidden" id="node-input-questionAnswerThreeType">
+  </div>
+  <div class="form-row">
+    <label for="node-input-questionAnswerThreeValue" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-database"></i> <span data-i18n="remote-question.label.answer_value"></label>
+    <input type="text" id="node-input-questionAnswerThreeValue" placeholder="">
+    <input type="hidden" id="node-input-questionAnswerThreeValueType">
+  </div>
 
-<script type="text/html" data-help-name="remote">
-  <p>A simple node that converts the message payloads into all lower-case characters</p>
+  <div id="help" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 40px; margin-bottom: 20px;">
+    <label data-i18n="remote-question.help.title" style="font-weight: bold;"></label>
+    <label data-i18n="remote-question.help.para1"></label>
+    <label data-i18n="remote-question.help.para2"></label>
+    <label data-i18n="remote-question.help.para3"></label>
+    <label data-i18n="remote-question.help.para4"></label>
+    <label data-i18n="remote-question.help.para5"></label>
+  </div>
+  <br>
 </script>

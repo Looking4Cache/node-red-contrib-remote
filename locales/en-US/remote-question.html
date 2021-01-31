@@ -1,0 +1,7 @@
+<script type="text/html" data-help-name="remote-question">
+  <p>With this node you can send a question through a push notification to the devices connected to the selected config node. Select a config node that you already use in an access node. You can use the same config node in several question nodes.</p>
+  <p>It is important that the confg node points to your local Node-RED computer and that an access node is active with it. The base URL is irrelevant.</p>
+  <p>Configure the title and the text of the notification. The default values assume that the payload of the incoming message contains the strings “title” and “body”. You can also enter fixed texts or use flow or global variables.</p>
+  <p>You can specify up to three answers. The text of the answers can be entered directly as an string or taken from the incoming message. If the text is empty, the answer is not displayed. You can use the value to specify what the node outputs in msg.payload when you select this answer.</p>
+  <p>Whenever a message arrives at the question node, a notification is sent to your devices.</p>
+</script>

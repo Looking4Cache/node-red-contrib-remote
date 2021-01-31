@@ -1,0 +1,7 @@
+<script type="text/html" data-help-name="remote-question">
+  <p>Über diese Node kannst Du eine Frage per Push Notification an die Geräte versenden, die mit der gewählten Config-Node verbunden sind. Wähle hierzu eine Config-Node, die Du bereits in einer Access-Node verwendest. Du kannst in mehreren Question-Nodes die selbe Config-Node verwenden.</p>
+  <p>Wichtig ist, das die Confg-Node auf Deinen lokalen Node-RED Rechner verweist und eine Access-Node damit aktiv ist. Die Basis URL ist dabei irrelevant.</p>
+  <p>Konfiguriere den Titel und den Text der Benachrichtigung. Die Vorgabewerte gehen davon aus, das im Payload der eingehenden Nachricht die Strings “title” und “body” enthalten sind. Du kannst aber auch feste Texte eingeben oder Flow- bzw. Global-Variablen verwenden.</p>
+  <p>Du kannst bis zu drei Antworten vorgeben. Der Text der Antworten kannst Du direkt als String eingeben oder aus der eingehenden Nachricht übernehmen. Ist der Text leer, wird die Antwort nicht angezeigt. Über den Wert kannst Du angeben, was die Node per msg.payload ausgibt, wenn Du diese Antwort wählst.</p>
+  <p>Immer sobald eine Message bei der Question-Node ankommt, wird eine Notification an Deine Geräte versendet.</p>
+</script>
