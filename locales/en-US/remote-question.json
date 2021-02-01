@@ -5,11 +5,18 @@
           "name": "Name",
           "title": "Title",
           "body": "Body",
+          "sound": "Sound",
           "answer_one": "Answer 1",
           "answer_two": "Answer 2",
           "answer_three": "Answer 3",
           "answer_text": "Text",
           "answer_value": "Value"
+        },
+        "sounds": {
+          "nosound": "No sound",
+          "default": "Default",
+          "pristine": "Pristine",
+          "enthusiast_audience": "Enthusiast Audience"
         },
         "help": {
           "title": "Help",

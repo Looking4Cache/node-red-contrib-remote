@@ -43,6 +43,7 @@ module.exports = function(RED) {
         'instanceauth': node.confignode.instanceauth,
         'notificationtitle': title,
         'notificationbody': body,
+        'notificationsound': config.questionSound,
         'questiondata': JSON.stringify(questionData)
       })
       .then(response => {

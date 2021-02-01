@@ -1,6 +1,7 @@
 module.exports = function(RED) {
   const commons = require('./remote-commons');
   const internalIp = require('internal-ip');
+  const fs = require('fs');
   var QRCode = require('qrcode');
 
   function RemoteConfigNode(n) {
@@ -85,6 +86,12 @@ module.exports = function(RED) {
       console.log("ERROR: registerApp: " + error);
       res.json({ 'error': error.message });
     });
+  });
+
+  RED.httpAdmin.get("/contrib-remote/getResouceFile/:filename", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+    // Sends a file as Base64
+    const fileBase64 = fs.readFileSync(__dirname + '/resources/' + req.params.filename, {encoding: 'base64'});
+    res.json({ 'filedata': fileBase64 });
   });
 
 }
