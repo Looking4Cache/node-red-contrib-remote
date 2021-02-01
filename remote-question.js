@@ -19,6 +19,7 @@ module.exports = function(RED) {
       let questionData = {
         "instancehash": node.confignode.instancehash,
         "nodeid": node.id,
+        "questiontype" : 1,
         "answers": [
           {
             "text": RED.util.evaluateNodeProperty(config.questionAnswerOne, config.questionAnswerOneType, node, msg),
