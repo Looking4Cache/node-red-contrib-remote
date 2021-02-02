@@ -15,8 +15,20 @@
         "sounds": {
           "nosound": "No sound",
           "default": "Default",
+          "bikebell": "Bicycle bell",
+          "bingbong": "Bing Bong",
+          "chime": "Chime",
+          "crow": "Crow",
+          "dingdingding": "Ding Ding Ding",
+          "dudeldidudel": "Dudel Di Dudel",
+          "enthusiastaudience": "Enthusiast Audience",
+          "gong": "Gong",
+          "monkeys": "Monkeys",
+          "peterundderwolf": "Peter and the Wolf",
           "pristine": "Pristine",
-          "enthusiast_audience": "Enthusiast Audience"
+          "roostercalling": "Rooster Calling",
+          "siren": "Siren",
+          "success": "Success"
         },
         "help": {
           "title": "Help",

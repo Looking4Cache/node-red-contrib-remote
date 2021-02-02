@@ -9,7 +9,8 @@
       notificationTitleType: {value:"msg"},
       notificationBody: {value:"payload.body"},
       notificationBodyType: {value:"msg"},
-      output: {value:1},
+      notificationSound: {value:"default"},
+      output: {value:1}
     },
     inputs: 1,
     outputs: 1,
@@ -26,11 +27,118 @@
         typeField: $("#node-input-notificationBodyType"),
         types: ['msg', 'str', 'flow', 'global'],
       });
+
+      // OnChange for sound to update audioPlayer
+      document.getElementById('node-input-notificationSound').onchange = function() {
+        updateSoundNotification();
+      };
     },
     label: function() {
         return this.name || "remote notification";
     }
   });
+
+  function updateSoundNotification() {
+    // Sound changed
+    const soundValue = document.getElementById('node-input-notificationSound').value;
+    const player = document.getElementById('soundPlayer');
+    const soundAttribution = document.getElementById('soundAttribution');
+    const soundAttributionIcon = document.getElementById('soundAttributionIcon');
+
+    // Show or hide player, load mp3
+    if ( soundValue === undefined || soundValue === '' || soundValue === 'nosound' || soundValue === 'default' ) {
+      player.style.visibility = 'collapse';
+      soundAttribution.style.visibility = 'collapse';
+      soundAttributionIcon.style.visibility = 'collapse';
+    } else {
+      $.getJSON('contrib-remote/getResouceFile/sound_' + soundValue + '.mp3',function(data) {
+        player.src = "data:audio/mp3;base64," + data.filedata;
+        player.style.visibility = 'visible';
+      });
+    }
+
+    // Update attribution
+    var attrName = '';
+    var attrLink = '';
+    var attrLicense = '';
+    var attrLicenseLink = '';
+    if ( soundValue === 'bikebell' ) {
+        attrName = '13gkopeckak';
+        attrLink = 'https://freesound.org/people/13gkopeckak/sounds/378912/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    } else if ( soundValue === 'bingbong' ) {
+        attrName = 'Benboncan';
+        attrLink = 'https://freesound.org/people/Benboncan/sounds/76925/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'chime' ) {
+        attrName = 'Sirkoto51';
+        attrLink = 'https://freesound.org/people/Sirkoto51/sounds/449547/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'crow' ) {
+        attrName = 'inchadney';
+        attrLink = 'https://freesound.org/people/inchadney/sounds/52450/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'dingdingding' ) {
+        attrName = 'JFRecords';
+        attrLink = 'https://freesound.org/people/JFRecords/sounds/420507/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'dudeldidudel' ) {
+        attrName = 'Thoribass';
+        attrLink = 'https://freesound.org/people/Thoribass/sounds/254819/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'enthusiastaudience' ) {
+        attrName = 'lonemonk';
+        attrLink = 'https://freesound.org/people/lonemonk/sounds/31169/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'gong' ) {
+        attrName = 'JensZygar';
+        attrLink = 'https://freesound.org/people/JensZygar/sounds/486629/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    } else if ( soundValue === 'monkeys' ) {
+        attrName = 'Team Masaka';
+        attrLink = 'https://freesound.org/people/TeamMasaka/sounds/197431/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'peterundderwolf' ) {
+        attrName = 'elexred';
+        attrLink = 'https://freesound.org/people/elexred/sounds/415193/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    } else if ( soundValue === 'pristine' ) {
+        attrName = 'Notification Sounds';
+        attrLink = 'https://notificationsounds.com/';
+        attrLicense = 'CC BY 4.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/4.0/';
+    } else if ( soundValue === 'roostercalling' ) {
+        attrName = 'InspectorJ';
+        attrLink = 'https://freesound.org/people/InspectorJ/sounds/439472/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'siren' ) {
+        attrName = 'ScreamStudio';
+        attrLink = 'https://freesound.org/people/ScreamStudio/sounds/412171/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'success' ) {
+        attrName = 'rhodesmas';
+        attrLink = 'https://freesound.org/people/rhodesmas/sounds/320652/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    }
+    soundAttribution.innerHTML = `<a href="${attrLink}" target="_blank">${attrName}</a> | <a href="${attrLicenseLink}" target="_blank">${attrLicense}</a>`;
+    if (attrName !== '') {
+      soundAttribution.style.visibility = 'visible';
+      soundAttributionIcon.style.visibility = 'visible';
+    }
+  }
 </script>
 
 <script type="text/html" data-template-name="remote-notification">
@@ -53,6 +161,32 @@
     <input type="text" id="node-input-notificationBody" placeholder="">
     <input type="hidden" id="node-input-notificationBodyType">
   </div>
+  <br>
+  <div class="form-row" style="margin-bottom: 0px;">
+    <label for="node-input-notificationSound"><i class="fa fa-volume-up"></i> <span data-i18n="remote-notification.label.sound"></label>
+    <select id="node-input-notificationSound">
+      <option value="nosound" data-i18n="remote-notification.sounds.nosound"></option>
+      <option value="default" data-i18n="remote-notification.sounds.default"></option>
+      <option value="bikebell" data-i18n="remote-notification.sounds.bikebell"></option>
+      <option value="bingbong" data-i18n="remote-notification.sounds.bingbong"></option>
+      <option value="chime" data-i18n="remote-notification.sounds.chime"></option>
+      <option value="crow" data-i18n="remote-notification.sounds.crow"></option>
+      <option value="dingdingding" data-i18n="remote-notification.sounds.dingdingding"></option>
+      <option value="dudeldidudel" data-i18n="remote-notification.sounds.dudeldidudel"></option>
+      <option value="enthusiastaudience" data-i18n="remote-notification.sounds.enthusiastaudience"></option>
+      <option value="gong" data-i18n="remote-notification.sounds.gong"></option>
+      <option value="monkeys" data-i18n="remote-notification.sounds.monkeys"></option>
+      <option value="peterundderwolf" data-i18n="remote-notification.sounds.peterundderwolf"></option>
+      <option value="pristine" data-i18n="remote-notification.sounds.pristine"></option>
+      <option value="roostercalling" data-i18n="remote-notification.sounds.roostercalling"></option>
+      <option value="siren" data-i18n="remote-notification.sounds.siren"></option>
+      <option value="success" data-i18n="remote-notification.sounds.success"></option>
+    </select>
+    <br>
+    <audio controls id="soundPlayer" style="margin-left: 106px; margin-top: 8px; visibility: collapse;">
+    </audio>
+  </div>
+  <label style="margin-left: 106px;"><i class="fa fa-copyright" id="soundAttributionIcon"></i> <span id="soundAttribution"></span></label>
   <br>
   <div class="form-row">
     <label for="node-input-output"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.output"></span></label>

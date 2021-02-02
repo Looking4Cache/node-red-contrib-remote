@@ -66,7 +66,7 @@ module.exports = function(RED) {
       // Output answer as new message
       node.log('Answer received: ' + req.body.answer);
       const msg = {
-          //"_msgid": RED.util.generateId(),
+          "_msgid": RED.util.generateId(),
           "payload": req.body.answer
       }
       node.send(msg);

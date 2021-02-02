@@ -5,9 +5,28 @@
           "name": "Name",
           "title": "Titel",
           "body": "Inhalt",
+          "sound": "Ton",
           "output": "Ausgabe",
           "output_forward": "Weiterleiten der msg",
           "output_status": "Status (true=erfolgreich / false=fehlgeschlagen)"
+        },
+        "sounds": {
+          "nosound": "Kein Ton",
+          "default": "Standard",
+          "bikebell": "Fahrradklingel",
+          "bingbong": "Bing Bong",
+          "chime": "Chime",
+          "crow": "Krähe",
+          "dingdingding": "Ding Ding Ding",
+          "dudeldidudel": "Dudel Di Dudel",
+          "enthusiastaudience": "Enthusiastisches Publikum",
+          "gong": "Gong",
+          "monkeys": "Monkeys",
+          "peterundderwolf": "Peter und der Wolf",
+          "pristine": "Pristine",
+          "roostercalling": "Rooster Calling",
+          "siren": "Sirene",
+          "success": "Erfolg"
         },
         "help": {
           "title": "Hilfe",

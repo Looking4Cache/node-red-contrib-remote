@@ -71,7 +71,7 @@
 
       // OnChange for sound to update audioPlayer
       document.getElementById('node-input-questionSound').onchange = function() {
-        updateSound();
+        updateSoundQuestion();
       };
     },
     label: function() {
@@ -79,7 +79,7 @@
     }
   });
 
-  function updateSound() {
+  function updateSoundQuestion() {
     // Sound changed
     const soundValue = document.getElementById('node-input-questionSound').value;
     const player = document.getElementById('soundPlayer');
@@ -103,16 +103,76 @@
     var attrLink = '';
     var attrLicense = '';
     var attrLicenseLink = '';
-    if ( soundValue === 'pristine' ) {
-        attrName = 'Notification Sounds';
-        attrLink = 'https://notificationsounds.com/';
-        attrLicense = 'CC BY 4.0';
-        attrLicenseLink = 'https://creativecommons.org/licenses/by/4.0/';
-    } else if ( soundValue === 'enthusiast_audience' ) {
+    if ( soundValue === 'bikebell' ) {
+        attrName = '13gkopeckak';
+        attrLink = 'https://freesound.org/people/13gkopeckak/sounds/378912/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    } else if ( soundValue === 'bingbong' ) {
+        attrName = 'Benboncan';
+        attrLink = 'https://freesound.org/people/Benboncan/sounds/76925/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'chime' ) {
+        attrName = 'Sirkoto51';
+        attrLink = 'https://freesound.org/people/Sirkoto51/sounds/449547/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'crow' ) {
+        attrName = 'inchadney';
+        attrLink = 'https://freesound.org/people/inchadney/sounds/52450/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'dingdingding' ) {
+        attrName = 'JFRecords';
+        attrLink = 'https://freesound.org/people/JFRecords/sounds/420507/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'dudeldidudel' ) {
+        attrName = 'Thoribass';
+        attrLink = 'https://freesound.org/people/Thoribass/sounds/254819/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'enthusiastaudience' ) {
         attrName = 'lonemonk';
         attrLink = 'https://freesound.org/people/lonemonk/sounds/31169/';
         attrLicense = 'CC BY 3.0';
         attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'gong' ) {
+        attrName = 'JensZygar';
+        attrLink = 'https://freesound.org/people/JensZygar/sounds/486629/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    } else if ( soundValue === 'monkeys' ) {
+        attrName = 'Team Masaka';
+        attrLink = 'https://freesound.org/people/TeamMasaka/sounds/197431/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'peterundderwolf' ) {
+        attrName = 'elexred';
+        attrLink = 'https://freesound.org/people/elexred/sounds/415193/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
+    } else if ( soundValue === 'pristine' ) {
+        attrName = 'Notification Sounds';
+        attrLink = 'https://notificationsounds.com/';
+        attrLicense = 'CC BY 4.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/4.0/';
+    } else if ( soundValue === 'roostercalling' ) {
+        attrName = 'InspectorJ';
+        attrLink = 'https://freesound.org/people/InspectorJ/sounds/439472/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'siren' ) {
+        attrName = 'ScreamStudio';
+        attrLink = 'https://freesound.org/people/ScreamStudio/sounds/412171/';
+        attrLicense = 'CC BY 3.0';
+        attrLicenseLink = 'https://creativecommons.org/licenses/by/3.0/';
+    } else if ( soundValue === 'success' ) {
+        attrName = 'rhodesmas';
+        attrLink = 'https://freesound.org/people/rhodesmas/sounds/320652/';
+        attrLicense = 'CC0 1.0 Universal';
+        attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
     }
     soundAttribution.innerHTML = `<a href="${attrLink}" target="_blank">${attrName}</a> | <a href="${attrLicenseLink}" target="_blank">${attrLicense}</a>`;
     if (attrName !== '') {
@@ -148,8 +208,20 @@
     <select id="node-input-questionSound">
       <option value="nosound" data-i18n="remote-question.sounds.nosound"></option>
       <option value="default" data-i18n="remote-question.sounds.default"></option>
+      <option value="bikebell" data-i18n="remote-question.sounds.bikebell"></option>
+      <option value="bingbong" data-i18n="remote-question.sounds.bingbong"></option>
+      <option value="chime" data-i18n="remote-question.sounds.chime"></option>
+      <option value="crow" data-i18n="remote-question.sounds.crow"></option>
+      <option value="dingdingding" data-i18n="remote-question.sounds.dingdingding"></option>
+      <option value="dudeldidudel" data-i18n="remote-question.sounds.dudeldidudel"></option>
+      <option value="enthusiastaudience" data-i18n="remote-question.sounds.enthusiastaudience"></option>
+      <option value="gong" data-i18n="remote-question.sounds.gong"></option>
+      <option value="monkeys" data-i18n="remote-question.sounds.monkeys"></option>
+      <option value="peterundderwolf" data-i18n="remote-question.sounds.peterundderwolf"></option>
       <option value="pristine" data-i18n="remote-question.sounds.pristine"></option>
-      <option value="enthusiast_audience" data-i18n="remote-question.sounds.enthusiast_audience"></option>
+      <option value="roostercalling" data-i18n="remote-question.sounds.roostercalling"></option>
+      <option value="siren" data-i18n="remote-question.sounds.siren"></option>
+      <option value="success" data-i18n="remote-question.sounds.success"></option>
     </select>
     <br>
     <audio controls id="soundPlayer" style="margin-left: 106px; margin-top: 8px; visibility: collapse;">
