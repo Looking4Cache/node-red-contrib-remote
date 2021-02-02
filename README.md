@@ -33,7 +33,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 ## Version History
 
 Version 1.1.0:
-- Added question node to send questions through push notifications. They can be answered directly on the notification level. Please update your mobile apps to Version 1.1.0 too.
+- Added question node to send questions through push notifications. They can be answered directly on the notification level.
+- You can select sounds for the push notifications.
+- Important: Please update your mobile apps to Version 1.1.0 too.
 
 Version 1.0.3:
 - Added the function to activate verbose logging of the SSH tunnel.
