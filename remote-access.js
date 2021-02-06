@@ -129,6 +129,29 @@ module.exports = function(RED) {
     node.on('close', function() {
       clearInterval(node.servingInterval);
     });
+
+    // Post URL for action
+    const postUrl = `/contrib-remote/action/${node.confignode.instancehash}`;
+    RED.httpNode.post(postUrl, function(req,res) {
+      // Output action as new message
+      node.log(`Action '${req.body.action}' received value '${req.body.value}'`);
+      const msg = {
+          "_msgid": RED.util.generateId(),
+          "payload": {
+            "action": req.body.action,
+            "value": req.body.value
+          }
+
+      }
+      node.send(msg);
+
+      // Send OK to app
+      const responseData = {
+        'status': 'OK'
+      };
+      res.json(responseData);
+    });
+
   }
 
   RED.nodes.registerType("remote-access",RemoteAccessNode);
