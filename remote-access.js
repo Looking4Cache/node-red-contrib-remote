@@ -141,7 +141,6 @@ module.exports = function(RED) {
             "action": req.body.action,
             "value": req.body.value
           }
-
       }
       node.send(msg);
 
@@ -150,6 +149,19 @@ module.exports = function(RED) {
         'status': 'OK'
       };
       res.json(responseData);
+    });
+
+    // Get URL for action
+    const getUrl = `/contrib-remote/context/${node.confignode.instancehash}/:context/:value`;
+    RED.httpNode.get(getUrl, function(req,res) {
+      // Return the internal IP
+      // global
+      // "wz_lampe"
+      const value = RED.util.evaluateNodeProperty(req.params.value, req.params.context, node, "");
+      const contextData = {
+        'value': value
+      }
+      res.json(contextData);
     });
 
   }
