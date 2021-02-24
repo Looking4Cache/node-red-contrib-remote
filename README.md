@@ -32,6 +32,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.1.1:
+- Dependency update axios
+
 Version 1.1.0:
 - Added question node to send questions through push notifications. They can be answered directly on the notification level.
 - You can select sounds for the push notifications.
