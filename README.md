@@ -13,7 +13,11 @@ You can install the Remote-RED nodes through the Node-RED library. Search for 'n
 
 ## Remote-RED Apps
 
-While the beta phase the apps will be available through Apple TestFlight and Google Closed Group Testing. Contact me to get the apps.
+You can install them from the Google PlayStore or Apple AppStore:
+
+[Remote-RED App for Android](http://play.google.com/store/apps/details?id=com.looking4cache.remotered.android)
+
+[Remote-RED App for iOS](https://apps.apple.com/us/app/remote-red/id1529777665)
 
 
 ## Tutorial for Remote-RED
@@ -31,6 +35,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 
 ## Version History
+
+Version 1.1.2:
+- The question node now supports custom httpRoot paths, as it is used e.g. in RedMatic.
 
 Version 1.1.1:
 - Dependency update axios
