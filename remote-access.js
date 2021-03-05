@@ -68,7 +68,8 @@ module.exports = function(RED) {
     axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
       "instancehash": node.confignode.instancehash,
       "instanceauth": node.confignode.instanceauth,
-      "protocol": node.confignode.protocol
+      "protocol": node.confignode.protocol,
+      "mountpath": RED.httpNode.mountpath
     })
     .then(response => {
       // Start SSH

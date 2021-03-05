@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.1.2:
+- The question node now supports custom httpRoot paths, as it is used e.g. in RedMatic.
+
 Version 1.1.1:
 - Dependency update axios
 
