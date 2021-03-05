@@ -151,12 +151,10 @@ module.exports = function(RED) {
       res.json(responseData);
     });
 
-    // Get URL for action
+    // Get URL for action (get context variables)
     const getUrl = `/contrib-remote/context/${node.confignode.instancehash}/:context/:value`;
     RED.httpNode.get(getUrl, function(req,res) {
-      // Return the internal IP
-      // global
-      // "wz_lampe"
+      // Get the vaue from the context and return it
       const value = RED.util.evaluateNodeProperty(req.params.value, req.params.context, node, "");
       const contextData = {
         'value': value

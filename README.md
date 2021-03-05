@@ -13,7 +13,7 @@ You can install the Remote-RED nodes through the Node-RED library. Search for 'n
 
 ## Remote-RED Apps
 
-Youj can install them from the Google PlayStore or Apple AppStore:
+You can install them from the Google PlayStore or Apple AppStore:
 
 [Remote-RED App for Android](http://play.google.com/store/apps/details?id=com.looking4cache.remotered.android)
 
