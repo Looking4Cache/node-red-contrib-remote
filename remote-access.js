@@ -12,10 +12,11 @@ module.exports = function(RED) {
       }
       const sshprocess = child_process.spawn("ssh", sshparameters);
 
-      // TODO: Herausfinden ob wirklich verbunden
+      // Set serving.. if not working, the process will exit or close
       node.status({fill:"green",shape:"dot",text:"remote-access.status.serving"});
       node.serving = true
 
+      // Attach to process events
       sshprocess.stdout.on('data', (data) => {
         logSSHBuffer(node, data, 'ssh process stdout');
       });
@@ -84,10 +85,34 @@ module.exports = function(RED) {
     });
   }
 
-  function servingTimer(node) {
-    // Request new instance slot and connect ssh if not connected
+  function tryConnect(node) {
+    // Request new instance slot and connect ssh
+    requestInstanceSlot(node)
+
+    // Create timer to check if ssh process still serving in 10 seconds
+    setTimeout(checkServing, 1000*10, node);
+  }
+
+  function checkServing(node) {
+    // Test if ssh serving
     if ( !node.serving ) {
-      requestInstanceSlot(node)
+      // Increase error counter
+      node.errorcounter++;
+
+      // Start timer to reconnect
+      let interval = 1000*10;
+      if (node.errorcounter >= 8) {
+        interval = 1000*290;
+      } else if (node.errorcounter >= 4) {
+        interval = 1000*50;
+      }
+      setTimeout(tryConnect, interval, node);
+    } else {
+      // Running > Reset error counter
+      node.errorcounter = 0;
+
+      // Schedule timer to check if still serving
+      setTimeout(checkServing, 1000*10, node);
     }
   }
 
@@ -96,6 +121,7 @@ module.exports = function(RED) {
     const node = this;
     node.serving = false;
     node.verbose = config.verbose;
+    node.errorcounter = 0;
 
     // Status
     node.status({fill:"orange",shape:"dot",text:"remote-access.status.starting"});
@@ -120,16 +146,8 @@ module.exports = function(RED) {
       return;
     }
 
-    // Timeout for connection check
-    node.servingInterval = setInterval(servingTimer, 1000*10, node);
-
     // Call API for announce the instacehash and authentication, retrive server and port.
-    requestInstanceSlot(node);
-
-    // Cleanup on close
-    node.on('close', function() {
-      clearInterval(node.servingInterval);
-    });
+    tryConnect(node);
   }
 
   RED.nodes.registerType("remote-access",RemoteAccessNode);

@@ -78,7 +78,7 @@ module.exports = function(RED) {
       res.json(responseData);
     });
 
-    node.on("close",function() {
+    node.on('close', function() {
       // Remove old routes, without a new deploy would break it..
       RED.httpNode._router.stack.forEach(function(route,i,routes) {
         if (route.route && route.route.path === postUrl) {
