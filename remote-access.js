@@ -90,7 +90,7 @@ module.exports = function(RED) {
     requestInstanceSlot(node)
 
     // Create timer to check if ssh process still serving in 10 seconds
-    setTimeout(checkServing, 1000*10, node);
+    node.checkservingtimeout = setTimeout(checkServing, 1000*10, node);
   }
 
   function checkServing(node) {
@@ -106,13 +106,13 @@ module.exports = function(RED) {
       } else if (node.errorcounter >= 4) {
         interval = 1000*50;
       }
-      setTimeout(tryConnect, interval, node);
+      node.tryconnecttimeout = setTimeout(tryConnect, interval, node);
     } else {
       // Running > Reset error counter
       node.errorcounter = 0;
 
       // Schedule timer to check if still serving
-      setTimeout(checkServing, 1000*10, node);
+      node.checkservingtimeout = setTimeout(checkServing, 1000*10, node);
     }
   }
 
@@ -148,6 +148,12 @@ module.exports = function(RED) {
 
     // Call API for announce the instacehash and authentication, retrive server and port.
     tryConnect(node);
+
+    // Cancel timeouts
+    node.on('close', function() {
+      clearTimeout(node.checkservingtimeout);
+      clearTimeout(node.tryconnecttimeout);
+    });
   }
 
   RED.nodes.registerType("remote-access",RemoteAccessNode);
