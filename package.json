@@ -15,6 +15,7 @@
   "dependencies": {
     "axios": "^0.21.0",
     "internal-ip": "^6.1.0",
+    "limiter": "^1.1.5",
     "qrcode": "^1.4.4"
   },
   "main": "remote-config.js",
