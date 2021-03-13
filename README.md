@@ -36,6 +36,11 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.1.3:
+- The question node works now well after a new deploy. Before sometimes a Node-RED restart was required.
+- The access node now reduces the ssh connection attempts if it fails to connect for a longer time.
+- The notification and question node has a limit now. It limits the push notifications to 100 per hour and node.
+
 Version 1.1.2:
 - The question node now supports custom httpRoot paths, as it is used e.g. in RedMatic.
 
