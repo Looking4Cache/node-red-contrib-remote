@@ -79,7 +79,10 @@ module.exports = function(RED) {
       startSSH(node, node.confignode.server, port);
     })
     .catch((error) => {
-      node.error('axios error: ' + error);
+      node.error('requestInstanceSlot: ' + error);
+      if ( error.response && error.response.data && error.response.data.message ) {
+        node.error(`${error.response.data.message}`);
+      }
       node.status({fill:"red",shape:"dot",text:"remote-access.status.commerror"});
       return;
     });
