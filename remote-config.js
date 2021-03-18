@@ -41,7 +41,11 @@ module.exports = function(RED) {
     })
     .catch((error) => {
       console.log("ERROR: requestInstanceHash: " + error);
-      res.json({ 'error': error.message });
+      let errorMessage = error.message;
+      if ( error.response && error.response.data && error.response.data.message ) {
+        errorMessage = errorMessage + " / " + error.response.data.message;
+      }
+      res.json({ 'error': errorMessage });
     });
   });
 
@@ -84,7 +88,11 @@ module.exports = function(RED) {
     })
     .catch((error) => {
       console.log("ERROR: registerApp: " + error);
-      res.json({ 'error': error.message });
+      let errorMessage = error.message;
+      if ( error.response && error.response.data && error.response.data.message ) {
+        errorMessage = errorMessage + " / " + error.response.data.message;
+      }
+      res.json({ 'error': errorMessage });
     });
   });
 
