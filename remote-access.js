@@ -184,10 +184,18 @@ module.exports = function(RED) {
       res.json(contextData);
     });
 
-    // Cancel timeouts
+    // Clean up on close
     node.on('close', function() {
+      // Cancel timeouts
       clearTimeout(node.checkservingtimeout);
       clearTimeout(node.tryconnecttimeout);
+
+      // Remove old routes, without a new deploy would break it..
+      RED.httpNode._router.stack.forEach(function(route,i,routes) {
+        if (route.route && (route.route.path === postUrl || route.route.path === getUrl)) {
+          routes.splice(i,1);
+        }
+      });
     });
 
   }
