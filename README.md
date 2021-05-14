@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.2.0:
+- In iOS you can now use Shortcuts and in Android you can new use a widget to perform actions in Node-RED. This action will be emitted through the new output of the remote access node.
+
 Version 1.1.3:
 - The question node works now well after a new deploy. Before sometimes a Node-RED restart was required.
 - The access node now reduces the ssh connection attempts if it fails to connect for a longer time.
