@@ -1,12 +1,17 @@
 module.exports = function(RED) {
   const commons = require('./remote-commons');
   const child_process = require('child_process');
+  const os = require("os");
 
   function startSSH(node, server, port) {
     try {
       node.log("starting ssh process");
-      //node.log('ssh -o StrictHostKeyChecking=no -R ' + port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString() + ' forward@proxy-' + server + ' -N');
-      var sshparameters = ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + node.confignode.host + ':' + node.confignode.port.toString(), 'forward@proxy-' + server, '-N'];
+      let host = node.confignode.host;
+      if ( host === 'localhost' && os.platform() === 'win32' ) {
+        host = '127.0.0.1'
+      }
+      //node.log('ssh -o StrictHostKeyChecking=no -R ' + port.toString() + ':' + host + ':' + node.confignode.port.toString() + ' forward@proxy-' + server + ' -N');
+      var sshparameters = ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + host + ':' + node.confignode.port.toString(), 'forward@proxy-' + server, '-N'];
       if ( node.verbose ) {
         sshparameters.push('-v');
       }
