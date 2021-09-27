@@ -16,5 +16,10 @@ module.exports = {
       }
     });
     return axios.create({ httpsAgent: httpsAgent });
+  },
+
+  getNodeVersion: function() {
+    var pjson = require(__dirname.replace('/nodes', '') + '/package.json');
+    return pjson.version;
   }
 }

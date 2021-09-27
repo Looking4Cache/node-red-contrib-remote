@@ -31,7 +31,8 @@ module.exports = function(RED) {
               'instanceauth': node.confignode.instanceauth,
               'notificationtitle': title,
               'notificationbody': body,
-              'notificationsound': config.notificationSound
+              'notificationsound': config.notificationSound,
+              'version': commons.getNodeVersion()
             })
             .then(response => {
               node.debug(`Notication send successfull`)

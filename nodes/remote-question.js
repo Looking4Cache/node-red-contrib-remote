@@ -52,7 +52,8 @@ module.exports = function(RED) {
               'notificationtitle': title,
               'notificationbody': body,
               'notificationsound': config.questionSound,
-              'questiondata': JSON.stringify(questionData)
+              'questiondata': JSON.stringify(questionData),
+              'version': commons.getNodeVersion()
             })
             .then(response => {
               node.debug(`Question send successfull`)
