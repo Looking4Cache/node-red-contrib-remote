@@ -24,9 +24,7 @@ module.exports = function(RED) {
             const body = RED.util.evaluateNodeProperty(config.questionBody, config.questionBodyType, node, msg);
             const notificationEmpty = ((title == undefined || title == '') && (body == undefined || body == ''));
             if (!notificationEmpty) {
-              // Title and/or body are filled
-              node.log(`Send question: ${title} - ${body}`)
-
+              // Title and/or body are filled, generate question data
               let questionData = {
                 "instancehash": node.confignode.instancehash,
                 "nodeid": node.id,
@@ -47,30 +45,46 @@ module.exports = function(RED) {
                 ]
               };
 
-              // Call API to send notification
-              const axiosInstance = commons.createAxiosInstance();
-              axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
-                'instancehash': node.confignode.instancehash,
-                'instanceauth': node.confignode.instanceauth,
-                'notificationtitle': title,
-                'notificationbody': body,
-                'notificationsound': config.questionSound,
-                'questiondata': JSON.stringify(questionData),
-                'version': commons.getNodeVersion()
-              })
-              .then(response => {
-                node.debug(`Question send successfull`)
-              })
-              .catch((error) => {
-                node.error("ERROR: " + error);
+              // Content smaller than 3600 bytes? FCM max size (complete payload) is 4000 bytes.
+              if (title.length + body.length + JSON.stringify(questionData).length <= 3600) {
+                // Log send
+                node.log(`Send question: ${title} - ${body}`)
 
-                // Output Error
+                // Call API to send notification
+                const axiosInstance = commons.createAxiosInstance();
+                axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
+                  'instancehash': node.confignode.instancehash,
+                  'instanceauth': node.confignode.instanceauth,
+                  'notificationtitle': title,
+                  'notificationbody': body,
+                  'notificationsound': config.questionSound,
+                  'questiondata': JSON.stringify(questionData),
+                  'version': commons.getNodeVersion()
+                })
+                .then(response => {
+                  node.debug(`Question send successfull`)
+                })
+                .catch((error) => {
+                  node.error("ERROR: " + error);
+
+                  // Output Error
+                  const msg = {
+                      "_msgid": RED.util.generateId(),
+                      "payload": -1
+                  }
+                  node.send(msg);
+                });
+              } else {
+                // To big...
+                node.error("The message exceeded 3600 bytes. Can´t send.");
+
+                // Output status if configured so
                 const msg = {
                     "_msgid": RED.util.generateId(),
                     "payload": -1
                 }
                 node.send(msg);
-              });
+              }
             } else {
               // Title and Body are empty
               node.error("You tried to sent a question without a title and without a body.");

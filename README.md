@@ -36,6 +36,10 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.2.3:
+- Notifications and Questions without an body or an title will not be send to the Remote-RED servers.
+- Prints an error message if a message or question exceeds the size of 3600 bytes.
+
 Version 1.2.2:
 - Better Windows support: Using remote access with 'localhost' will not work on Windows 10 hosts. Now it uses '127.0.0.1' instead.
 
