@@ -22,52 +22,66 @@ module.exports = function(RED) {
           if (remainingRequests >= 0) {
             const title = RED.util.evaluateNodeProperty(config.questionTitle, config.questionTitleType, node, msg);
             const body = RED.util.evaluateNodeProperty(config.questionBody, config.questionBodyType, node, msg);
-            node.log(`Send question: ${title} - ${body}`)
+            const notificationEmpty = ((title == undefined || title == '') && (body == undefined || body == ''));
+            if (!notificationEmpty) {
+              // Title and/or body are filled
+              node.log(`Send question: ${title} - ${body}`)
 
-            let questionData = {
-              "instancehash": node.confignode.instancehash,
-              "nodeid": node.id,
-              "questiontype" : 1,
-              "answers": [
-                {
-                  "text": RED.util.evaluateNodeProperty(config.questionAnswerOne, config.questionAnswerOneType, node, msg),
-                  "value": RED.util.evaluateNodeProperty(config.questionAnswerOneValue, config.questionAnswerOneValueType, node, msg)
-                },
-                {
-                  "text": RED.util.evaluateNodeProperty(config.questionAnswerTwo, config.questionAnswerTwoType, node, msg),
-                  "value": RED.util.evaluateNodeProperty(config.questionAnswerTwoValue, config.questionAnswerTwoValueType, node, msg)
-                },
-                {
-                  "text": RED.util.evaluateNodeProperty(config.questionAnswerThree, config.questionAnswerThreeType, node, msg),
-                  "value": RED.util.evaluateNodeProperty(config.questionAnswerThreeValue, config.questionAnswerThreeValueType, node, msg)
+              let questionData = {
+                "instancehash": node.confignode.instancehash,
+                "nodeid": node.id,
+                "questiontype" : 1,
+                "answers": [
+                  {
+                    "text": RED.util.evaluateNodeProperty(config.questionAnswerOne, config.questionAnswerOneType, node, msg),
+                    "value": RED.util.evaluateNodeProperty(config.questionAnswerOneValue, config.questionAnswerOneValueType, node, msg)
+                  },
+                  {
+                    "text": RED.util.evaluateNodeProperty(config.questionAnswerTwo, config.questionAnswerTwoType, node, msg),
+                    "value": RED.util.evaluateNodeProperty(config.questionAnswerTwoValue, config.questionAnswerTwoValueType, node, msg)
+                  },
+                  {
+                    "text": RED.util.evaluateNodeProperty(config.questionAnswerThree, config.questionAnswerThreeType, node, msg),
+                    "value": RED.util.evaluateNodeProperty(config.questionAnswerThreeValue, config.questionAnswerThreeValueType, node, msg)
+                  }
+                ]
+              };
+
+              // Call API to send notification
+              const axiosInstance = commons.createAxiosInstance();
+              axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
+                'instancehash': node.confignode.instancehash,
+                'instanceauth': node.confignode.instanceauth,
+                'notificationtitle': title,
+                'notificationbody': body,
+                'notificationsound': config.questionSound,
+                'questiondata': JSON.stringify(questionData),
+                'version': commons.getNodeVersion()
+              })
+              .then(response => {
+                node.debug(`Question send successfull`)
+              })
+              .catch((error) => {
+                node.error("ERROR: " + error);
+
+                // Output Error
+                const msg = {
+                    "_msgid": RED.util.generateId(),
+                    "payload": -1
                 }
-              ]
-            };
+                node.send(msg);
+              });
+            } else {
+              // Title and Body are empty
+              node.error("You tried to sent a question without a title and without a body.");
 
-            // Call API to send notification
-            const axiosInstance = commons.createAxiosInstance();
-            axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
-              'instancehash': node.confignode.instancehash,
-              'instanceauth': node.confignode.instanceauth,
-              'notificationtitle': title,
-              'notificationbody': body,
-              'notificationsound': config.questionSound,
-              'questiondata': JSON.stringify(questionData),
-              'version': commons.getNodeVersion()
-            })
-            .then(response => {
-              node.debug(`Question send successfull`)
-            })
-            .catch((error) => {
-              node.error("ERROR: " + error);
-
-              // Output Error
+              // Output status if configured so
               const msg = {
                   "_msgid": RED.util.generateId(),
                   "payload": -1
               }
               node.send(msg);
-            });
+            }
           } else {
             // Limit reached
             node.error("Questions limit reached! (100 questions/hour/node)");

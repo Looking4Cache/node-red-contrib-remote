@@ -22,43 +22,62 @@ module.exports = function(RED) {
           if (remainingRequests >= 0) {
             const title = RED.util.evaluateNodeProperty(config.notificationTitle, config.notificationTitleType, node, msg);
             const body = RED.util.evaluateNodeProperty(config.notificationBody, config.notificationBodyType, node, msg);
-            node.log(`Send notication: ${title} - ${body}`)
+            const notificationEmpty = ((title == undefined || title == '') && (body == undefined || body == ''));
+            if (!notificationEmpty) {
+              // Title and/or body are filled
+              node.log(`Send notication: ${title} - ${body}`)
 
-            // Call API to send notification
-            const axiosInstance = commons.createAxiosInstance();
-            axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
-              'instancehash': node.confignode.instancehash,
-              'instanceauth': node.confignode.instanceauth,
-              'notificationtitle': title,
-              'notificationbody': body,
-              'notificationsound': config.notificationSound,
-              'version': commons.getNodeVersion()
-            })
-            .then(response => {
-              node.debug(`Notication send successfull`)
+              // Call API to send notification
+              const axiosInstance = commons.createAxiosInstance();
+              axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
+                'instancehash': node.confignode.instancehash,
+                'instanceauth': node.confignode.instanceauth,
+                'notificationtitle': title,
+                'notificationbody': body,
+                'notificationsound': config.notificationSound,
+                'version': commons.getNodeVersion()
+              })
+              .then(response => {
+                node.debug(`Notication send successfull`)
+
+                // Output status if configured so
+                if ( config.output == 2 ) {
+                  msg.payload = true;
+                  node.send(msg);
+                }
+              })
+              .catch((error) => {
+                node.error("ERROR: " + error);
+
+                // Output status if configured so
+                if ( config.output == 2 ) {
+                  msg.payload = false;
+                  node.send(msg);
+                }
+              });
+            } else {
+              // Title and Body are empty
+              node.error("You tried to sent a notification without a title and without a body.");
 
               // Output status if configured so
               if ( config.output == 2 ) {
-                msg.payload = true;
+                const msg = {
+                    "_msgid": RED.util.generateId(),
+                    "payload": false
+                }
                 node.send(msg);
               }
-            })
-            .catch((error) => {
-              node.error("ERROR: " + error);
-
-              // Output status if configured so
-              if ( config.output == 2 ) {
-                msg.payload = false;
-                node.send(msg);
-              }
-            });
+            }
           } else {
             // Limit reached
             node.error("Notifications limit reached! (100 notifications/hour/node)");
 
             // Output status if configured so
             if ( config.output == 2 ) {
-              msg.payload = false;
+              const msg = {
+                  "_msgid": RED.util.generateId(),
+                  "payload": false
+              }
               node.send(msg);
             }
           }
