@@ -6,6 +6,7 @@
           "title": "Titel",
           "body": "Inhalt",
           "sound": "Ton",
+          "sound_possible": "Mögliche Werte: bikebell, bingbong, chime, crow, dingdingding, dudeldidudel, enthusiastaudience, gong, monkeys, peterundderwolf, pristine, roostercalling, siren, success",
           "output": "Ausgabe",
           "output_forward": "Weiterleiten der msg",
           "output_status": "Status (true=erfolgreich / false=fehlgeschlagen)"
@@ -13,6 +14,7 @@
         "sounds": {
           "nosound": "Kein Ton",
           "default": "Standard",
+          "computed": "Berechnet",
           "bikebell": "Fahrradklingel",
           "bingbong": "Bing Bong",
           "chime": "Chime",

@@ -10,6 +10,8 @@
       notificationBody: {value:"payload.body"},
       notificationBodyType: {value:"msg"},
       notificationSound: {value:"default"},
+      notificationSoundComputed: {value:"payload.sound"},
+      notificationSoundComputedType: {value:"msg"},
       output: {value:1}
     },
     inputs: 1,
@@ -25,6 +27,11 @@
       $("#node-input-notificationBody").typedInput({
         default: 'msg',
         typeField: $("#node-input-notificationBodyType"),
+        types: ['msg', 'str', 'flow', 'global'],
+      });
+      $("#node-input-notificationSoundComputed").typedInput({
+        default: 'msg',
+        typeField: $("#node-input-notificationSoundComputedType"),
         types: ['msg', 'str', 'flow', 'global'],
       });
 
@@ -44,18 +51,19 @@
     const player = document.getElementById('soundPlayer');
     const soundAttribution = document.getElementById('soundAttribution');
     const soundAttributionIcon = document.getElementById('soundAttributionIcon');
+    const soundPlayerContainer = document.getElementById('soundPlayerContainer');
+    const soundComputedContainer = document.getElementById('soundComputedContainer');
 
     // Show or hide player, load mp3
-    if ( soundValue === undefined || soundValue === '' || soundValue === 'nosound' || soundValue === 'default' ) {
-      player.style.visibility = 'collapse';
-      soundAttribution.style.visibility = 'collapse';
-      soundAttributionIcon.style.visibility = 'collapse';
+    if ( soundValue === undefined || soundValue === '' || soundValue === 'nosound' || soundValue === 'default' || soundValue === 'computed' ) {
+      soundPlayerContainer.style.display = 'none';
     } else {
       $.getJSON('contrib-remote/getResouceFile/sound_' + soundValue + '.mp3',function(data) {
         player.src = "data:audio/mp3;base64," + data.filedata;
-        player.style.visibility = 'visible';
+        soundPlayerContainer.style.display = 'inline';
       });
     }
+    soundComputedContainer.style.display = ( soundValue === 'computed' ) ? 'inline' : 'none';
 
     // Update attribution
     var attrName = '';
@@ -134,10 +142,6 @@
         attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
     }
     soundAttribution.innerHTML = `<a href="${attrLink}" target="_blank">${attrName}</a> | <a href="${attrLicenseLink}" target="_blank">${attrLicense}</a>`;
-    if (attrName !== '') {
-      soundAttribution.style.visibility = 'visible';
-      soundAttributionIcon.style.visibility = 'visible';
-    }
   }
 </script>
 
@@ -162,11 +166,12 @@
     <input type="hidden" id="node-input-notificationBodyType">
   </div>
   <br>
-  <div class="form-row" style="margin-bottom: 0px;">
+  <div class="form-row">
     <label for="node-input-notificationSound"><i class="fa fa-volume-up"></i> <span data-i18n="remote-notification.label.sound"></label>
     <select id="node-input-notificationSound">
       <option value="nosound" data-i18n="remote-notification.sounds.nosound"></option>
       <option value="default" data-i18n="remote-notification.sounds.default"></option>
+      <option value="computed" data-i18n="remote-notification.sounds.computed"></option>
       <option value="bikebell" data-i18n="remote-notification.sounds.bikebell"></option>
       <option value="bingbong" data-i18n="remote-notification.sounds.bingbong"></option>
       <option value="chime" data-i18n="remote-notification.sounds.chime"></option>
@@ -182,12 +187,22 @@
       <option value="siren" data-i18n="remote-notification.sounds.siren"></option>
       <option value="success" data-i18n="remote-notification.sounds.success"></option>
     </select>
-    <br>
-    <audio controls id="soundPlayer" style="margin-left: 106px; margin-top: 8px; visibility: collapse;">
-    </audio>
   </div>
-  <label style="margin-left: 106px;"><i class="fa fa-copyright" id="soundAttributionIcon"></i> <span id="soundAttribution"></span></label>
-  <br>
+  <div style="min-height: 120px;">
+    <div id="soundPlayerContainer">
+      <audio controls id="soundPlayer" style="margin-left: 106px;"></audio>
+      <label style="margin-left: 106px;"><i class="fa fa-copyright" id="soundAttributionIcon"></i> <span id="soundAttribution"></span></label>
+    </div>
+    <div id="soundComputedContainer">
+      <div class="form-row">
+        <label for="node-input-notificationSoundComputed"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.sound"></span></label>
+        <input type="text" id="node-input-notificationSoundComputed" placeholder="">
+        <input type="hidden" id="node-input-notificationSoundComputedType">
+      </div>
+      <label data-i18n="remote-notification.label.sound_possible" style="max-width: 460px;"></label>
+    </div>
+  </div>
+
   <div class="form-row">
     <label for="node-input-output"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.output"></span></label>
     <select id="node-input-output">

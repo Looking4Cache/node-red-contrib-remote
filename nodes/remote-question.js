@@ -50,6 +50,12 @@ module.exports = function(RED) {
                 // Log send
                 node.log(`Send question: ${title} - ${body}`)
 
+                // Sound configured or computed?
+                let sound = config.questionSound
+                if (sound === 'computed') {
+                  sound = RED.util.evaluateNodeProperty(config.questionSoundComputed, config.questionSoundComputedType, node, msg);
+                }
+
                 // Call API to send notification
                 const axiosInstance = commons.createAxiosInstance();
                 axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
@@ -57,7 +63,7 @@ module.exports = function(RED) {
                   'instanceauth': node.confignode.instanceauth,
                   'notificationtitle': title,
                   'notificationbody': body,
-                  'notificationsound': config.questionSound,
+                  'notificationsound': sound,
                   'questiondata': JSON.stringify(questionData),
                   'version': commons.getNodeVersion()
                 })

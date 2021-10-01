@@ -6,6 +6,7 @@
           "title": "Titel",
           "body": "Inhalt",
           "sound": "Ton",
+          "sound_possible": "Mögliche Werte: bikebell, bingbong, chime, crow, dingdingding, dudeldidudel, enthusiastaudience, gong, monkeys, peterundderwolf, pristine, roostercalling, siren, success",
           "answer_one": "Antwort 1",
           "answer_two": "Antwort 2",
           "answer_three": "Antwort 3",
@@ -15,6 +16,7 @@
         "sounds": {
           "nosound": "Kein Ton",
           "default": "Standard",
+          "computed": "Berechnet",
           "bikebell": "Fahrradklingel",
           "bingbong": "Bing Bong",
           "chime": "Chime",

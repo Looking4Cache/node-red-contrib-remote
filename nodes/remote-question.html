@@ -9,6 +9,8 @@
       questionTitleType: {value:"msg"},
       questionBody: {value:"payload.body"},
       questionSound: {value:"default"},
+      questionSoundComputed: {value:"payload.sound"},
+      questionSoundComputedType: {value:"msg"},
       questionBodyType: {value:"msg"},
       questionAnswerOne: {value:""},
       questionAnswerOneType: {value:"str"},
@@ -36,6 +38,11 @@
       $("#node-input-questionBody").typedInput({
         default: 'msg',
         typeField: $("#node-input-questionBodyType"),
+        types: ['msg', 'str', 'flow', 'global'],
+      });
+      $("#node-input-questionSoundComputed").typedInput({
+        default: 'msg',
+        typeField: $("#node-input-questionSoundComputedType"),
         types: ['msg', 'str', 'flow', 'global'],
       });
       $("#node-input-questionAnswerOne").typedInput({
@@ -85,18 +92,19 @@
     const player = document.getElementById('soundPlayer');
     const soundAttribution = document.getElementById('soundAttribution');
     const soundAttributionIcon = document.getElementById('soundAttributionIcon');
+    const soundPlayerContainer = document.getElementById('soundPlayerContainer');
+    const soundComputedContainer = document.getElementById('soundComputedContainer');
 
     // Show or hide player, load mp3
-    if ( soundValue === undefined || soundValue === '' || soundValue === 'nosound' || soundValue === 'default' ) {
-      player.style.visibility = 'collapse';
-      soundAttribution.style.visibility = 'collapse';
-      soundAttributionIcon.style.visibility = 'collapse';
+    if ( soundValue === undefined || soundValue === '' || soundValue === 'nosound' || soundValue === 'default' || soundValue === 'computed' ) {
+      soundPlayerContainer.style.display = 'none';
     } else {
       $.getJSON('contrib-remote/getResouceFile/sound_' + soundValue + '.mp3',function(data) {
         player.src = "data:audio/mp3;base64," + data.filedata;
-        player.style.visibility = 'visible';
+        soundPlayerContainer.style.display = 'inline';
       });
     }
+    soundComputedContainer.style.display = ( soundValue === 'computed' ) ? 'inline' : 'none';
 
     // Update attribution
     var attrName = '';
@@ -175,10 +183,6 @@
         attrLicenseLink = 'https://creativecommons.org/publicdomain/zero/1.0/';
     }
     soundAttribution.innerHTML = `<a href="${attrLink}" target="_blank">${attrName}</a> | <a href="${attrLicenseLink}" target="_blank">${attrLicense}</a>`;
-    if (attrName !== '') {
-      soundAttribution.style.visibility = 'visible';
-      soundAttributionIcon.style.visibility = 'visible';
-    }
   }
 </script>
 
@@ -203,11 +207,12 @@
     <input type="hidden" id="node-input-questionBodyType">
   </div>
   <br>
-  <div class="form-row" style="margin-bottom: 0px;">
+  <div class="form-row">
     <label for="node-input-questionSound"><i class="fa fa-volume-up"></i> <span data-i18n="remote-question.label.sound"></label>
     <select id="node-input-questionSound">
       <option value="nosound" data-i18n="remote-question.sounds.nosound"></option>
       <option value="default" data-i18n="remote-question.sounds.default"></option>
+      <option value="computed" data-i18n="remote-question.sounds.computed"></option>
       <option value="bikebell" data-i18n="remote-question.sounds.bikebell"></option>
       <option value="bingbong" data-i18n="remote-question.sounds.bingbong"></option>
       <option value="chime" data-i18n="remote-question.sounds.chime"></option>
@@ -223,12 +228,22 @@
       <option value="siren" data-i18n="remote-question.sounds.siren"></option>
       <option value="success" data-i18n="remote-question.sounds.success"></option>
     </select>
-    <br>
-    <audio controls id="soundPlayer" style="margin-left: 106px; margin-top: 8px; visibility: collapse;">
-    </audio>
   </div>
-  <label style="margin-left: 106px;"><i class="fa fa-copyright" id="soundAttributionIcon"></i> <span id="soundAttribution"></span></label>
-  <br>
+  <div style="min-height: 120px;">
+    <div id="soundPlayerContainer">
+      <audio controls id="soundPlayer" style="margin-left: 106px;"></audio>
+      <label style="margin-left: 106px;"><i class="fa fa-copyright" id="soundAttributionIcon"></i> <span id="soundAttribution"></span></label>
+    </div>
+    <div id="soundComputedContainer">
+      <div class="form-row">
+        <label for="node-input-questionSoundComputed"><i class="fa fa-tag"></i> <span data-i18n="remote-question.label.sound"></span></label>
+        <input type="text" id="node-input-questionSoundComputed" placeholder="">
+        <input type="hidden" id="node-input-questionSoundComputedType">
+      </div>
+      <label data-i18n="remote-question.label.sound_possible" style="max-width: 460px;"></label>
+    </div>
+  </div>
+
   <label><i class="fa fa-pencil-square-o"></i> <span data-i18n="remote-question.label.answer_one"></span></label>
   <div class="form-row">
     <label for="node-input-questionAnswerOne" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-font"></i> <span data-i18n="remote-question.label.answer_text"></label>
