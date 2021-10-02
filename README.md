@@ -37,6 +37,7 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 ## Version History
 
 Version 1.2.3:
+- The settings base url and port are filled automatically for new config nodes. This is helpful when using alternative installations such as RedMatic.
 - Notifications and Questions can have a computed sound. So you can include the sound based on the incoming message.
 - Notifications and Questions without an body or an title will not be send to the Remote-RED servers.
 - Prints an error message if a message or question exceeds the size of 3600 bytes.
