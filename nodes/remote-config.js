@@ -23,11 +23,14 @@ module.exports = function(RED) {
     }
   });
 
-  RED.httpAdmin.get("/contrib-remote/internalIpV4", RED.auth.needsPermission('remote-config.read'), function(req,res) {
-    // Return the internal IP
+  RED.httpAdmin.get("/contrib-remote/connectionData", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+    // Return the internal IP and the mountpath
     const ipData = {
-      'ipv4': internalIp.v4.sync()
+      'ipv4': internalIp.v4.sync(),
+      'baseurl': RED.httpNode.mountpath + ((RED.settings.ui !== undefined && RED.settings.ui.path !== undefined) ? RED.settings.ui.path : ''),
+      'port': (RED.settings.uiPort !== undefined) ? String(RED.settings.uiPort) : '1880'
     }
+    console.log(`${JSON.stringify(ipData)}`);
     res.json(ipData);
   });
 

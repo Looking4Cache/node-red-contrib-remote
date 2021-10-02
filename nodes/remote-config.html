@@ -6,8 +6,8 @@
       name: {value:"Node-RED UI"},
       host: {value:"localhost"},
       protocol: {value:"http"},
-      port: {value:1880, validate:RED.validators.number()},
-      baseurl: {value:"/ui"},
+      port: {value:0, validate:RED.validators.number()},
+      baseurl: {value:""},
       instancehash: {value:""},
       server: {value:""},
       region: {value:"de"}
@@ -31,14 +31,21 @@
       // Insert legal link urls
       setTimeout(insertLinkUrls, 250);
 
-      // Get internal IP, fill localhost infos
-      $.getJSON('contrib-remote/internalIpV4',function(data) {
+      // Get internal IP, fill localhost infos, get baseUrl
+      $.getJSON('contrib-remote/connectionData',function(data) {
         internalIpV4 = data.ipv4;
         updateLocalhostInfo();
 
         document.getElementById('node-config-input-host').onchange = function() {
           updateLocalhostInfo();
         };
+
+        if (document.getElementById('node-config-input-baseurl').value === '') {
+          document.getElementById('node-config-input-baseurl').value = data.baseurl
+        }
+        if (document.getElementById('node-config-input-port').value === '') {
+          document.getElementById('node-config-input-port').value = data.port
+        }
       });
 
       // Show backup info?
