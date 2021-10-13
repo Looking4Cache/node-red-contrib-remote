@@ -11,6 +11,8 @@
           "serving": "aktiv",
           "stopping": "stoppe",
           "stopped": "gestoppt",
+          "heartbeaterror": "Kommuniktionsfehler",
+          "heartbeaterroractive": "aktiv - kein Webserver erkannt",
           "commerror": "Fehler bei der Kommunikation mit dem Server.",
           "noconfig": "Keine Konfiguration gefunden.",
           "incompleteconfig": "Konfiguration unvollständig.",

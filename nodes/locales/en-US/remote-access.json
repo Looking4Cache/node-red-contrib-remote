@@ -11,6 +11,8 @@
           "serving": "serving",
           "stopping": "stopping",
           "stopped": "stopped",
+          "heartbeaterror": "communication error",
+          "heartbeaterroractive": "serving - no endpoint detected",
           "commerror": "Error communicating with server.",
           "noconfig": "No configuration found.",
           "incompleteconfig": "Configuration incomplete.",

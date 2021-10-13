@@ -6,6 +6,12 @@ module.exports = function(RED) {
   function startSSH(node, server, port) {
     try {
       node.log("starting ssh process");
+
+      // Reset heartbeat status
+      node.initialHartbeatStatus = ''
+      node.lastHartbeatStatus = ''
+
+      // Create ssh command
       let host = node.confignode.host;
       if ( host === 'localhost' && os.platform() === 'win32' ) {
         host = '127.0.0.1'
@@ -125,6 +131,46 @@ module.exports = function(RED) {
     }
   }
 
+  function heartbeat(node) {
+    // Performs a heartbeat: Ask to the server if ssh is available
+    if ( node.serving ) {
+      const axiosInstance = commons.createAxiosInstance();
+      axiosInstance.post(`https://api-${node.confignode.server}/heartbeat`, {
+        'instancehash': node.confignode.instancehash,
+        'instanceauth': node.confignode.instanceauth,
+        'version': commons.getNodeVersion()
+      })
+      .then(response => {
+        // Remember the status
+        if ( node.initialHartbeatStatus === '' ) {
+          node.initialHartbeatStatus = response.data.status
+        }
+        node.lastHartbeatStatus = response.data.status
+
+        // If the communication is not ok...
+        if ( node.lastHartbeatStatus !== 'OK' ) {
+          if ( node.initialHartbeatStatus === 'OK' ) {
+            // If the status before was ok > Restart communication
+            node.status({fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
+            node.serving = false
+            node.log(`Heartbeat error. Reconnecting soon.`);
+          } else {
+            // If the status before had also an error > Just change the label.
+            node.status({fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterroractive"});
+            node.log(`Heartbeat detected no valid endpoint. Please check your connection settings (Base URL, Serving Port and Protocol).`);
+          }
+        }
+      })
+      .catch((error) => {
+        // Error on api call > Just log
+        node.error('heartbeat: ' + error);
+        if ( error.response && error.response.data && error.response.data.message ) {
+          node.error(`${error.response.data.message}`);
+        }
+      });
+    }
+  }
+
   function RemoteAccessNode(config) {
     RED.nodes.createNode(this,config);
     const node = this;
@@ -154,6 +200,11 @@ module.exports = function(RED) {
       node.status({fill:"red",shape:"dot",text:"remote-access.status.backupconfig"});
       return;
     }
+
+    // Init heartbeat
+    node.initialHartbeatStatus = ''
+    node.lastHartbeatStatus = ''
+    node.heartbeatinterval = setInterval(heartbeat, 5*60*1000, node);
 
     // Call API for announce the instacehash and authentication, retrive server and port.
     tryConnect(node);
@@ -195,6 +246,7 @@ module.exports = function(RED) {
       // Cancel timeouts
       clearTimeout(node.checkservingtimeout);
       clearTimeout(node.tryconnecttimeout);
+      clearInterval(node.heartbeatinterval);
 
       // Remove old routes, without a new deploy would break it..
       RED.httpNode._router.stack.forEach(function(route,i,routes) {
