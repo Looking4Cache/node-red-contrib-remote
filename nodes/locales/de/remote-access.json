@@ -13,6 +13,7 @@
           "stopped": "gestoppt",
           "heartbeaterror": "Kommuniktionsfehler",
           "heartbeaterroractive": "aktiv - kein Webserver erkannt",
+          "heartbeaterrornotfound": "aktiv - jedoch 404 erhalten",
           "commerror": "Fehler bei der Kommunikation mit dem Server.",
           "noconfig": "Keine Konfiguration gefunden.",
           "incompleteconfig": "Konfiguration unvollständig.",

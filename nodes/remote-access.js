@@ -8,8 +8,8 @@ module.exports = function(RED) {
       node.log("starting ssh process");
 
       // Reset heartbeat status
-      node.initialHartbeatStatus = ''
-      node.lastHartbeatStatus = ''
+      node.initialHeartbeatStatus = ''
+      node.lastHeartbeatStatus = ''
 
       // Create ssh command
       let host = node.confignode.host;
@@ -142,14 +142,18 @@ module.exports = function(RED) {
       })
       .then(response => {
         // Remember the status
-        if ( node.initialHartbeatStatus === '' ) {
-          node.initialHartbeatStatus = response.data.status
+        if ( node.initialHeartbeatStatus === '' ) {
+          node.initialHeartbeatStatus = response.data.status
         }
-        node.lastHartbeatStatus = response.data.status
+        node.lastHeartbeatStatus = response.data.status
 
         // If the communication is not ok...
-        if ( node.lastHartbeatStatus !== 'OK' ) {
-          if ( node.initialHartbeatStatus === 'OK' ) {
+        if ( node.lastHeartbeatStatus === 'NOTFOUND' ) {
+          // The local endpoint responed a 404...
+          node.status({fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterrornotfound"});
+          node.log(`Heartbeat detected no valid endpoint, got a 404 response. Please check the base URL in the connection settings.`);
+        } else if ( node.lastHeartbeatStatus !== 'OK' ) {
+          if ( node.initialHeartbeatStatus === 'OK' ) {
             // If the status before was ok > Restart communication
             node.status({fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
             node.serving = false
@@ -202,8 +206,8 @@ module.exports = function(RED) {
     }
 
     // Init heartbeat
-    node.initialHartbeatStatus = ''
-    node.lastHartbeatStatus = ''
+    node.initialHeartbeatStatus = ''
+    node.lastHeartbeatStatus = ''
     node.heartbeatinterval = setInterval(heartbeat, 5*60*1000, node);
 
     // Call API for announce the instacehash and authentication, retrive server and port.

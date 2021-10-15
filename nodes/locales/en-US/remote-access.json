@@ -13,6 +13,7 @@
           "stopped": "stopped",
           "heartbeaterror": "communication error",
           "heartbeaterroractive": "serving - no endpoint detected",
+          "heartbeaterrornotfound": "serving - but received 404 response",
           "commerror": "Error communicating with server.",
           "noconfig": "No configuration found.",
           "incompleteconfig": "Configuration incomplete.",
