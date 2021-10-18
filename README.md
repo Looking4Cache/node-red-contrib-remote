@@ -26,7 +26,7 @@ There is a help page describing how the the nodes work together and how to conne
 
 [Help in English](https://www.remote-red.com/en/help/)
 
-[Hilfe in deutsch](https://www.remote-red.com/de/hilfe/)
+[Hilfe in Deutsch](https://www.remote-red.com/de/hilfe/)
 
 
 ## Contact
