@@ -2,6 +2,8 @@ module.exports = function(RED) {
   const commons = require('./remote-commons');
   const child_process = require('child_process');
   const os = require("os");
+  let sshprocess = undefined
+  let statustext = ''
 
   function startSSH(node, server, port) {
     try {
@@ -21,10 +23,10 @@ module.exports = function(RED) {
       if ( node.verbose ) {
         sshparameters.push('-v');
       }
-      const sshprocess = child_process.spawn("ssh", sshparameters);
+      sshprocess = child_process.spawn("ssh", sshparameters);
 
       // Set serving.. if not working, the process will exit or close
-      node.status({fill:"green",shape:"dot",text:"remote-access.status.serving"});
+      setStatus(node, {fill:"green",shape:"dot",text:"remote-access.status.serving"});
       node.serving = true
 
       // Attach to process events
@@ -37,13 +39,17 @@ module.exports = function(RED) {
       });
 
       sshprocess.on('close', (code, signal) => {
-        node.status({fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+        if ( statustext !== "remote-access.status.heartbeaterror" ) {
+          setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+        }
         node.serving = false
         node.log("ssh process stopped (close: " + code + " / " + signal + ")");
       });
 
       sshprocess.on('exit', (code, signal) => {
-        node.status({fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+        if ( statustext !== "remote-access.status.heartbeaterror" ) {
+          setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+        }
         node.serving = false
         node.log("ssh process stopped (exit: " + code + " / " + signal + ")");
       });
@@ -53,7 +59,7 @@ module.exports = function(RED) {
       });
 
       node.on('close', function() {
-        node.status({fill:"red",shape:"dot",text:"remote-access.status.stopping"});
+        setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopping"});
         node.log("stopping ssh process");
         sshprocess.kill();
       });
@@ -72,6 +78,14 @@ module.exports = function(RED) {
         }
       });
     }
+  }
+
+  function setStatus(node, options) {
+    // Set the status, remember text
+    if ( options !== undefined && options.text !== undefined ) {
+      statustext = options.text
+    }
+    node.status(options);
   }
 
   function requestInstanceSlot(node) {
@@ -95,7 +109,7 @@ module.exports = function(RED) {
       if ( error.response && error.response.data && error.response.data.message ) {
         node.error(`${error.response.data.message}`);
       }
-      node.status({fill:"red",shape:"dot",text:"remote-access.status.commerror"});
+      setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.commerror"});
       return;
     });
   }
@@ -134,11 +148,14 @@ module.exports = function(RED) {
   function heartbeat(node) {
     // Performs a heartbeat: Ask to the server if ssh is available
     if ( node.serving ) {
+      node.log(`Heartbeat...`);
       const axiosInstance = commons.createAxiosInstance();
       axiosInstance.post(`https://api-${node.confignode.server}/heartbeat`, {
         'instancehash': node.confignode.instancehash,
         'instanceauth': node.confignode.instanceauth,
         'version': commons.getNodeVersion()
+      }, {
+        'timeout': 60*1000
       })
       .then(response => {
         // Remember the status
@@ -150,17 +167,18 @@ module.exports = function(RED) {
         // If the communication is not ok...
         if ( node.lastHeartbeatStatus === 'NOTFOUND' ) {
           // The local endpoint responed a 404...
-          node.status({fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterrornotfound"});
+          setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterrornotfound"});
           node.log(`Heartbeat detected no valid endpoint, got a 404 response. Please check the base URL in the connection settings.`);
         } else if ( node.lastHeartbeatStatus !== 'OK' ) {
           if ( node.initialHeartbeatStatus === 'OK' ) {
             // If the status before was ok > Restart communication
-            node.status({fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
+            setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
+            sshprocess.kill();
             node.serving = false
             node.log(`Heartbeat error. Reconnecting soon.`);
           } else {
             // If the status before had also an error > Just change the label.
-            node.status({fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterroractive"});
+            setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterroractive"});
             node.log(`Heartbeat detected no valid endpoint. Please check your connection settings (Base URL, Serving Port and Protocol).`);
           }
         }
@@ -183,7 +201,7 @@ module.exports = function(RED) {
     node.errorcounter = 0;
 
     // Status
-    node.status({fill:"orange",shape:"dot",text:"remote-access.status.starting"});
+    setStatus(node, {fill:"orange",shape:"dot",text:"remote-access.status.starting"});
 
     // Retrieve the config node
     node.confignode = RED.nodes.getNode(config.confignode);
@@ -191,17 +209,17 @@ module.exports = function(RED) {
       node.log("Server: " + node.confignode.server + " InstanceHash: " + node.confignode.instancehash );
     } else {
       node.log("No configuration found.");
-      node.status({fill:"red",shape:"dot",text:"remote-access.status.noconfig"});
+      setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.noconfig"});
       return;
     }
     if ( node.confignode.instancehash === undefined || node.confignode.instancehash === '' ) {
       node.log("Configuration incomplete.");
-      node.status({fill:"red",shape:"dot",text:"remote-access.status.incompleteconfig"});
+      setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.incompleteconfig"});
       return;
     }
     if ( node.confignode.instancehash !== undefined && node.confignode.instanceauth === undefined ) {
       node.log("Configuration has no instanceauth. Maybe restored backup!");
-      node.status({fill:"red",shape:"dot",text:"remote-access.status.backupconfig"});
+      setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.backupconfig"});
       return;
     }
 
