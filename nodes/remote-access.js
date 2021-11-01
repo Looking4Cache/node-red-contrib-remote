@@ -148,7 +148,6 @@ module.exports = function(RED) {
   function heartbeat(node) {
     // Performs a heartbeat: Ask to the server if ssh is available
     if ( node.serving ) {
-      node.log(`Heartbeat...`);
       const axiosInstance = commons.createAxiosInstance();
       axiosInstance.post(`https://api-${node.confignode.server}/heartbeat`, {
         'instancehash': node.confignode.instancehash,
