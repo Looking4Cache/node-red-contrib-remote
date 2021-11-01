@@ -20,8 +20,8 @@ module.exports = function(RED) {
       if (node.confignode != undefined) {
         node.limiter.removeTokens(1, function(err, remainingRequests) {
           if (remainingRequests >= 0) {
-            const title = RED.util.evaluateNodeProperty(config.questionTitle, config.questionTitleType, node, msg);
-            const body = RED.util.evaluateNodeProperty(config.questionBody, config.questionBodyType, node, msg);
+            const title = commons.evaluateValue(RED, config.questionTitle, config.questionTitleType, node, msg);
+            const body = commons.evaluateValue(RED, config.questionBody, config.questionBodyType, node, msg);
             const notificationEmpty = ((title == undefined || title == '') && (body == undefined || body == ''));
             if (!notificationEmpty) {
               // Title and/or body are filled, generate question data
@@ -31,16 +31,16 @@ module.exports = function(RED) {
                 "questiontype" : 1,
                 "answers": [
                   {
-                    "text": RED.util.evaluateNodeProperty(config.questionAnswerOne, config.questionAnswerOneType, node, msg),
-                    "value": RED.util.evaluateNodeProperty(config.questionAnswerOneValue, config.questionAnswerOneValueType, node, msg)
+                    "text": commons.evaluateValue(RED, config.questionAnswerOne, config.questionAnswerOneType, node, msg),
+                    "value": commons.evaluateValue(RED, config.questionAnswerOneValue, config.questionAnswerOneValueType, node, msg)
                   },
                   {
-                    "text": RED.util.evaluateNodeProperty(config.questionAnswerTwo, config.questionAnswerTwoType, node, msg),
-                    "value": RED.util.evaluateNodeProperty(config.questionAnswerTwoValue, config.questionAnswerTwoValueType, node, msg)
+                    "text": commons.evaluateValue(RED, config.questionAnswerTwo, config.questionAnswerTwoType, node, msg),
+                    "value": commons.evaluateValue(RED, config.questionAnswerTwoValue, config.questionAnswerTwoValueType, node, msg)
                   },
                   {
-                    "text": RED.util.evaluateNodeProperty(config.questionAnswerThree, config.questionAnswerThreeType, node, msg),
-                    "value": RED.util.evaluateNodeProperty(config.questionAnswerThreeValue, config.questionAnswerThreeValueType, node, msg)
+                    "text": commons.evaluateValue(RED, config.questionAnswerThree, config.questionAnswerThreeType, node, msg),
+                    "value": commons.evaluateValue(RED, config.questionAnswerThreeValue, config.questionAnswerThreeValueType, node, msg)
                   }
                 ]
               };
@@ -53,7 +53,7 @@ module.exports = function(RED) {
                 // Sound configured or computed?
                 let sound = config.questionSound
                 if (sound === 'computed') {
-                  sound = RED.util.evaluateNodeProperty(config.questionSoundComputed, config.questionSoundComputedType, node, msg);
+                  sound = commons.evaluateValue(RED, config.questionSoundComputed, config.questionSoundComputedType, node, msg);
                 }
 
                 // Call API to send notification

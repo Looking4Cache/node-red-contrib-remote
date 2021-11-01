@@ -21,5 +21,17 @@ module.exports = {
   getNodeVersion: function() {
     var pjson = require(__dirname.replace('/nodes', '') + '/package.json');
     return pjson.version;
+  },
+
+  evaluateValue: function(RED, value, type, node, msg) {
+    // Evaluates the value
+    let evalValue = ''
+    try {
+      evalValue = RED.util.evaluateNodeProperty(value, type, node, msg);
+    } catch (e) {
+      node.error(`Error evaluating value: ${e}`)
+    }
+    return evalValue;
   }
+
 }

@@ -20,8 +20,8 @@ module.exports = function(RED) {
       if (node.confignode != undefined) {
         node.limiter.removeTokens(1, function(err, remainingRequests) {
           if (remainingRequests >= 0) {
-            const title = RED.util.evaluateNodeProperty(config.notificationTitle, config.notificationTitleType, node, msg);
-            const body = RED.util.evaluateNodeProperty(config.notificationBody, config.notificationBodyType, node, msg);
+            const title = commons.evaluateValue(RED, config.notificationTitle, config.notificationTitleType, node, msg);
+            const body = commons.evaluateValue(RED, config.notificationBody, config.notificationBodyType, node, msg);
             const notificationEmpty = ((title == undefined || title == '') && (body == undefined || body == ''));
             if (!notificationEmpty) {
               // Title and/or body are filled
@@ -34,7 +34,7 @@ module.exports = function(RED) {
                 // Sound configured or computed?
                 let sound = config.notificationSound
                 if (sound === 'computed') {
-                  sound = RED.util.evaluateNodeProperty(config.notificationSoundComputed, config.notificationSoundComputedType, node, msg);
+                  sound = commons.evaluateValue(RED, config.notificationSoundComputed, config.notificationSoundComputedType, node, msg);
                 }
 
                 // Call API to send notification
