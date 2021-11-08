@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.3.2:
+- Changed the method to get the installed node version. Thanks hardillb!
+
 Version 1.3.1:
 - Added timeout handling to the heartbeat function.
 - Catches errors when evaluating the title, body or sound of an notification.

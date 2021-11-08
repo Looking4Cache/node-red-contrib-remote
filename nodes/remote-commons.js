@@ -2,6 +2,7 @@ const https = require('https')
 const axios = require('axios')
 const fs = require('fs');
 const crypto = require('crypto');
+const path = require('path');
 
 module.exports = {
   createAxiosInstance: function() {
@@ -19,7 +20,8 @@ module.exports = {
   },
 
   getNodeVersion: function() {
-    var pjson = require(__dirname.replace('/nodes', '') + '/package.json');
+    var filepath = path.join(__dirname, '../package.json');
+    var pjson = require(filepath);
     return pjson.version;
   },
 
