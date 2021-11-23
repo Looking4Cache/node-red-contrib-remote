@@ -6,8 +6,9 @@ const path = require('path');
 
 module.exports = {
   createAxiosInstance: function() {
+    var filepath = path.join(__dirname, 'resources', 'ca.cer');
     const httpsAgent = new https.Agent({
-      ca: fs.readFileSync(__dirname + '/resources/ca.cer'),
+      ca: fs.readFileSync(filepath),
       checkServerIdentity: function(host, cert) {
         const pubkeyPinned = 'YHGEo54+LKxdpCuSAFt+Zwx/RVSHER96vM/Rh0/zcQ4=';
         const pubkeyServer = crypto.createHash('sha256').update(cert.pubkey).digest('base64');
@@ -20,7 +21,7 @@ module.exports = {
   },
 
   getNodeVersion: function() {
-    var filepath = path.join(__dirname, '../package.json');
+    var filepath = path.join(__dirname, '..', 'package.json');
     var pjson = require(filepath);
     return pjson.version;
   },
