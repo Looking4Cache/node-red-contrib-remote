@@ -231,8 +231,8 @@ module.exports = function(RED) {
     tryConnect(node);
 
     // Post URL for action
-    const postUrl = `/contrib-remote/action/${node.confignode.instancehash}`;
-    RED.httpNode.post(postUrl, function(req,res) {
+    const postUrlAction = `/contrib-remote/action/${node.confignode.instancehash}`;
+    RED.httpNode.post(postUrlAction, function(req,res) {
       // Output action as new message
       node.log(`Action '${req.body.action}' received value '${req.body.value}'`);
       const msg = {
@@ -242,7 +242,28 @@ module.exports = function(RED) {
             "value": req.body.value
           }
       }
-      node.send(msg);
+      node.send([msg, null]);
+
+      // Send OK to app
+      const responseData = {
+        'status': 'OK'
+      };
+      res.json(responseData);
+    });
+
+    // Post URL for geofence
+    const postUrlGeofence = `/contrib-remote/geofence/${node.confignode.instancehash}`;
+    RED.httpNode.post(postUrlGeofence, function(req,res) {
+      // Output action as new message
+      node.log(`Geofence '${req.body.name}' received enter value '${req.body.enter}'`);
+      const msg = {
+          "_msgid": RED.util.generateId(),
+          "payload": {
+            "name": req.body.name,
+            "enter": req.body.enter
+          }
+      }
+      node.send([null, msg]);
 
       // Send OK to app
       const responseData = {
@@ -271,7 +292,20 @@ module.exports = function(RED) {
 
       // Remove old routes, without a new deploy would break it..
       RED.httpNode._router.stack.forEach(function(route,i,routes) {
-        if (route.route && (route.route.path === postUrl || route.route.path === getUrl)) {
+        if (route.route && route.route.path === postUrlAction) {
+          node.log(` -> Remove Route '${route.route.path}'`);
+          routes.splice(i,1);
+        }
+      });
+      RED.httpNode._router.stack.forEach(function(route,i,routes) {
+        if (route.route && route.route.path === postUrlGeofence) {
+          node.log(` -> Remove Route '${route.route.path}'`);
+          routes.splice(i,1);
+        }
+      });
+      RED.httpNode._router.stack.forEach(function(route,i,routes) {
+        if (route.route && route.route.path === getUrl) {
+          node.log(` -> Remove Route '${route.route.path}'`);
           routes.splice(i,1);
         }
       });
