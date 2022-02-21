@@ -34,7 +34,7 @@
           "title": "Hilfe",
           "para1": "Über diese Node kannst Du eine Push Notification an die Geräte versenden, die mit der gewählten Config-Node verbunden sind. Wähle hierzu eine Config-Node, die Du auch z.B. bereits in einer Access-Node verwendest. Du kannst in mehreren Notification-Nodes die selbe Config-Node verwenden.",
           "para2": "Konfiguriere den Titel und den Text der Benachrichtigung. Die Vorgabewerte gehen davon aus, das im Payload der eingehenden Nachricht die Strings “title” und “body” enthalten sind. Du kannst aber auch feste Texte eingeben oder Flow- bzw. Global-Variablen verwenden.",
-          "para3": "Immer sobald eine Message bei der Notification-Node ankommt, wird eine Notification an Deine Geräte versendet."
+          "para3": "Immer sobald eine Message bei der Notification-Node ankommt, wird eine Notification an Deine Geräte versendet. Es wird kein Versand durchgeführt, wenn msg.payload.send den Boolean-Wert 'false' enthält."
         }
     }
 }

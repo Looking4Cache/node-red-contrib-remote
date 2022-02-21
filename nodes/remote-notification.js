@@ -18,6 +18,10 @@ module.exports = function(RED) {
     // Act on incomming messages
     node.on('input', function(msg) {
       if (node.confignode != undefined) {
+        if (msg.payload.send === false) {
+          node.log(`Notification not send (msg.payload.send = false).`)
+          return;
+        }
         node.limiter.removeTokens(1, function(err, remainingRequests) {
           if (remainingRequests >= 0) {
             let title = commons.evaluateValue(RED, config.notificationTitle, config.notificationTitleType, node, msg);
