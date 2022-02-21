@@ -46,6 +46,11 @@
         "apphelp": {
           "title": "App Hilfe",
           "para1": "Lade die Remote-RED App aus dem Apple AppStore oder Google PlayStore herunter. Verwende in der App die Funktion “Node-RED Instanz hinzufügen” um diesen QR-Code zu scannen."
+        },
+        "applink": {
+          "title": "Alternative: Per Link hinzufügen",
+          "para1": "Öffne diesen Link auf Deinem iOS oder Android Gerät, nachdem Du die Remote-RED App installiert hast:",
+          "link": "Link zum hinzufügen"
         }
     }
 }

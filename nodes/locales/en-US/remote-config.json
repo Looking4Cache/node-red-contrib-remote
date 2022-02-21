@@ -46,6 +46,11 @@
         "apphelp": {
           "title": "App Help",
           "para1": "Download the Remote-RED app from the Apple AppStore or Google PlayStore. Use the function “Add Node-RED Instance” in the app to scan this QR Code."
+        },
+        "applink": {
+          "title": "Alternative: Add via link",
+          "para1": "Open this link on your iOS or Android device after installing the Remote-RED app:",
+          "link": "Link to add"
         }
     }
 }

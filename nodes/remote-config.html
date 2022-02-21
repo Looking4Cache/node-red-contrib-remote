@@ -130,6 +130,7 @@
       if ( data.error == undefined ) {
         // Show QR Code
         document.getElementById('registerRemoteAppQRCode').src = data.qrcode;
+        document.getElementById('appLink').setAttribute('href', data.link);
         document.getElementById('registerRemoteAppQRCodeContainer').style.removeProperty('visibility');
         document.getElementById('registerRemoteAppQRCodeContainer').style.removeProperty('height');
         document.getElementById('registerRemoteAppButtonText').innerHTML = document.getElementById('registerRemoteAppButton_next_text').innerHTML;
@@ -242,6 +243,11 @@
     <div id="apphelp" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 6px; margin-bottom: 20px;">
       <label data-i18n="remote-config.apphelp.title" style="font-weight: bold;"></label>
       <label data-i18n="remote-config.apphelp.para1"></label>
+    </div>
+    <div style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 6px; margin-bottom: 20px;">
+      <label data-i18n="remote-config.applink.title" style="font-weight: bold;"></label>
+      <label data-i18n="remote-config.applink.para1"></label>
+      <a id="appLink" href="" target="_blank"><i><label data-i18n="remote-config.applink.link" style="display: inline; color: #AD1626;"></label></i></a>
     </div>
   </div>
 
