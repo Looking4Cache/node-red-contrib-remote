@@ -36,6 +36,11 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.4.0
+- In addition to the QR code, a link is now generated to add an instance in the app.
+- Sending notifications and questions is prevented if msg.playload.send === false.
+- Error catched if a notification or question does not contain a title and body.
+
 Version 1.3.3:
 - Improved compatibility for Windows.
 
