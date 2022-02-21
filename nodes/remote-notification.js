@@ -20,9 +20,11 @@ module.exports = function(RED) {
       if (node.confignode != undefined) {
         node.limiter.removeTokens(1, function(err, remainingRequests) {
           if (remainingRequests >= 0) {
-            const title = commons.evaluateValue(RED, config.notificationTitle, config.notificationTitleType, node, msg);
-            const body = commons.evaluateValue(RED, config.notificationBody, config.notificationBodyType, node, msg);
-            const notificationEmpty = ((title == undefined || title == '') && (body == undefined || body == ''));
+            let title = commons.evaluateValue(RED, config.notificationTitle, config.notificationTitleType, node, msg);
+            let body = commons.evaluateValue(RED, config.notificationBody, config.notificationBodyType, node, msg);
+            if (title == undefined) title = '';
+            if (body == undefined) body = '';
+            const notificationEmpty = (title == '' && body == '');
             if (!notificationEmpty) {
               // Title and/or body are filled
 
