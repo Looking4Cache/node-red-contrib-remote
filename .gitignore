@@ -1,6 +1,5 @@
 node_modules
 build
 npm-debug.log
-.ftpconfig
 .env
 .DS_Store
