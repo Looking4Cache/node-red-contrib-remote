@@ -27,7 +27,7 @@ module.exports = function(RED) {
     // Return the internal IP and the mountpath
     const ipData = {
       'ipv4': internalIp.v4.sync(),
-      'baseurl': RED.httpNode.mountpath + ((RED.settings.ui !== undefined && RED.settings.ui.path !== undefined) ? RED.settings.ui.path : ''),
+      'baseurl': RED.httpNode.mountpath + ((RED.settings.ui !== undefined && RED.settings.ui.path !== undefined) ? RED.settings.ui.path : 'ui'),
       'port': (RED.settings.uiPort !== undefined) ? String(RED.settings.uiPort) : '1880'
     }
     console.log(`${JSON.stringify(ipData)}`);
