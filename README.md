@@ -39,6 +39,7 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 Version 1.5.0
 - Geofencing! You can add geofences in the apps. Entering and leaving them will trigger a message on the new output of the remote access node.
 - New instances will have the base url '/ui' again.
+- iOS App: Links with target '_blank' will be redirected to iOS.
 
 Version 1.4.0
 - In addition to the QR code, a link is now generated to add an instance in the app.
