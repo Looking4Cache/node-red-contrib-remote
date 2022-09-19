@@ -12,6 +12,7 @@
           "region": "Server location",
           "region_us": "America (USA)",
           "region_de": "Europe (Germany)",
+          "region_sg": "Asia (Singapur)",
           "region_dev": "Development host",
           "region_desc": "The region can´t be changed after registering an app.",
           "change_info": "If you change settings, you need to reconnect the app.",

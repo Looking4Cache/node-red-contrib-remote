@@ -12,6 +12,7 @@
           "region": "Standort Server",
           "region_us": "Amerika (USA)",
           "region_de": "Europa (Deutschland)",
+          "region_sg": "Asien (Singapur)",
           "region_dev": "Entwicklung",
           "region_desc": "Der Standort kann nicht mehr geändert werden, sobald eine App registriert wurde.",
           "change_info": "Wenn Du Einstellungen änderst, musst Du die App neu verbinden.",
