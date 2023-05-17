@@ -18,7 +18,7 @@ module.exports = function(RED) {
     // Act on incomming messages
     node.on('input', function(msg) {
       if (node.confignode != undefined) {
-        if (msg.payload.send === false) {
+        if (msg.payload !== undefined && msg.payload.send === false) {
           node.log(`Question not send (msg.payload.send = false).`)
           return;
         }
