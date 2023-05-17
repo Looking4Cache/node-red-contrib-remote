@@ -4,6 +4,7 @@ module.exports = function(RED) {
   const os = require("os");
   let sshprocess = undefined
   let statustext = ''
+  let instanceIsBanned = false
 
   function startSSH(node, server, port) {
     try {
@@ -92,6 +93,11 @@ module.exports = function(RED) {
   }
 
   function requestInstanceSlot(node) {
+    // Is this instance banned?
+    if ( instanceIsBanned ) {
+      return;
+    }
+
     // Call API to retrive server and port.
     const axiosInstance = commons.createAxiosInstance();
     axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
@@ -112,6 +118,15 @@ module.exports = function(RED) {
       node.error('requestInstanceSlot: ' + commons.getNetworkErrorString(error))
       if ( commons.getNetworkErrorCustomString(error) !== undefined) {
         node.error(commons.getNetworkErrorCustomString(error));
+      }
+
+      // Wenn gebannt -> Merken
+      if ( error.response && error.response.status ) {
+        if ( error.response.status === 403 ) {
+          setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.banned"});
+          instanceIsBanned = true;
+          return;
+        }
       }
 
       // Set status

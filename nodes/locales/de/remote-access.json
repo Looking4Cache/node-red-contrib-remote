@@ -17,7 +17,8 @@
           "commerror": "Fehler bei der Kommunikation mit dem Server.",
           "noconfig": "Keine Konfiguration gefunden.",
           "incompleteconfig": "Konfiguration unvollständig.",
-          "backupconfig": "Konfiguration aus Backup."
+          "backupconfig": "Konfiguration aus Backup.",
+          "banned": "Die Instanz wurde deaktiviert. Möglicherweise aufgrund einer DDOS-Attacke. Wenn Sie dieses System nicht missbrauchen, erstelle bitte eine neuen Konfig Node, um Remote-RED wieder zu verwenden. Andernfalls suchen Sie nach falschen Weiterleitungen oder Proxy Fehlern. Diese IP wird für 10 Minuten gesperrt."
         },
         "help": {
           "title": "Hilfe",

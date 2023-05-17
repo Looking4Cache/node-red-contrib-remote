@@ -17,7 +17,8 @@
           "commerror": "Error communicating with server.",
           "noconfig": "No configuration found.",
           "incompleteconfig": "Configuration incomplete.",
-          "backupconfig": "Configuration from backup."
+          "backupconfig": "Configuration from backup.",
+          "banned": "Instance is deactivated. Maybe due DDOS attacks. If you are not missusing this system, please create new config node to use Remote-RED again. Otherwise look for incorrect redirects or such errors. Banning IP for 10 minutes."
         },
         "help": {
           "title": "Help",
