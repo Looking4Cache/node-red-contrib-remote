@@ -63,7 +63,11 @@ module.exports = function(RED) {
                   }
                 })
                 .catch((error) => {
-                  node.error("ERROR: " + error);
+                  // Log error
+                  node.error('sendNotification: ' + commons.getNetworkErrorString(error))
+                  if ( commons.getNetworkErrorCustomString(error) !== undefined) {
+                    node.error(commons.getNetworkErrorCustomString(error));
+                  }
 
                   // Output status if configured so
                   if ( config.output == 2 ) {

@@ -103,6 +103,9 @@
       } else {
         // Show error
         alert('Error while registering instance: ' + data.error);
+
+        // Enable button again
+        document.getElementById('registerRemoteAppButton').disabled = false;
       }
     });
   }

@@ -18,7 +18,7 @@ module.exports = function(RED) {
       if ( host === 'localhost' && os.platform() === 'win32' ) {
         host = '127.0.0.1'
       }
-      //node.log('ssh -o StrictHostKeyChecking=no -R ' + port.toString() + ':' + host + ':' + node.confignode.port.toString() + ' forward@proxy-' + server + ' -N');
+      // node.log('ssh -o StrictHostKeyChecking=no -R ' + port.toString() + ':' + host + ':' + node.confignode.port.toString() + ' forward@proxy-' + server + ' -N');
       var sshparameters = ['-o StrictHostKeyChecking=no', '-R', port.toString() + ':' + host + ':' + node.confignode.port.toString(), 'forward@proxy-' + server, '-N'];
       if ( node.verbose ) {
         sshparameters.push('-v');
@@ -36,6 +36,9 @@ module.exports = function(RED) {
 
       sshprocess.stderr.on('data', (data) => {
         logSSHBuffer(node, data, 'ssh process stderr');
+        if ( data.toString().includes('Connection timed out')) {
+          node.error(`SSH connection timeout. Please check if port 22 is open for outgoing connections.`);
+        }
       });
 
       sshprocess.on('close', (code, signal) => {
@@ -105,10 +108,13 @@ module.exports = function(RED) {
       startSSH(node, node.confignode.server, port);
     })
     .catch((error) => {
-      node.error('requestInstanceSlot: ' + error);
-      if ( error.response && error.response.data && error.response.data.message ) {
-        node.error(`${error.response.data.message}`);
+      // Log error
+      node.error('requestInstanceSlot: ' + commons.getNetworkErrorString(error))
+      if ( commons.getNetworkErrorCustomString(error) !== undefined) {
+        node.error(commons.getNetworkErrorCustomString(error));
       }
+
+      // Set status
       setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.commerror"});
       return;
     });
@@ -183,10 +189,10 @@ module.exports = function(RED) {
         }
       })
       .catch((error) => {
-        // Error on api call > Just log
-        node.error('heartbeat: ' + error);
-        if ( error.response && error.response.data && error.response.data.message ) {
-          node.error(`${error.response.data.message}`);
+        // Error on api call > Log error
+        node.error('heartbeat: ' + commons.getNetworkErrorString(error))
+        if ( commons.getNetworkErrorCustomString(error) !== undefined) {
+          node.error(commons.getNetworkErrorCustomString(error));
         }
       });
     }

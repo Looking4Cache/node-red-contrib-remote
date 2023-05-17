@@ -48,6 +48,9 @@ module.exports = function(RED) {
       if ( error.response && error.response.data && error.response.data.message ) {
         errorMessage = errorMessage + " / " + error.response.data.message;
       }
+      if ( commons.getNetworkErrorCustomString(error) !== undefined) {
+        errorMessage = commons.getNetworkErrorCustomString(error);
+      }
       res.json({ 'error': errorMessage });
     });
   });
@@ -96,6 +99,9 @@ module.exports = function(RED) {
       let errorMessage = error.message;
       if ( error.response && error.response.data && error.response.data.message ) {
         errorMessage = errorMessage + " / " + error.response.data.message;
+      }
+      if ( commons.getNetworkErrorCustomString(error) !== undefined) {
+        errorMessage = commons.getNetworkErrorCustomString(error);
       }
       res.json({ 'error': errorMessage });
     });

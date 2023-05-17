@@ -17,7 +17,7 @@ module.exports = {
         }
       }
     });
-    return axios.create({ httpsAgent: httpsAgent });
+    return axios.create({ httpsAgent: httpsAgent, timeout: 5000 });
   },
 
   getNodeVersion: function() {
@@ -35,6 +35,27 @@ module.exports = {
       node.error(`Error evaluating value: ${e}`)
     }
     return evalValue;
+  },
+
+  getNetworkErrorString: function(error) {
+    // Trys to get a error message
+    let errorString = `` + error;
+    if ( error.response && error.response.data && error.response.data.message ) {
+      errorString = `${error.response.data.message}`;
+    }
+    return errorString;
+  },
+
+  getNetworkErrorCustomString: function(error) {
+    // Custom error messages for common errors
+    let errorString = undefined;
+    if ( error.code === 'ECONNABORTED' ) {
+      errorString = `Error during https call. Please check Internet connection on your Node-RED server. Please check if a firewall blocks outgoing port 443.`;
+    }
+    if ( error.code === 'EAI_AGAIN' ) {
+      errorString = `Error during DNS queries. Please check Internet connection on your Node-RED server. Please check if a firewall blocks your DNS queries.`;
+    }
+    return errorString;
   }
 
 }

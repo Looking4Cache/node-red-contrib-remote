@@ -77,7 +77,11 @@ module.exports = function(RED) {
                   node.debug(`Question send successfull`)
                 })
                 .catch((error) => {
-                  node.error("ERROR: " + error);
+                  // Log error
+                  node.error('sendNotification: ' + commons.getNetworkErrorString(error))
+                  if ( commons.getNetworkErrorCustomString(error) !== undefined) {
+                    node.error(commons.getNetworkErrorCustomString(error));
+                  }
 
                   // Output Error
                   const msg = {
