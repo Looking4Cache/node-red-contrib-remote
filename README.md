@@ -38,6 +38,7 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 Version 1.5.0
 - Geofencing! You can add geofences in the apps. Entering and leaving them will trigger a message on the new output of the remote access node.
+- Adding server location in Asia.
 - New instances will have the base url '/ui' again.
 - Error with "Multiple requests" after a missing internet connection fixed.
 - iOS App: Links with target '_blank' will be redirected to iOS.
