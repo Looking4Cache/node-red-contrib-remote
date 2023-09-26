@@ -24,10 +24,8 @@ module.exports = function(RED) {
         }
         node.limiter.removeTokens(1, function(err, remainingRequests) {
           if (remainingRequests >= 0) {
-            let title = commons.evaluateValue(RED, config.questionTitle, config.questionTitleType, node, msg);
-            let body = commons.evaluateValue(RED, config.questionBody, config.questionBodyType, node, msg);
-            if (title == undefined) title = '';
-            if (body == undefined) body = '';
+            let title = commons.evaluateValue(RED, config.questionTitle, config.questionTitleType, node, msg, true);
+            let body = commons.evaluateValue(RED, config.questionBody, config.questionBodyType, node, msg, true);
             const notificationEmpty = (title == '' && body == '');
             if (!notificationEmpty) {
               // Title and/or body are filled, generate question data
@@ -37,19 +35,20 @@ module.exports = function(RED) {
                 "questiontype" : 1,
                 "answers": [
                   {
-                    "text": commons.evaluateValue(RED, config.questionAnswerOne, config.questionAnswerOneType, node, msg),
-                    "value": commons.evaluateValue(RED, config.questionAnswerOneValue, config.questionAnswerOneValueType, node, msg)
+                    "text": commons.evaluateValue(RED, config.questionAnswerOne, config.questionAnswerOneType, node, msg, true),
+                    "value": commons.evaluateValue(RED, config.questionAnswerOneValue, config.questionAnswerOneValueType, node, msg, false)
                   },
                   {
-                    "text": commons.evaluateValue(RED, config.questionAnswerTwo, config.questionAnswerTwoType, node, msg),
-                    "value": commons.evaluateValue(RED, config.questionAnswerTwoValue, config.questionAnswerTwoValueType, node, msg)
+                    "text": commons.evaluateValue(RED, config.questionAnswerTwo, config.questionAnswerTwoType, node, msg, true),
+                    "value": commons.evaluateValue(RED, config.questionAnswerTwoValue, config.questionAnswerTwoValueType, node, msg, false)
                   },
                   {
-                    "text": commons.evaluateValue(RED, config.questionAnswerThree, config.questionAnswerThreeType, node, msg),
-                    "value": commons.evaluateValue(RED, config.questionAnswerThreeValue, config.questionAnswerThreeValueType, node, msg)
+                    "text": commons.evaluateValue(RED, config.questionAnswerThree, config.questionAnswerThreeType, node, msg, true),
+                    "value": commons.evaluateValue(RED, config.questionAnswerThreeValue, config.questionAnswerThreeValueType, node, msg, false)
                   }
                 ]
               };
+              node.log(`questionData: ${JSON.stringify(questionData)}`)
 
               // Content smaller than 3600 bytes? FCM max size (complete payload) is 4000 bytes.
               if (title.length + body.length + JSON.stringify(questionData).length <= 3600) {
@@ -59,7 +58,7 @@ module.exports = function(RED) {
                 // Sound configured or computed?
                 let sound = config.questionSound
                 if (sound === 'computed') {
-                  sound = commons.evaluateValue(RED, config.questionSoundComputed, config.questionSoundComputedType, node, msg);
+                  sound = commons.evaluateValue(RED, config.questionSoundComputed, config.questionSoundComputedType, node, msg, true);
                 }
 
                 // Call API to send notification

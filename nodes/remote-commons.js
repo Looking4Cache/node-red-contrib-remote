@@ -27,11 +27,15 @@ module.exports = {
     return pjson.version;
   },
 
-  evaluateValue: function(RED, value, type, node, msg) {
+  evaluateValue: function(RED, value, type, node, msg, tostring) {
     // Evaluates the value
     let evalValue = ''
     try {
       evalValue = RED.util.evaluateNodeProperty(value, type, node, msg);
+      if (tostring) {
+        if (evalValue == undefined) evalValue = '';
+        evalValue = String(evalValue);
+      }
     } catch (e) {
       node.error(`Error evaluating value: ${e}`)
     }

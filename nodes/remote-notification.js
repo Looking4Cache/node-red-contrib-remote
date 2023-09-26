@@ -24,10 +24,8 @@ module.exports = function(RED) {
         }
         node.limiter.removeTokens(1, function(err, remainingRequests) {
           if (remainingRequests >= 0) {
-            let title = commons.evaluateValue(RED, config.notificationTitle, config.notificationTitleType, node, msg);
-            let body = commons.evaluateValue(RED, config.notificationBody, config.notificationBodyType, node, msg);
-            if (title == undefined) title = '';
-            if (body == undefined) body = '';
+            let title = commons.evaluateValue(RED, config.notificationTitle, config.notificationTitleType, node, msg, true);
+            let body = commons.evaluateValue(RED, config.notificationBody, config.notificationBodyType, node, msg, true);
             const notificationEmpty = (title == '' && body == '');
             if (!notificationEmpty) {
               // Title and/or body are filled
@@ -40,7 +38,7 @@ module.exports = function(RED) {
                 // Sound configured or computed?
                 let sound = config.notificationSound
                 if (sound === 'computed') {
-                  sound = commons.evaluateValue(RED, config.notificationSoundComputed, config.notificationSoundComputedType, node, msg);
+                  sound = commons.evaluateValue(RED, config.notificationSoundComputed, config.notificationSoundComputedType, node, msg, true);
                 }
 
                 // Call API to send notification
@@ -77,7 +75,7 @@ module.exports = function(RED) {
                 });
               } else {
                 // To big...
-                node.error("The message exceeded 3600 bytes. Can´t send.");
+                node.error("xxxThe message exceeded 3600 bytes. Can´t send.");
 
                 // Output status if configured so
                 if ( config.output == 2 ) {

@@ -38,6 +38,7 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 Version 1.5.1
 - Added support for running Node-RED with a self signed https certificate.
+- Notifications and Questions will automatically convert values to string if a string is needed (e.g. title and body). 
 
 Version 1.5.0
 - Geofencing! You can add geofences in the apps. Entering and leaving them will trigger a message on the new output of the remote access node.
