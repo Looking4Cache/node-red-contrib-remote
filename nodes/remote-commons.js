@@ -8,6 +8,7 @@ module.exports = {
   createAxiosInstance: function() {
     var filepath = path.join(__dirname, 'resources', 'ca.cer');
     const httpsAgent = new https.Agent({
+      rejectUnauthorized: false,
       ca: fs.readFileSync(filepath),
       checkServerIdentity: function(host, cert) {
         const pubkeyPinned = 'YHGEo54+LKxdpCuSAFt+Zwx/RVSHER96vM/Rh0/zcQ4=';
