@@ -34,11 +34,22 @@ module.exports = function(RED) {
     res.json(ipData);
   });
 
-  RED.httpAdmin.get("/contrib-remote/requestInstanceHash/:region", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+  RED.httpAdmin.get("/contrib-remote/requestInstanceHash/:regionorserver", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
     const axiosInstance = commons.createAxiosInstance();
-    console.log('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest')
-    axiosInstance.post('https://contact-' + req.params.region + '.remote-red.com/instanceHashRequest', {})
+
+    // Region or server?
+    let url = '';
+    if (req.params.regionorserver.includes('.')) {
+      // server
+      url = 'https://api-' + req.params.regionorserver + '/instanceHashRequest';
+    } else {
+      // region
+      url = 'https://contact-' + req.params.regionorserver + '.remote-red.com/instanceHashRequest';
+    }
+
+    // Call API
+    axiosInstance.post(url, {})
     .then(response => {
       res.json(response.data);
     })
@@ -56,11 +67,12 @@ module.exports = function(RED) {
   });
 
   RED.httpAdmin.post("/contrib-remote/registerApp", RED.auth.needsPermission('remote-config.read'), function(req,res) {
-    // Call API for a instacehash and a instanceauth
+    // Call API for a appHash and password
     const axiosInstance = commons.createAxiosInstance();
     axiosInstance.post(`https://api-${req.body.server}/registerApp`, {
       'instancehash': req.body.instancehash,
-      'instanceauth': req.body.instanceauth
+      'instanceauth': req.body.instanceauth,
+      'customerhash': req.body.customerhash
     })
     .then(response => {
       var localip = req.body.host;

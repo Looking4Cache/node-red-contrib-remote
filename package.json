@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-remote",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Remote-RED is an ecosystem to bring remote access, push notification and geofencing to Node-RED. There are also additional functions like directly answer on a notification and homescreen widgets.",
   "author": "Thorsten Heilmann",
   "license": "GPL-3.0",
