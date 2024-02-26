@@ -36,8 +36,11 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.5.3
+- Improved error logging while the instance registration process.
+
 Version 1.5.2
-- Compatibility to 'node-red-contrib-remote-cli'
+- Compatibility to 'node-red-contrib-remote-cli'.
 
 Version 1.5.1
 - Added support for running Node-RED with a self signed https certificate.
