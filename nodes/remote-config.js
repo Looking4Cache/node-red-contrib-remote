@@ -55,6 +55,7 @@ module.exports = function(RED) {
     })
     .catch((error) => {
       console.log("ERROR: requestInstanceHash: " + error);
+      console.error(error);
       let errorMessage = error.message;
       if ( error.response && error.response.data && error.response.data.message ) {
         errorMessage = errorMessage + " / " + error.response.data.message;
@@ -108,6 +109,7 @@ module.exports = function(RED) {
     })
     .catch((error) => {
       console.log("ERROR: registerApp: " + error);
+      console.error(error);
       let errorMessage = error.message;
       if ( error.response && error.response.data && error.response.data.message ) {
         errorMessage = errorMessage + " / " + error.response.data.message;
