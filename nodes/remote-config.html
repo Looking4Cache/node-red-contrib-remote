@@ -166,6 +166,23 @@
     }
   }
 
+  function testNetworkButtonClicked() {
+    // Disable Button
+    document.getElementById('testNetworkButton').disabled = true;
+
+    $.get(`contrib-remote/testNetwork`, function(data) {
+      if ( data.error == undefined ) {
+        alert(data);
+      } else {
+        // Show error
+        alert('Error while registering app: ' + data.error);
+      }
+
+      // Enable button
+      document.getElementById('testNetworkButton').disabled = false;
+    });
+  }
+
   function openSupportMailButtonClicked() {
     // Get InstanceHash and Server from UI
     const instanceHash = document.getElementById('node-config-input-instancehash').value;
@@ -243,7 +260,7 @@
   <span id='terms_url_template' data-i18n="remote-config.legal.termsurl" style="display: none;"></span>
 
   <div id="registerRemoteAppQRCodeContainer" style="visibility: collapse; height: 0px;">
-    <img id="registerRemoteAppQRCode" src=""></img>
+    <img id="registerRemoteAppQRCode" src="">
     <div id="apphelp" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 6px; margin-bottom: 20px;">
       <label data-i18n="remote-config.apphelp.title" style="font-weight: bold;"></label>
       <label data-i18n="remote-config.apphelp.para1"></label>
@@ -269,6 +286,12 @@
       <input type="text" id="node-config-input-server" placeholder="Wird automatisch berechnet.">
     </div>
   </div>
+
+  <!-- 
+  <button id="testNetworkButton" type="button" class="red-ui-button" onclick="testNetworkButtonClicked()">
+    <span id="testNetworkButtonText" data-i18n="remote-config.actions.test_network">
+  </button>
+  -->
 
   <div id="help" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 40px; margin-bottom: 20px;">
     <label data-i18n="remote-config.help.title" style="font-weight: bold;"></label>

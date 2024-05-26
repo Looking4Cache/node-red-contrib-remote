@@ -17,10 +17,10 @@
     "internal-ip": "^6.1.0",
     "limiter": "^1.1.5",
     "path": "^0.12.7",
+    "ping": "^0.4.4",
     "qrcode": "^1.4.4"
   },
   "main": "remote-config.js",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

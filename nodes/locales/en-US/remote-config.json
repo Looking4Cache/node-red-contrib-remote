@@ -21,6 +21,7 @@
         "actions" : {
           "register_app": "Connect Remote-RED App",
           "register_app_next": "Connect another Remote-RED App",
+          "test_network": "Test network",
           "support_mail": "Open mail to support"
         },
         "legal": {
