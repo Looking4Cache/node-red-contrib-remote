@@ -91,7 +91,7 @@
   function registerInstance() {
     // Request InstanceHash when empty
     const region = document.getElementById('node-config-input-region').value;
-    $.getJSON('contrib-remote/requestInstanceHash/' + region, function(data) {
+    $.getJSON('contrib-remote/requestInstanceHash/' + region + '/0', function(data) {
       if ( data.error == undefined ) {
         // Fill UI
         document.getElementById('node-config-input-instancehash').value = data.instancehash;
@@ -235,6 +235,7 @@
         <option value="us" data-i18n="remote-config.label.region_us"></option>
         <option value="de" data-i18n="remote-config.label.region_de"></option>
         <option value="sg" data-i18n="remote-config.label.region_sg"></option>
+        <option value="dev" data-i18n="remote-config.label.region_dev"></option>
         <!-- <option value="dev" data-i18n="remote-config.label.region_dev"></option> -->
     </select>
   </div>
