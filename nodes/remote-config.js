@@ -172,7 +172,7 @@ module.exports = function(RED) {
       const qrCodeString = JSON.stringify(qrCodeData);
       const qrCodeStringBuffer = Buffer.from(qrCodeString);
       const qrCodeStringBase64 = qrCodeStringBuffer.toString('base64');
-      const link = 'remotered://add?data=' + qrCodeStringBase64;
+      const link = response.data.appurl + '://add?data=' + qrCodeStringBase64;
       QRCode.toDataURL(qrCodeStringBase64, function (err, url) {
         const responseData = {
           'qrcode': url,
