@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.6.0
+- Compatibility to 'node-red-contrib-remote-cli' version 1.1.0.
+
 Version 1.5.3
 - Improved error logging while the instance registration process.
 
