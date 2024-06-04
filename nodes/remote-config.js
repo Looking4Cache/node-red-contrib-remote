@@ -105,7 +105,7 @@ module.exports = function(RED) {
     res.json(ipData);
   });
 
-  RED.httpAdmin.get("/contrib-remote/requestInstanceHash/:regionorserver/:customerhash", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+  RED.httpAdmin.get("/contrib-remote/requestInstanceHash/:regionorserver/:customerhash/:customerkey", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Call API for a instacehash and a instanceauth
     const axiosInstance = commons.createAxiosInstance();
 
@@ -122,6 +122,7 @@ module.exports = function(RED) {
     // Call API
     axiosInstance.post(url, {
       'customerhash': req.params.customerhash,
+      'customerkey': req.params.customerkey,
       'version': commons.getNodeVersion()
     })
     .then(response => {
@@ -167,7 +168,8 @@ module.exports = function(RED) {
         'instancehash': response.data.instancehash,
         'apphash': response.data.apphash,
         'password': response.data.password,
-        'nodeversion': 1.0
+        'customerhash': response.data.customerhash,
+        'nodeversion': commons.getNodeVersion()
       };
       const qrCodeString = JSON.stringify(qrCodeData);
       const qrCodeStringBuffer = Buffer.from(qrCodeString);
