@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 1.6.1
+- Adding instances on Android is be possible again.
+
 Version 1.6.0
 - Compatibility to 'node-red-contrib-remote-cli' version 1.1.0.
 
