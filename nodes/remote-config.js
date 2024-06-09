@@ -169,7 +169,7 @@ module.exports = function(RED) {
         'apphash': response.data.apphash,
         'password': response.data.password,
         'customerhash': response.data.customerhash,
-        'nodeversion': commons.getNodeVersion()
+        'nodeversion': 1.1
       };
       const qrCodeString = JSON.stringify(qrCodeData);
       const qrCodeStringBuffer = Buffer.from(qrCodeString);
