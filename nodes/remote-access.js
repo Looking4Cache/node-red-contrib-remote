@@ -2,6 +2,7 @@ module.exports = function(RED) {
   const commons = require('./remote-commons');
   const child_process = require('child_process');
   const os = require("os");
+  const internalIp = require('internal-ip');
   let sshprocess = undefined
   let statustext = ''
   let instanceIsBanned = false
@@ -98,6 +99,21 @@ module.exports = function(RED) {
       return;
     }
 
+    // Create object with config values to send to server
+    var localip = node.confignode.host;
+    if (localip.toLowerCase() == 'localhost') localip = internalIp.v4.sync();
+    if (localip === undefined) localip = "";
+    const config = {
+      'name': node.confignode.name,
+      'localip': localip,
+      'localport': node.confignode.localport,
+      'baseurl': node.confignode.baseurl,
+    }
+    const configString = JSON.stringify(config);
+    const configStringBuffer = Buffer.from(configString);
+    const configStringBase64 = configStringBuffer.toString('base64');
+    node.log(`configString ${configString}`);
+
     // Call API to retrive server and port.
     const axiosInstance = commons.createAxiosInstance();
     axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
@@ -105,6 +121,7 @@ module.exports = function(RED) {
       'instanceauth': node.confignode.instanceauth,
       'protocol': node.confignode.protocol,
       'mountpath': RED.httpNode.mountpath,
+      'config': configStringBase64,
       'version': commons.getNodeVersion()
     })
     .then(response => {

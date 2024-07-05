@@ -152,12 +152,8 @@ module.exports = function(RED) {
     })
     .then(response => {
       var localip = req.body.host;
-      if (localip.toLowerCase() == 'localhost') {
-        localip = internalIp.v4.sync();
-      }
-      if (localip === undefined) {
-        localip = "";
-      }
+      if (localip.toLowerCase() == 'localhost') localip = internalIp.v4.sync();
+      if (localip === undefined) localip = "";  
 
       const qrCodeData = {
         'name': req.body.name,

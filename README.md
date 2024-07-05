@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 2.0.0
+- Config changes will be transfered to the app without creating a new QR Code.
+
 Version 1.6.1
 - Adding instances on Android is be possible again.
 
