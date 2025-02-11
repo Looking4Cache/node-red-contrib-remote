@@ -160,7 +160,7 @@ module.exports = function(RED) {
         'server': req.body.server,
         'localip': localip,
         'localport': req.body.localport,
-        'protocol': req.body.protocol,
+        'localprotocol': req.body.protocol,
         'baseurl': req.body.baseurl,
         'instancehash': response.data.instancehash,
         'apphash': response.data.apphash,

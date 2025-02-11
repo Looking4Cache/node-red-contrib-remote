@@ -107,7 +107,7 @@ module.exports = function(RED) {
       'name': node.confignode.name,
       'localip': localip,
       'localport': node.confignode.port,
-      'protocol': node.confignode.protocol,
+      'localprotocol': node.confignode.protocol,
       'baseurl': node.confignode.baseurl,
     }
     const configString = JSON.stringify(config);
