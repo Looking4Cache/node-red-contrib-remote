@@ -109,6 +109,7 @@ module.exports = function(RED) {
       'localport': node.confignode.port,
       'localprotocol': node.confignode.protocol,
       'baseurl': node.confignode.baseurl,
+      'timestamp': Date.now(),
     }
     const configString = JSON.stringify(config);
     const configStringBuffer = Buffer.from(configString);
