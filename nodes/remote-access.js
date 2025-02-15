@@ -3,13 +3,21 @@ module.exports = function(RED) {
   const child_process = require('child_process');
   const os = require("os");
   const internalIp = require('internal-ip');
-  let sshprocess = undefined
-  let statustext = ''
-  let instanceIsBanned = false
 
   function startSSH(node, server, port) {
     try {
       node.log("starting ssh process");
+
+      // Is there a old node.sshprocess object?
+      if (node.sshprocess !== undefined) {
+        node.log(`ssh process with pid ${node.sshprocess.pid} already existing`);
+        node.sshprocess.removeAllListeners('close');
+        node.sshprocess.removeAllListeners('exit');
+        node.sshprocess.removeAllListeners('error');
+        node.sshprocess.stdout.removeAllListeners('data');
+        node.sshprocess.stderr.removeAllListeners('data');
+        node.sshprocess = undefined;
+      }
 
       // Reset heartbeat status
       node.initialHeartbeatStatus = ''
@@ -25,43 +33,43 @@ module.exports = function(RED) {
       if ( node.verbose ) {
         sshparameters.push('-v');
       }
-      sshprocess = child_process.spawn("ssh", sshparameters);
-      node.log(`ssh process with pid ${sshprocess.pid} started`);
+      node.sshprocess = child_process.spawn("ssh", sshparameters);
+      node.log(`ssh process with pid ${node.sshprocess.pid} started`);
 
       // Set serving.. if not working, the process will exit or close
       setStatus(node, {fill:"green",shape:"dot",text:"remote-access.status.serving"});
       node.serving = true
 
       // Attach to process events
-      sshprocess.stdout.on('data', (data) => {
+      node.sshprocess.stdout.on('data', (data) => {
         logSSHBuffer(node, data, 'ssh process stdout');
       });
 
-      sshprocess.stderr.on('data', (data) => {
+      node.sshprocess.stderr.on('data', (data) => {
         logSSHBuffer(node, data, 'ssh process stderr');
         if ( data.toString().includes('Connection timed out')) {
           node.error(`SSH connection timeout. Please check if port 22 is open for outgoing connections.`);
         }
       });
 
-      sshprocess.on('close', (code, signal) => {
-        if ( statustext !== "remote-access.status.heartbeaterror" ) {
+      node.sshprocess.on('close', (code, signal) => {
+        if ( node.statustext !== "remote-access.status.heartbeaterror" ) {
           setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
         }
         node.serving = false
-        node.log(`ssh process close (pid: ${sshprocess.pid} code: ${code} signal: ${signal})`);
+        node.log(`ssh process close (pid: ${node.sshprocess.pid} code: ${code} signal: ${signal})`);
       });
 
-      sshprocess.on('exit', (code, signal) => {
-        if ( statustext !== "remote-access.status.heartbeaterror" ) {
+      node.sshprocess.on('exit', (code, signal) => {
+        if ( node.statustext !== "remote-access.status.heartbeaterror" ) {
           setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
         }
         node.serving = false
-        node.log(`ssh process exit (pid: ${sshprocess.pid} code: ${code} signal: ${signal})`);
+        node.log(`ssh process exit (pid: ${node.sshprocess.pid} code: ${code} signal: ${signal})`);
       });
 
-      sshprocess.on('error', (err) => {
-        node.log(`ssh process error (pid: ${sshprocess.pid}): ${err.name} : ${err.message}`);
+      node.sshprocess.on('error', (err) => {
+        node.log(`ssh process error (pid: ${node.sshprocess.pid}): ${err.name} : ${err.message}`);
       });
     } catch (e) {
       // TODO: Error: socket hang up
@@ -83,7 +91,7 @@ module.exports = function(RED) {
   function setStatus(node, options) {
     // Set the status, remember text
     if ( options !== undefined && options.text !== undefined ) {
-      statustext = options.text
+      node.statustext = options.text
     }
     node.status(options);
   }
@@ -92,7 +100,7 @@ module.exports = function(RED) {
     // Asnyc because https call can take some seconds..
     return new Promise((resolve, reject) => {
       // Is this instance banned?
-      if ( instanceIsBanned ) {
+      if ( node.instanceIsBanned ) {
         reject();
       }
 
@@ -141,12 +149,12 @@ module.exports = function(RED) {
         if ( error.response && error.response.status ) {
           if ( error.response.status === 403 ) {
             setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.banned"});
-            instanceIsBanned = true;
+            node.instanceIsBanned = true;
           }
         }
 
         // Set status
-        if (!instanceIsBanned) setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.commerror"});
+        if (!node.instanceIsBanned) setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.commerror"});
         reject();
       });
     });
@@ -232,9 +240,9 @@ module.exports = function(RED) {
   function killSSHProcess(node) {
     // Kill process
     try {
-      if (sshprocess !== undefined) {
-        node.log(`Killing process ${sshprocess.pid}`);
-        sshprocess.kill();
+      if (node.sshprocess !== undefined) {
+        node.log(`Killing process ${node.sshprocess.pid}`);
+        node.sshprocess.kill();
       }
       node.serving = false
     } catch (error) {
@@ -245,9 +253,12 @@ module.exports = function(RED) {
   function RemoteAccessNode(config) {
     RED.nodes.createNode(this,config);
     const node = this;
+    node.sshprocess = undefined;
+    node.statustext = '';
     node.serving = false;
     node.verbose = config.verbose;
     node.errorcounter = 0;
+    node.instanceIsBanned = false;
 
     // Status
     setStatus(node, {fill:"orange",shape:"dot",text:"remote-access.status.starting"});
