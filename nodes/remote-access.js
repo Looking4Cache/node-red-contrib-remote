@@ -26,6 +26,7 @@ module.exports = function(RED) {
         sshparameters.push('-v');
       }
       sshprocess = child_process.spawn("ssh", sshparameters);
+      node.log(`ssh process with pid ${sshprocess.pid} started`);
 
       // Set serving.. if not working, the process will exit or close
       setStatus(node, {fill:"green",shape:"dot",text:"remote-access.status.serving"});
@@ -48,7 +49,7 @@ module.exports = function(RED) {
           setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
         }
         node.serving = false
-        node.log("ssh process stopped (close: " + code + " / " + signal + ")");
+        node.log(`ssh process close (pid: ${sshprocess.pid} code: ${code} signal: ${signal})`);
       });
 
       sshprocess.on('exit', (code, signal) => {
@@ -56,17 +57,11 @@ module.exports = function(RED) {
           setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
         }
         node.serving = false
-        node.log("ssh process stopped (exit: " + code + " / " + signal + ")");
+        node.log(`ssh process exit (pid: ${sshprocess.pid} code: ${code} signal: ${signal})`);
       });
 
       sshprocess.on('error', (err) => {
-        node.log("ssh process error:" + err.name + ": " + err.message);
-      });
-
-      node.on('close', function() {
-        setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopping"});
-        node.log("stopping ssh process");
-        sshprocess.kill();
+        node.log(`ssh process error (pid: ${sshprocess.pid}): ${err.name} : ${err.message}`);
       });
     } catch (e) {
       // TODO: Error: socket hang up
@@ -212,8 +207,7 @@ module.exports = function(RED) {
           if ( node.initialHeartbeatStatus === 'OK' ) {
             // If the status before was ok > Restart communication
             setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
-            sshprocess.kill();
-            node.serving = false
+            killSSHProcess(node)
             node.log(`Heartbeat error. Reconnecting soon.`);
           } else {
             // If the status before had also an error > Just change the label.
@@ -229,6 +223,19 @@ module.exports = function(RED) {
           node.error(commons.getNetworkErrorCustomString(error));
         }
       });
+    }
+  }
+
+  function killSSHProcess(node) {
+    // Kill process
+    try {
+      if (sshprocess !== undefined) {
+        node.log(`Killing process ${sshprocess.pid}`);
+        sshprocess.kill();
+      }
+      node.serving = false
+    } catch (error) {
+      node.error(`Error in killSSHProcess: ${error}`);
     }
   }
 
@@ -324,31 +331,48 @@ module.exports = function(RED) {
     });
 
     // Clean up on close
-    node.on('close', function() {
+    node.on('close', function(removed, done) {
+      // Set status
+      setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopping"});
+
+      // Kill process
+      killSSHProcess(node)
+
       // Cancel timeouts
-      clearTimeout(node.checkservingtimeout);
-      clearTimeout(node.tryconnecttimeout);
-      clearInterval(node.heartbeatinterval);
+      try {
+        clearTimeout(node.checkservingtimeout);
+        clearTimeout(node.tryconnecttimeout);
+        clearInterval(node.heartbeatinterval);
+      } catch (error) {
+        node.error(`Error in close > clearTimeout: ${error}`);
+      }
 
       // Remove old routes, without a new deploy would break it..
-      RED.httpNode._router.stack.forEach(function(route,i,routes) {
-        if (route.route && route.route.path === postUrlAction) {
-          node.log(` -> Remove Route '${route.route.path}'`);
-          routes.splice(i,1);
-        }
-      });
-      RED.httpNode._router.stack.forEach(function(route,i,routes) {
-        if (route.route && route.route.path === postUrlGeofence) {
-          node.log(` -> Remove Route '${route.route.path}'`);
-          routes.splice(i,1);
-        }
-      });
-      RED.httpNode._router.stack.forEach(function(route,i,routes) {
-        if (route.route && route.route.path === getUrl) {
-          node.log(` -> Remove Route '${route.route.path}'`);
-          routes.splice(i,1);
-        }
-      });
+      try {
+        RED.httpNode._router.stack.forEach(function(route,i,routes) {
+          if (route.route && route.route.path === postUrlAction) {
+            node.log(` -> Remove Route '${route.route.path}'`);
+            routes.splice(i,1);
+          }
+        });
+        RED.httpNode._router.stack.forEach(function(route,i,routes) {
+          if (route.route && route.route.path === postUrlGeofence) {
+            node.log(` -> Remove Route '${route.route.path}'`);
+            routes.splice(i,1);
+          }
+        });
+        RED.httpNode._router.stack.forEach(function(route,i,routes) {
+          if (route.route && route.route.path === getUrl) {
+            node.log(` -> Remove Route '${route.route.path}'`);
+            routes.splice(i,1);
+          }
+        });
+      } catch (error) {
+        node.error(`Error in close > remove routs: ${error}`);
+      }
+
+      // Signal close done
+      done();
     });
 
   }
