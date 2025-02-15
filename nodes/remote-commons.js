@@ -18,7 +18,7 @@ module.exports = {
         }
       }
     });
-    return axios.create({ httpsAgent: httpsAgent, timeout: 5000 });
+    return axios.create({ httpsAgent: httpsAgent, timeout: 30000 });
   },
 
   getNodeVersion: function() {

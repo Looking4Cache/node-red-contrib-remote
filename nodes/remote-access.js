@@ -89,69 +89,72 @@ module.exports = function(RED) {
   }
 
   function requestInstanceSlot(node) {
-    // Is this instance banned?
-    if ( instanceIsBanned ) {
-      return;
-    }
-
-    // Create object with config values to send to server
-    var localip = node.confignode.host;
-    if (localip.toLowerCase() == 'localhost') localip = internalIp.v4.sync();
-    if (localip === undefined) localip = "";
-    const config = {
-      'name': node.confignode.name,
-      'localip': localip,
-      'localport': node.confignode.port,
-      'localprotocol': node.confignode.protocol,
-      'baseurl': node.confignode.baseurl,
-      'timestamp': Date.now(),
-    }
-    const configString = JSON.stringify(config);
-    const configStringBuffer = Buffer.from(configString);
-    const configStringBase64 = configStringBuffer.toString('base64');
-    node.log(`configString ${configString}`);
-
-    // Call API to retrive server and port.
-    const axiosInstance = commons.createAxiosInstance();
-    axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
-      'instancehash': node.confignode.instancehash,
-      'instanceauth': node.confignode.instanceauth,
-      'protocol': node.confignode.protocol,
-      'mountpath': RED.httpNode.mountpath,
-      'config': configStringBase64,
-      'version': commons.getNodeVersion()
-    })
-    .then(response => {
-      // Start SSH
-      const port = response.data.port;
-      node.log(`Using ${node.confignode.server} on port ${port}`);
-      startSSH(node, node.confignode.server, port);
-    })
-    .catch((error) => {
-      // Log error
-      node.error('requestInstanceSlot: ' + commons.getNetworkErrorString(error))
-      if ( commons.getNetworkErrorCustomString(error) !== undefined) {
-        node.error(commons.getNetworkErrorCustomString(error));
+    // Asnyc because https call can take some seconds..
+    return new Promise((resolve, reject) => {
+      // Is this instance banned?
+      if ( instanceIsBanned ) {
+        reject();
       }
 
-      // Wenn gebannt -> Merken
-      if ( error.response && error.response.status ) {
-        if ( error.response.status === 403 ) {
-          setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.banned"});
-          instanceIsBanned = true;
-          return;
+      // Create object with config values to send to server
+      var localip = node.confignode.host;
+      if (localip.toLowerCase() == 'localhost') localip = internalIp.v4.sync();
+      if (localip === undefined) localip = "";
+      const config = {
+        'name': node.confignode.name,
+        'localip': localip,
+        'localport': node.confignode.port,
+        'localprotocol': node.confignode.protocol,
+        'baseurl': node.confignode.baseurl,
+        'timestamp': Date.now(),
+      }
+      const configString = JSON.stringify(config);
+      const configStringBuffer = Buffer.from(configString);
+      const configStringBase64 = configStringBuffer.toString('base64');
+      node.log(`Sending config to server: ${configString}`);
+
+      // Call API to retrive server and port.
+      const axiosInstance = commons.createAxiosInstance();
+      axiosInstance.post(`https://api-${node.confignode.server}/instanceSlotRequest`, {
+        'instancehash': node.confignode.instancehash,
+        'instanceauth': node.confignode.instanceauth,
+        'protocol': node.confignode.protocol,
+        'mountpath': RED.httpNode.mountpath,
+        'config': configStringBase64,
+        'version': commons.getNodeVersion()
+      })
+      .then(response => {
+        // Start SSH
+        const port = response.data.port;
+        node.log(`Using ${node.confignode.server} on port ${port}`);
+        startSSH(node, node.confignode.server, port);
+        resolve();
+      })
+      .catch((error) => {
+        // Log error
+        node.error('requestInstanceSlot: ' + commons.getNetworkErrorString(error))
+        if ( commons.getNetworkErrorCustomString(error) !== undefined) {
+          node.error(commons.getNetworkErrorCustomString(error));
         }
-      }
 
-      // Set status
-      setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.commerror"});
-      return;
+        // Wenn gebannt -> Merken
+        if ( error.response && error.response.status ) {
+          if ( error.response.status === 403 ) {
+            setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.banned"});
+            instanceIsBanned = true;
+          }
+        }
+
+        // Set status
+        if (!instanceIsBanned) setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.commerror"});
+        reject();
+      });
     });
   }
 
-  function tryConnect(node) {
+  async function tryConnect(node) {
     // Request new instance slot and connect ssh
-    requestInstanceSlot(node)
+    await requestInstanceSlot(node)
 
     // Create timer to check if ssh process still serving in 10 seconds
     node.checkservingtimeout = setTimeout(checkServing, 1000*10, node);
@@ -275,7 +278,7 @@ module.exports = function(RED) {
     node.heartbeatinterval = setInterval(heartbeat, 5*60*1000, node);
 
     // Call API for announce the instacehash and authentication, retrive server and port.
-    tryConnect(node);
+    tryConnect(node)
 
     // Post URL for action
     const postUrlAction = `/contrib-remote/action/${node.confignode.instancehash}`;
