@@ -5,7 +5,7 @@
     defaults: {
       name: {value:"Node-RED UI"},
       host: {value:"localhost"},
-      protocol: {value:"http"},
+      protocol: {value:""},
       port: {value:0, validate:RED.validators.number()},
       baseurl: {value:""},
       instancehash: {value:""},
@@ -48,6 +48,10 @@
         if (document.getElementById('node-config-input-port').value === '') {
           document.getElementById('node-config-input-port').value = data.port
         }
+        if (document.getElementById('node-config-input-protocol').value === '') {
+          document.getElementById('node-config-input-protocol').value = data.protocol
+        }
+        
       });
 
       // Show change info / backup info?
@@ -239,8 +243,8 @@
   <div class="form-row">
     <label for="node-config-input-protocol"><i class="fa fa-tag"></i> <span data-i18n="remote-config.label.protocol"></label>
     <select id="node-config-input-protocol">
-        <option value="http">http</option>
-        <option value="https">https</option>
+      <option value="http">http</option>
+      <option value="https">https</option>
     </select>
   </div>
   <div class="form-row">

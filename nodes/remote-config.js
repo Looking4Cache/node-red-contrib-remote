@@ -94,14 +94,24 @@ module.exports = function(RED) {
     res.json(testResults);
   });
 
-  RED.httpAdmin.get("/contrib-remote/connectionData", RED.auth.needsPermission('remote-config.read'), function(req,res) {
-    // Return the internal IP and the mountpath
+  RED.httpAdmin.get("/contrib-remote/connectionData", RED.auth.needsPermission('remote-config.read'), async function(req,res) {
+    // Return the internal IP, the port, the protocol and the calculated baseurl
     const ipData = {
-      'ipv4': internalIp.v4.sync(),
-      'baseurl': RED.httpNode.mountpath + ((RED.settings.ui !== undefined && RED.settings.ui.path !== undefined) ? RED.settings.ui.path : 'ui'),
-      'port': (RED.settings.uiPort !== undefined) ? String(RED.settings.uiPort) : '1880'
+      ipv4: internalIp.v4.sync(),
+      port: (RED.settings.uiPort !== undefined) ? String(RED.settings.uiPort) : '1880',
+      protocol: (RED.settings.https !== undefined) ? 'https' : 'http',
     }
-    console.log(`${JSON.stringify(ipData)}`);
+
+    // Check Dashbaord 2 url
+    const availableDashbaord = await commons.testUrlAvailable(`${ipData.protocol}://${ipData.ipv4}:${ipData.port}${RED.httpNode.mountpath}dashboard`);
+    if (availableDashbaord) {
+      ipData.baseurl = `${RED.httpNode.mountpath}dashboard`;
+    } else {
+      // Dashbaord 2 not founnd, use UI settings instead
+      ipData.baseurl =  RED.httpNode.mountpath + ((RED.settings.ui !== undefined && RED.settings.ui.path !== undefined) ? RED.settings.ui.path : 'ui');
+    }
+
+    // console.log(`${JSON.stringify(ipData)}`);
     res.json(ipData);
   });
 
