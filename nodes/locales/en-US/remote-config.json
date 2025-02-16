@@ -15,8 +15,8 @@
           "region_sg": "Asia (Singapur)",
           "region_dev": "Development host",
           "region_desc": "The region can´t be changed after registering an app.",
-          "change_info": "If you change settings, you need to reconnect the app.",
-          "backup_info": "This config node was restored from a backup. Therefore security relevant information are not included. Please delete this config-node and the connections in your Remote-RED apps. Create a new config-node, connect it to the apps and select this new config node in all dependent nodes."
+          "change_info": "To apply changes, first carry out a redeploy. Then restart the app or refresh the list of instances by dragging the list down.",
+          "backup_info": "This config node was restored from a backup. Therefore security relevant information are not included. Please delete this config-node (via the gear icon at the top right) and the connections in your Remote-RED apps. Create a new config-node, connect it to the apps and select this new config node in all dependent nodes."
         },
         "actions" : {
           "register_app": "Connect Remote-RED App",

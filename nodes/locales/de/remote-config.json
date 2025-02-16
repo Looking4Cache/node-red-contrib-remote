@@ -15,8 +15,8 @@
           "region_sg": "Asien (Singapur)",
           "region_dev": "Entwicklung",
           "region_desc": "Der Standort kann nicht mehr geändert werden, sobald eine App registriert wurde.",
-          "change_info": "Wenn Du Einstellungen änderst, musst Du die App neu verbinden.",
-          "backup_info": "Diese Konfig-Node wurde aus einem Backup wiederhergestellt. Daher sind sicherheitsrelevante Informationen nicht enthalten. Bitte löschen diese Konfig-Node und die Verbindungen in Deinen Remote-RED Apps. Lege eine neue Konfig-Node an, verbinde diese neu mit den Apps und wähle diese neue Konfig-Node in allen davon abhängigen Nodes aus."
+          "change_info": "Damit Änderungen aktiv werden führe einen Redeploy durch. Starte danach die App neu oder aktualisiere die Liste der Instanzen, indem Du die Liste nach unten ziehst.",
+          "backup_info": "Diese Konfig-Node wurde aus einem Backup wiederhergestellt. Daher sind sicherheitsrelevante Informationen nicht enthalten. Bitte löschen diese Konfig-Node (über das Zahnrad Icon rechts oben) und die Verbindungen in Deinen Remote-RED Apps. Lege eine neue Konfig-Node an, verbinde diese neu mit den Apps und wähle diese neue Konfig-Node in allen davon abhängigen Nodes aus."
         },
         "actions" : {
           "register_app": "Remote-RED App verbinden",
