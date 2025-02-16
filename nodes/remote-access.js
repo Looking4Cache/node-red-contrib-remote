@@ -3,6 +3,7 @@ module.exports = function(RED) {
   const child_process = require('child_process');
   const os = require("os");
   const internalIp = require('internal-ip');
+  const instancehashToAccessNode = {};
 
   function startSSH(node, server, port) {
     try {
@@ -278,11 +279,22 @@ module.exports = function(RED) {
       return;
     }
     if ( node.confignode.instancehash !== undefined && node.confignode.instanceauth === undefined ) {
-      node.log("Configuration has no instanceauth. Maybe restored backup!");
+      node.error("Configuration has no instanceauth. Maybe restored backup!");
       setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.backupconfig"});
       return;
     }
 
+    // Check if there are more access nodes for this config node
+    const accessNodeObject = instancehashToAccessNode[node.confignode.instancehash];
+    if (accessNodeObject !== undefined && accessNodeObject['id'] !== node.id) {
+      const errorText = `The config node '${node.confignode.name}' is already used in the access node '${accessNodeObject['name']}'. Use only one access node for a config node.`;
+      node.error(errorText);
+      setStatus(node, {fill:"red",shape:"dot",text:errorText});
+      return;
+    } else {
+      instancehashToAccessNode[node.confignode.instancehash] = { id: node.id, name: node.name }
+    }
+        
     // Init heartbeat
     node.initialHeartbeatStatus = ''
     node.lastHeartbeatStatus = ''
