@@ -37,7 +37,17 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 ## Version History
 
 Version 2.0.0
-- Config changes will be transfered to the app without creating a new QR Code.
+- Enormously faster access to your Node-RED via the Internet
+- macOS app for Apple Silicon (M-Chips)#
+- Status display whether the instances are connected
+- Changes to the configuration are applied without reconnecting the app
+- Connection loss after switching from Wifi to mobile fixed
+- Notifications with full UTF-8 support 
+- New instances automatically recognize http/https and the use of Dashboard 2
+- Android: Local network is used again if possible
+- Android: Delete an instance by long press and pull to refresh
+- Reconnecting the instance to my server improved
+- Multiple use of a config node in several access nodes is now recognized
 
 Version 1.6.1
 - Adding instances on Android is be possible again.
