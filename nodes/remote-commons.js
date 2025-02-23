@@ -18,7 +18,13 @@ module.exports = {
         }
       }
     });
-    return axios.create({ httpsAgent: httpsAgent, timeout: 30000 });
+    return axios.create({
+      httpsAgent: httpsAgent,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   },
 
   testUrlAvailable: async function(url) {
