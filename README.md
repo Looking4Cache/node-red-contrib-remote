@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 2.0.1
+- Possible bug on network connection fixed
+
 Version 2.0.0
 - Enormously faster access to your Node-RED via the Internet
 - macOS app for Apple Silicon (M-Chips)#
