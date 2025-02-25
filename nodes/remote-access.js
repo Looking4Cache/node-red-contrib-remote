@@ -102,7 +102,7 @@ module.exports = function(RED) {
     return new Promise((resolve, reject) => {
       // Is this instance banned?
       if ( node.instanceIsBanned ) {
-        reject();
+        reject(new Error('Instance banned'));
       }
 
       // Create object with config values to send to server
@@ -141,10 +141,12 @@ module.exports = function(RED) {
       })
       .catch((error) => {
         // Log error
-        node.error('requestInstanceSlot: ' + commons.getNetworkErrorString(error))
+        node.error('requestInstanceSlot: ' + commons.getNetworkErrorString(error));
+        node.error(error);
         if ( commons.getNetworkErrorCustomString(error) !== undefined) {
           node.error(commons.getNetworkErrorCustomString(error));
         }
+        commons.reportError(error, node, 'requestInstanceSlot');
 
         // Wenn gebannt -> Merken
         if ( error.response && error.response.status ) {
@@ -156,14 +158,20 @@ module.exports = function(RED) {
 
         // Set status
         if (!node.instanceIsBanned) setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.commerror"});
-        reject();
+
+        // Resolve as error is handled
+        resolve();
       });
     });
   }
 
   async function tryConnect(node) {
     // Request new instance slot and connect ssh
-    await requestInstanceSlot(node)
+    try {
+      await requestInstanceSlot(node)
+    } catch (error) {
+      commons.reportError(error, node, 'tryConnect');
+    }
 
     // Create timer to check if ssh process still serving in 10 seconds
     node.checkservingtimeout = setTimeout(checkServing, 1000*10, node);

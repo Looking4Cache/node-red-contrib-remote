@@ -80,6 +80,16 @@ module.exports = {
       errorString = `Error during DNS queries. Please check Internet connection on your Node-RED server. Please check if a firewall blocks your DNS queries.`;
     }
     return errorString;
+  },
+
+  reportError: function(error, node, caller) {
+    if (error instanceof AggregateError) {
+      error.errors.forEach(errorElem => {
+        this.reportError(errorElem, node, caller);
+      });
+    } else {
+      node.error(`${caller}: ${error.code}: ${(error.stack !== undefined) ? error.stack : error.message}`);
+    }
   }
 
 }
