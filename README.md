@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 2.0.2
+- Crash on Node-RED startup fixed, extended error reporting
+
 Version 2.0.1
 - Possible bug on network connection fixed
 
