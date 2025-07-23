@@ -88,7 +88,10 @@ module.exports = {
         this.reportError(errorElem, node, caller);
       });
     } else {
-      node.error(`${caller}: ${error.code}: ${(error.stack !== undefined) ? error.stack : error.message}`);
+      node.error(`${caller}: ${error.code}: ${error.message}`);
+      if ( error.stack !== undefined ) {
+        node.debug(error.stack);
+      }
     }
   }
 

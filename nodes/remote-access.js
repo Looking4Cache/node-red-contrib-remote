@@ -12,12 +12,7 @@ module.exports = function(RED) {
       // Is there a old node.sshprocess object?
       if (node.sshprocess !== undefined) {
         node.log(`ssh process with pid ${node.sshprocess.pid} already existing`);
-        node.sshprocess.removeAllListeners('close');
-        node.sshprocess.removeAllListeners('exit');
-        node.sshprocess.removeAllListeners('error');
-        node.sshprocess.stdout.removeAllListeners('data');
-        node.sshprocess.stderr.removeAllListeners('data');
-        node.sshprocess = undefined;
+        killSSHProcess(node);
       }
 
       // Reset heartbeat status
@@ -103,6 +98,7 @@ module.exports = function(RED) {
       // Is this instance banned?
       if ( node.instanceIsBanned ) {
         reject(new Error('Instance banned'));
+        return;
       }
 
       // Create object with config values to send to server
@@ -120,7 +116,7 @@ module.exports = function(RED) {
       const configString = JSON.stringify(config);
       const configStringBuffer = Buffer.from(configString);
       const configStringBase64 = configStringBuffer.toString('base64');
-      node.log(`Sending config to server: ${configString}`);
+      // node.log(`Sending config to server: ${configString}`);
 
       // Call API to retrive server and port.
       const axiosInstance = commons.createAxiosInstance();
@@ -153,6 +149,8 @@ module.exports = function(RED) {
           if ( error.response.status === 403 ) {
             setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.banned"});
             node.instanceIsBanned = true;
+            reject(new Error('Instance banned'));
+            return;
           }
         }
 
@@ -218,8 +216,11 @@ module.exports = function(RED) {
         }
         node.lastHeartbeatStatus = response.data.status
 
-        // If the communication is not ok...
-        if ( node.lastHeartbeatStatus === 'NOTFOUND' ) {
+        // Based on the status...
+        if ( node.lastHeartbeatStatus === 'OK' ) {
+          node.initialHeartbeatStatus = node.lastHeartbeatStatus; // Wenn es jetzt OK ist, zählt es auch wie initial OK
+          setStatus(node, {fill:"green",shape:"dot",text:"remote-access.status.serving"});
+        } else if ( node.lastHeartbeatStatus === 'NOTFOUND' ) {
           // The local endpoint responed a 404...
           setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterrornotfound"});
           node.log(`Heartbeat detected no valid endpoint, got a 404 response. Please check the base URL in the connection settings.`);
@@ -227,8 +228,8 @@ module.exports = function(RED) {
           if ( node.initialHeartbeatStatus === 'OK' ) {
             // If the status before was ok > Restart communication
             setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
-            killSSHProcess(node)
             node.log(`Heartbeat error. Reconnecting soon.`);
+            killSSHProcess(node)
           } else {
             // If the status before had also an error > Just change the label.
             setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterroractive"});
@@ -238,7 +239,7 @@ module.exports = function(RED) {
       })
       .catch((error) => {
         // Error on api call > Log error
-        node.error('heartbeat: ' + commons.getNetworkErrorString(error))
+        commons.reportError(error, node, 'heartbeat');
         if ( commons.getNetworkErrorCustomString(error) !== undefined) {
           node.error(commons.getNetworkErrorCustomString(error));
         }
@@ -251,7 +252,13 @@ module.exports = function(RED) {
     try {
       if (node.sshprocess !== undefined) {
         node.log(`Killing process ${node.sshprocess.pid}`);
+        node.sshprocess.removeAllListeners('close');
+        node.sshprocess.removeAllListeners('exit');
+        node.sshprocess.removeAllListeners('error');
+        node.sshprocess.stdout.removeAllListeners('data');
+        node.sshprocess.stderr.removeAllListeners('data');
         node.sshprocess.kill();
+        node.sshprocess = undefined;
       }
       node.serving = false
     } catch (error) {
