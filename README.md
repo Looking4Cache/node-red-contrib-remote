@@ -36,6 +36,9 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 2.0.4
+-  Fix for 'No endpoint detected' message
+
 Version 2.0.3
 -  More stable handling of connection losses
 
