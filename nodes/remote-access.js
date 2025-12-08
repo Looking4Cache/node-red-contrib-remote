@@ -5,14 +5,14 @@ module.exports = function(RED) {
   const internalIp = require('internal-ip');
   const instancehashToAccessNode = {};
 
-  function startSSH(node, server, port) {
+  async function startSSH(node, server, port) {
     try {
       node.log("starting ssh process");
 
       // Is there a old node.sshprocess object?
       if (node.sshprocess !== undefined) {
-        node.log(`ssh process with pid ${node.sshprocess.pid} already existing`);
-        killSSHProcess(node);
+        node.log(`checking old ssh process with pid ${node.sshprocess.pid}`);
+        await killSSHProcess(node);
       }
 
       // Reset heartbeat status
@@ -30,7 +30,8 @@ module.exports = function(RED) {
         sshparameters.push('-v');
       }
       node.sshprocess = child_process.spawn("ssh", sshparameters);
-      node.log(`ssh process with pid ${node.sshprocess.pid} started`);
+      const currentPid = node.sshprocess.pid;
+      node.log(`ssh process with pid ${currentPid} started`);
 
       // Set serving.. if not working, the process will exit or close
       setStatus(node, {fill:"green",shape:"dot",text:"remote-access.status.serving"});
@@ -49,23 +50,29 @@ module.exports = function(RED) {
       });
 
       node.sshprocess.on('close', (code, signal) => {
-        if ( node.statustext !== "remote-access.status.heartbeaterror" ) {
-          setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+        node.log(`ssh process close (pid: ${currentPid} code: ${code} signal: ${signal})`);
+        // Only update status if this is still the current process
+        if (node.sshprocess && node.sshprocess.pid === currentPid) {
+          if ( node.statustext !== "remote-access.status.heartbeaterror" ) {
+            setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+          }
+          node.serving = false
         }
-        node.serving = false
-        node.log(`ssh process close (pid: ${node.sshprocess.pid} code: ${code} signal: ${signal})`);
       });
 
       node.sshprocess.on('exit', (code, signal) => {
-        if ( node.statustext !== "remote-access.status.heartbeaterror" ) {
-          setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+        node.log(`ssh process exit (pid: ${currentPid} code: ${code} signal: ${signal})`);
+        // Only update status if this is still the current process
+        if (node.sshprocess && node.sshprocess.pid === currentPid) {
+          if ( node.statustext !== "remote-access.status.heartbeaterror" ) {
+            setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopped"});
+          }
+          node.serving = false
         }
-        node.serving = false
-        node.log(`ssh process exit (pid: ${node.sshprocess.pid} code: ${code} signal: ${signal})`);
       });
 
       node.sshprocess.on('error', (err) => {
-        node.log(`ssh process error (pid: ${node.sshprocess.pid}): ${err.name} : ${err.message}`);
+        node.log(`ssh process error (pid: ${currentPid}): ${err.name} : ${err.message}`);
       });
     } catch (e) {
       // TODO: Error: socket hang up
@@ -229,7 +236,8 @@ module.exports = function(RED) {
             // If the status before was ok > Restart communication
             setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
             node.log(`Heartbeat error. Reconnecting soon.`);
-            killSSHProcess(node)
+            // Set serving to false, checkServing will trigger reconnect and startSSH will kill old process
+            node.serving = false;
           } else {
             // If the status before had also an error > Just change the label.
             setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterroractive"});
@@ -248,22 +256,62 @@ module.exports = function(RED) {
   }
 
   function killSSHProcess(node) {
-    // Kill process
-    try {
-      if (node.sshprocess !== undefined) {
-        node.log(`Killing process ${node.sshprocess.pid}`);
-        node.sshprocess.removeAllListeners('close');
-        node.sshprocess.removeAllListeners('exit');
-        node.sshprocess.removeAllListeners('error');
-        node.sshprocess.stdout.removeAllListeners('data');
-        node.sshprocess.stderr.removeAllListeners('data');
-        node.sshprocess.kill();
-        node.sshprocess = undefined;
+    // Returns a promise that kills the current process. Resolves when process is dead or after 2 seconds.
+    return new Promise((resolve) => {
+      try {
+        if (node.sshprocess !== undefined) {
+          const pidToKill = node.sshprocess.pid;
+          const processToKill = node.sshprocess;
+
+          // Remove existing listeners
+          processToKill.removeAllListeners('close');
+          processToKill.removeAllListeners('exit');
+          processToKill.removeAllListeners('error');
+          processToKill.stdout.removeAllListeners('data');
+          processToKill.stderr.removeAllListeners('data');
+
+          // Check if process is already dead (exitCode is set when process has exited)
+          if (processToKill.exitCode !== null || processToKill.killed) {
+            node.log(`Process ${pidToKill} already dead (exitCode: ${processToKill.exitCode}, killed: ${processToKill.killed})`);
+            node.sshprocess = undefined;
+            node.serving = false;
+            resolve();
+            return;
+          }
+
+          node.log(`Killing process ${pidToKill}`);
+
+          // Safety timeout: resolve after 2 seconds even if exit event doesn't fire
+          const safetyTimeout = setTimeout(() => {
+            node.log(`Process ${pidToKill} kill timeout after 2 seconds`);
+            node.serving = false;
+            resolve();
+          }, 2000);
+
+          // Set up one-time exit handler to know when process is really dead
+          const exitHandler = () => {
+            clearTimeout(safetyTimeout);
+            node.log(`Process ${pidToKill} confirmed killed`);
+            node.serving = false;
+            resolve();
+          };
+
+          // Add one-time exit handler
+          processToKill.once('exit', exitHandler);
+
+          // Send kill signal
+          processToKill.kill();
+          node.sshprocess = undefined;
+        } else {
+          node.serving = false;
+          resolve();
+        }
+      } catch (error) {
+        node.error(`Error in killSSHProcess: ${error}`);
+        node.serving = false;
+        resolve();
       }
-      node.serving = false
-    } catch (error) {
-      node.error(`Error in killSSHProcess: ${error}`);
-    }
+    });
   }
 
   function RemoteAccessNode(config) {
@@ -376,8 +424,8 @@ module.exports = function(RED) {
       // Set status
       setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopping"});
 
-      // Kill process
-      killSSHProcess(node)
+      // Kill process (don't wait as Node-RED has a timeout for close handlers)
+      killSSHProcess(node).catch(err => node.error(`Error killing SSH process on close: ${err}`))
 
       // Cancel timeouts
       try {
