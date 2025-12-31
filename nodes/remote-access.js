@@ -15,8 +15,7 @@ module.exports = function(RED) {
         await killSSHProcess(node);
       }
 
-      // Reset heartbeat status
-      node.initialHeartbeatStatus = ''
+      // Reset heartbeat status for current tunnel
       node.lastHeartbeatStatus = ''
 
       // Create ssh command
@@ -218,30 +217,39 @@ module.exports = function(RED) {
       })
       .then(response => {
         // Remember the status
-        if ( node.initialHeartbeatStatus === '' ) {
-          node.initialHeartbeatStatus = response.data.status
-        }
         node.lastHeartbeatStatus = response.data.status
 
         // Based on the status...
         if ( node.lastHeartbeatStatus === 'OK' ) {
-          node.initialHeartbeatStatus = node.lastHeartbeatStatus; // Wenn es jetzt OK ist, zählt es auch wie initial OK
+          // Successful heartbeat
+          node.configurationValidated = true;   // Configuration is definitely OK
+          node.initialRetryCount = 0;           // Reset retry counter on success
           setStatus(node, {fill:"green",shape:"dot",text:"remote-access.status.serving"});
         } else if ( node.lastHeartbeatStatus === 'NOTFOUND' ) {
-          // The local endpoint responed a 404...
+          // The local endpoint responded with a 404...
           setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterrornotfound"});
           node.log(`Heartbeat detected no valid endpoint, got a 404 response. Please check the base URL in the connection settings.`);
-        } else if ( node.lastHeartbeatStatus !== 'OK' ) {
-          if ( node.initialHeartbeatStatus === 'OK' ) {
-            // If the status before was ok > Restart communication
+        } else {
+          // Heartbeat error - decide whether to reconnect
+          if ( node.configurationValidated === true ) {
+            // Configuration was validated before → Reconnect
             setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.heartbeaterror"});
             node.log(`Heartbeat error. Reconnecting soon.`);
             // Set serving to false, checkServing will trigger reconnect and startSSH will kill old process
             node.serving = false;
           } else {
-            // If the status before had also an error > Just change the label.
-            setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterroractive"});
-            node.log(`Heartbeat detected no valid endpoint. Please check your connection settings (Base URL, Serving Port and Protocol).`);
+            // Never worked yet - check if still in startup phase
+            if ( node.initialRetryCount < 3 ) {
+              // Still in startup phase - give it more chances (after reboot with slow network, Starlink reconnect, etc.)
+              node.initialRetryCount++;
+              setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterror"});
+              node.log(`Heartbeat error during startup (attempt ${node.initialRetryCount}/3). Reconnecting soon.`);
+              node.serving = false;  // Trigger reconnect
+            } else {
+              // Too many failed attempts > Misconfiguration > NO reconnect
+              setStatus(node, {fill:"yellow",shape:"dot",text:"remote-access.status.heartbeaterroractive"});
+              node.log(`Heartbeat detected no valid endpoint. Please check your connection settings (Base URL, Serving Port and Protocol).`);
+            }
           }
         }
       })
@@ -359,8 +367,9 @@ module.exports = function(RED) {
     }
         
     // Init heartbeat
-    node.initialHeartbeatStatus = ''
-    node.lastHeartbeatStatus = ''
+    node.configurationValidated = false;  // Was the configuration EVER successfully validated?
+    node.lastHeartbeatStatus = '';
+    node.initialRetryCount = 0;           // Counts retry attempts during startup phase
     node.heartbeatinterval = setInterval(heartbeat, 5*60*1000, node);
 
     // Call API for announce the instacehash and authentication, retrive server and port.
