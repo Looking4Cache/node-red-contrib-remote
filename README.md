@@ -36,11 +36,14 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 ## Version History
 
+Version 2.0.5
+- Improved reconnect for Starlink users
+
 Version 2.0.4
--  Fix for 'No endpoint detected' message
+- Fix for 'No endpoint detected' message
 
 Version 2.0.3
--  More stable handling of connection losses
+- More stable handling of connection losses
 
 Version 2.0.2
 - Crash on Node-RED startup fixed, extended error reporting
