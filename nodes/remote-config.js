@@ -53,14 +53,12 @@ module.exports = function(RED) {
             .then(res => {
               const v4 = res.some(e => e.family === 4);
               const v6 = res.some(e => e.family === 6);
-              testResults.push({type: 'DNS', test: `DNS lookup ${host}`, result: getErrorMessage(error)});
+              testResults.push({type: 'DNS', test: `DNS lookup ${host}`, result: `OK (${v4 ? 'IPv4' : ''}${v4 && v6 ? ', ' : ''}${v6 ? 'IPv6' : ''})`});
               console.log(res);
-              // testResults.push({test: `DNS lookup ${host}`, result: res.alive ? `${res.time}ms` : 'Error'});
             })
             .catch(error => {
               console.log(error);
               console.log(`dns resolve ${host}: ${getErrorMessage(error)}`);
-              // console.log(error);
               testResults.push({type: 'DNS', test: `DNS lookup ${host}`, result: getErrorMessage(error)});
             });
     });
