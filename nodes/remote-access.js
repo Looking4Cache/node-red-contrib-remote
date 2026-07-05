@@ -75,7 +75,7 @@ module.exports = function(RED) {
       });
     } catch (e) {
       // TODO: Error: socket hang up
-      node.error('startSSH error: ' + error);
+      node.error('startSSH error: ' + e);
     }
   }
 
