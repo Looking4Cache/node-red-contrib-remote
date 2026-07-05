@@ -75,7 +75,7 @@ module.exports = function(RED) {
                 });
               } else {
                 // To big...
-                node.error("xxxThe message exceeded 3600 bytes. Can´t send.");
+                node.error("The message exceeded 3600 bytes. Can´t send.");
 
                 // Output status if configured so
                 if ( config.output == 2 ) {
