@@ -169,6 +169,18 @@ module.exports = function(RED) {
     });
   }
 
+  function scheduleCheckServing(node, delay) {
+    // Only one checkServing timer per node: cancel a pending one before scheduling
+    clearTimeout(node.checkservingtimeout);
+    node.checkservingtimeout = setTimeout(checkServing, delay, node);
+  }
+
+  function scheduleTryConnect(node, delay) {
+    // Only one tryConnect timer per node: cancel a pending one before scheduling
+    clearTimeout(node.tryconnecttimeout);
+    node.tryconnecttimeout = setTimeout(tryConnect, delay, node);
+  }
+
   async function tryConnect(node) {
     // Request new instance slot and connect ssh
     try {
@@ -178,7 +190,7 @@ module.exports = function(RED) {
     }
 
     // Create timer to check if ssh process still serving in 10 seconds
-    node.checkservingtimeout = setTimeout(checkServing, 1000*10, node);
+    scheduleCheckServing(node, 1000*10);
   }
 
   function checkServing(node) {
@@ -194,13 +206,13 @@ module.exports = function(RED) {
       } else if (node.errorcounter >= 4) {
         interval = 1000*50;
       }
-      node.tryconnecttimeout = setTimeout(tryConnect, interval, node);
+      scheduleTryConnect(node, interval);
     } else {
       // Running > Reset error counter
       node.errorcounter = 0;
 
       // Schedule timer to check if still serving
-      node.checkservingtimeout = setTimeout(checkServing, 1000*10, node);
+      scheduleCheckServing(node, 1000*10);
     }
   }
 
