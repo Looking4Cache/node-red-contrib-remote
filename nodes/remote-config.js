@@ -5,6 +5,7 @@ module.exports = function(RED) {
   const dns = require('dns'); 
   const dnsPromises = dns.promises;
   const fs = require('fs');
+  const path = require('path');
   var QRCode = require('qrcode');
 
   function RemoteConfigNode(n) {
@@ -205,7 +206,8 @@ module.exports = function(RED) {
 
   RED.httpAdmin.get("/contrib-remote/getResouceFile/:filename", RED.auth.needsPermission('remote-config.read'), function(req,res) {
     // Sends a file as Base64
-    const fileBase64 = fs.readFileSync(__dirname + '/resources/' + req.params.filename, {encoding: 'base64'});
+    const safeName = path.basename(req.params.filename);
+    const fileBase64 = fs.readFileSync(__dirname + '/resources/' + safeName, {encoding: 'base64'});
     res.json({ 'filedata': fileBase64 });
   });
 
