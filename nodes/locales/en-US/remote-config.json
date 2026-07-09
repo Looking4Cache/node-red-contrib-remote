@@ -16,7 +16,11 @@
           "region_dev": "Development host",
           "region_desc": "The region can´t be changed after registering an app.",
           "change_info": "To apply changes, first carry out a redeploy. Then restart the app or refresh the list of instances by dragging the list down.",
-          "backup_info": "This config node was restored from a backup. Therefore security relevant information are not included. Please delete this config-node (via the gear icon at the top right) and the connections in your Remote-RED apps. Create a new config-node, connect it to the apps and select this new config node in all dependent nodes."
+          "backup_info": "This config node was restored from a backup. Therefore security relevant information are not included. Please delete this config-node (via the gear icon at the top right) and the connections in your Remote-RED apps. Create a new config-node, connect it to the apps and select this new config node in all dependent nodes.",
+          "partner_toggle": "I'm a participant of the Remote-RED Partner Program",
+          "customerhash": "CustomerHash",
+          "customerkey": "CustomerKey",
+          "customerkey_desc": "The CustomerKey is only used once during registration and is not stored."
         },
         "actions" : {
           "register_app": "Connect Remote-RED App",
@@ -33,6 +37,11 @@
           "terms": "Terms of Use",
           "privacypolicyurl": "https://www.remote-red.com/en/privacypolicy",
           "termsurl": "https://www.remote-red.com/en/terms"
+        },
+        "partner": {
+          "title": "Remote-RED Partner Program",
+          "info1": "The Remote-RED Partner Program is aimed at manufacturers and integrators who embed Remote-RED into their own products and manage and bill their own instance quotas via the Remote-RED Partner Portal. If you are a participant, you can enter your CustomerHash and CustomerKey here to assign this instance to your partner account. ",
+          "link": "Go to the Remote-RED Partner Portal"
         },
         "help": {
           "title": "Help",

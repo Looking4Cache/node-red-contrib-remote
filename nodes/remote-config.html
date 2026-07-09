@@ -11,8 +11,7 @@
       instancehash: {value:""},
       server: {value:""},
       region: {value:"de"},
-      customerhash: {value:""},
-      customerkey: {value:""}
+      customerhash: {value:""}
     },
     credentials: {
       instanceauth: {type:"text"}
@@ -26,8 +25,27 @@
       document.getElementById('remoteInstanceInputs').style.visibility = 'collapse';
 
       // Deactivate region if already registered
-      if (document.getElementById('node-config-input-instancehash').value != "") {
+      const alreadyRegistered = document.getElementById('node-config-input-instancehash').value != "";
+      if (alreadyRegistered) {
         document.getElementById('node-config-input-region').disabled = true;
+      }
+
+      // Partner-Bereich: aufklappbar, Toggle togglet Sichtbarkeit
+      document.getElementById('node-config-input-showpartner').onchange = function() {
+        togglePartnerSection(this.checked);
+      };
+      // Bereits ein customerhash gesetzt? Dann direkt aufgeklappt anzeigen.
+      const hasCustomerhash = document.getElementById('node-config-input-customerhash').value != "";
+      if (hasCustomerhash) {
+        document.getElementById('node-config-input-showpartner').checked = true;
+      }
+      togglePartnerSection(hasCustomerhash);
+
+      // Instanz schon registriert? Partner-Zuordnung ist dann nicht mehr aenderbar.
+      if (alreadyRegistered) {
+        document.getElementById('node-config-input-showpartner').disabled = true;
+        document.getElementById('node-config-input-customerhash').disabled = true;
+        document.getElementById('node-config-input-customerkeyinput').disabled = true;
       }
 
       // Insert legal link urls
@@ -82,6 +100,18 @@
     document.getElementById('legalTermsLink').setAttribute('href', document.getElementById('terms_url_template').innerHTML);
   }
 
+  function togglePartnerSection(show) {
+    // Shows/hides the Remote-RED Partner Programm section
+    const section = document.getElementById('partnerSection');
+    if (show) {
+      section.style.removeProperty('visibility');
+      section.style.removeProperty('max-height');
+    } else {
+      section.style.visibility = 'collapse';
+      section.style.maxHeight = '0px';
+    }
+  }
+
   function updateLocalhostInfo() {
     // Gives infos about localhost, maybe hides it.
     if (document.getElementById('node-config-input-host').value.toLowerCase() == 'localhost') {
@@ -103,7 +133,12 @@
   function registerInstance() {
     // Request InstanceHash when empty
     const region = document.getElementById('node-config-input-region').value;
-    $.getJSON('contrib-remote/requestInstanceHash/' + region + '/0/0', function(data) {
+    const customerhash = document.getElementById('node-config-input-customerhash').value || '0';
+    const customerkey = document.getElementById('node-config-input-customerkeyinput').value || '0';
+    $.getJSON('contrib-remote/requestInstanceHash/' + region + '/' + encodeURIComponent(customerhash) + '/' + encodeURIComponent(customerkey), function(data) {
+      // CustomerKey wird nur einmalig zur Registrierung benoetigt - danach aus dem UI entfernen.
+      document.getElementById('node-config-input-customerkeyinput').value = '';
+
       if ( data.error == undefined ) {
         // Fill UI
         document.getElementById('node-config-input-instancehash').value = data.instancehash;
@@ -266,6 +301,30 @@
     </select>
   </div>
   <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.region_desc"></label>
+
+  <br>
+  <br>
+  <div class="form-row">
+    <input type="checkbox" id="node-config-input-showpartner" style="display:inline-block; width:22px; vertical-align:top;">
+    <label for="node-config-input-showpartner" style="width:auto;" data-i18n="remote-config.label.partner_toggle"></label>
+  </div>
+  <div id="partnerSection" style="visibility: collapse; max-height: 0px;">
+    <div id="partnerInfo" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-bottom: 10px;">
+      <label data-i18n="remote-config.partner.title" style="font-weight: bold;"></label>
+      <label data-i18n="remote-config.partner.info1"></label>
+      <a id="partnerPortalLink" href="https://portal.remote-red.com" target="_blank"><i><label data-i18n="remote-config.partner.link" style="display: inline; color: #AD1626;"></label></i></a>
+    </div>
+    <div class="form-row">
+      <label for="node-config-input-customerhash"><span data-i18n="remote-config.label.customerhash"></span></label>
+      <input type="text" id="node-config-input-customerhash" placeholder="">
+    </div>
+    <div class="form-row">
+      <label for="node-config-input-customerkeyinput"><span data-i18n="remote-config.label.customerkey"></span></label>
+      <input type="password" id="node-config-input-customerkeyinput" placeholder="">
+    </div>
+    <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.customerkey_desc"></label>
+    <br>
+  </div>
 
   <br>
   <button id="registerRemoteAppButton" type="button" class="red-ui-button" onclick="registerButtonClicked()">

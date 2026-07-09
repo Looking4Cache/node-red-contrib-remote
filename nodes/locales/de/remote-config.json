@@ -16,7 +16,11 @@
           "region_dev": "Entwicklung",
           "region_desc": "Der Standort kann nicht mehr geändert werden, sobald eine App registriert wurde.",
           "change_info": "Damit Änderungen aktiv werden führe einen Redeploy durch. Starte danach die App neu oder aktualisiere die Liste der Instanzen, indem Du die Liste nach unten ziehst.",
-          "backup_info": "Diese Konfig-Node wurde aus einem Backup wiederhergestellt. Daher sind sicherheitsrelevante Informationen nicht enthalten. Bitte löschen diese Konfig-Node (über das Zahnrad Icon rechts oben) und die Verbindungen in Deinen Remote-RED Apps. Lege eine neue Konfig-Node an, verbinde diese neu mit den Apps und wähle diese neue Konfig-Node in allen davon abhängigen Nodes aus."
+          "backup_info": "Diese Konfig-Node wurde aus einem Backup wiederhergestellt. Daher sind sicherheitsrelevante Informationen nicht enthalten. Bitte löschen diese Konfig-Node (über das Zahnrad Icon rechts oben) und die Verbindungen in Deinen Remote-RED Apps. Lege eine neue Konfig-Node an, verbinde diese neu mit den Apps und wähle diese neue Konfig-Node in allen davon abhängigen Nodes aus.",
+          "partner_toggle": "Ich bin Teilnehmer am Remote-RED Partner Programm",
+          "customerhash": "CustomerHash",
+          "customerkey": "CustomerKey",
+          "customerkey_desc": "Der CustomerKey wird nur einmalig zur Registrierung verwendet und nicht gespeichert."
         },
         "actions" : {
           "register_app": "Remote-RED App verbinden",
@@ -33,6 +37,11 @@
           "terms": "Nutzungsvereinbarung",
           "privacypolicyurl": "https://www.remote-red.com/de/datenschutz",
           "termsurl": "https://www.remote-red.com/de/nutzung"
+        },
+        "partner": {
+          "title": "Remote-RED Partner Programm",
+          "info1": "Das Remote-RED Partner Programm richtet sich an Hersteller und Integratoren, die Remote-RED in eigene Produkte einbetten und über das Remote-RED Partner Portal eigene Kontingente an Instanzen verwalten und abrechnen. Falls Du Teilnehmer bist, kannst Du hier Deinen CustomerHash und CustomerKey eintragen, um diese Instanz Deinem Partner-Konto zuzuordnen. ",
+          "link": "Zum Remote-RED Partner Portal"
         },
         "help": {
           "title": "Hilfe",

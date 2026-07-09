@@ -19,6 +19,7 @@ module.exports = function(RED) {
     this.server = n.server;
     this.instanceauth = this.credentials.instanceauth;
     this.region = n.region;
+    this.customerhash = n.customerhash;
   }
 
   RED.nodes.registerType("remote-config",RemoteConfigNode, {
