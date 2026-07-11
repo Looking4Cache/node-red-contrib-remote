@@ -20,7 +20,9 @@
           "partner_toggle": "Ich bin Teilnehmer am Remote-RED Partner Programm",
           "customerhash": "CustomerHash",
           "customerkey": "CustomerKey",
-          "customerkey_desc": "Der CustomerKey wird nur einmalig zur Registrierung verwendet und nicht gespeichert."
+          "customerkey_desc": "Der CustomerKey wird nur einmalig zur Registrierung verwendet und nicht gespeichert.",
+          "customerreference": "Kunden-Referenz (optional)",
+          "customerreference_desc": "Z.B. Seriennummer oder Endkunden-Nummer, max. 100 Zeichen. Dient der Zuordnung dieser Instanz im Partner-Portal und ist nachträglich nicht mehr änderbar."
         },
         "actions" : {
           "register_app": "Remote-RED App verbinden",

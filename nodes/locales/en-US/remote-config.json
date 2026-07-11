@@ -20,7 +20,9 @@
           "partner_toggle": "I'm a participant of the Remote-RED Partner Program",
           "customerhash": "CustomerHash",
           "customerkey": "CustomerKey",
-          "customerkey_desc": "The CustomerKey is only used once during registration and is not stored."
+          "customerkey_desc": "The CustomerKey is only used once during registration and is not stored.",
+          "customerreference": "Customer reference (optional)",
+          "customerreference_desc": "E.g. serial number or end customer number, max. 100 characters. Used to identify this instance in the Partner Portal and cannot be changed afterwards."
         },
         "actions" : {
           "register_app": "Connect Remote-RED App",

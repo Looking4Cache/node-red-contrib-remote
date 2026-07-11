@@ -129,12 +129,19 @@ module.exports = function(RED) {
       url = 'https://contact-' + req.params.regionorserver + '.remote-red.com/instanceHashRequest';
     }
 
-    // Call API
-    axiosInstance.post(url, {
+    // Build request body; customerreference is optional (query param, backwards compatible
+    // with older CLI/node versions that never send it, PARTNER-PORTAL-KONZEPT Kap. 8.3 pt. 7)
+    const postData = {
       'customerhash': req.params.customerhash,
       'customerkey': req.params.customerkey,
       'version': commons.getNodeVersion()
-    })
+    };
+    if (req.query.customerreference !== undefined && req.query.customerreference !== '') {
+      postData.customerreference = req.query.customerreference;
+    }
+
+    // Call API
+    axiosInstance.post(url, postData)
     .then(response => {
       res.json(response.data);
     })

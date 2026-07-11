@@ -46,6 +46,7 @@
         document.getElementById('node-config-input-showpartner').disabled = true;
         document.getElementById('node-config-input-customerhash').disabled = true;
         document.getElementById('node-config-input-customerkeyinput').disabled = true;
+        document.getElementById('node-config-input-customerreferenceinput').disabled = true;
       }
 
       // Insert legal link urls
@@ -135,9 +136,15 @@
     const region = document.getElementById('node-config-input-region').value;
     const customerhash = document.getElementById('node-config-input-customerhash').value || '0';
     const customerkey = document.getElementById('node-config-input-customerkeyinput').value || '0';
-    $.getJSON('contrib-remote/requestInstanceHash/' + region + '/' + encodeURIComponent(customerhash) + '/' + encodeURIComponent(customerkey), function(data) {
-      // CustomerKey wird nur einmalig zur Registrierung benoetigt - danach aus dem UI entfernen.
+    const customerreference = document.getElementById('node-config-input-customerreferenceinput').value || '';
+    let requestUrl = 'contrib-remote/requestInstanceHash/' + region + '/' + encodeURIComponent(customerhash) + '/' + encodeURIComponent(customerkey);
+    if (customerreference !== '') {
+      requestUrl += '?customerreference=' + encodeURIComponent(customerreference);
+    }
+    $.getJSON(requestUrl, function(data) {
+      // CustomerKey und CustomerReference werden nur einmalig zur Registrierung benoetigt - danach aus dem UI entfernen.
       document.getElementById('node-config-input-customerkeyinput').value = '';
+      document.getElementById('node-config-input-customerreferenceinput').value = '';
 
       if ( data.error == undefined ) {
         // Fill UI
@@ -323,6 +330,12 @@
       <input type="password" id="node-config-input-customerkeyinput" placeholder="">
     </div>
     <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.customerkey_desc"></label>
+    <br>
+    <div class="form-row">
+      <label for="node-config-input-customerreferenceinput"><span data-i18n="remote-config.label.customerreference"></span></label>
+      <input type="text" id="node-config-input-customerreferenceinput" placeholder="" maxlength="100">
+    </div>
+    <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.customerreference_desc"></label>
     <br>
   </div>
 
