@@ -41,12 +41,12 @@
       }
       togglePartnerSection(hasCustomerhash);
 
-      // Instanz schon registriert? Partner-Zuordnung ist dann nicht mehr aenderbar.
+      // Instanz schon registriert? Partner-Zuordnung ist dann nicht mehr änderbar.
       if (alreadyRegistered) {
         document.getElementById('node-config-input-showpartner').disabled = true;
         document.getElementById('node-config-input-customerhash').disabled = true;
-        document.getElementById('node-config-input-customerkeyinput').disabled = true;
-        document.getElementById('node-config-input-customerreferenceinput').disabled = true;
+        document.getElementById('customerkeyRow').style.display = 'none';
+        document.getElementById('customerreferenceRow').style.display = 'none';
       }
 
       // Insert legal link urls
@@ -325,18 +325,22 @@
       <label for="node-config-input-customerhash"><span data-i18n="remote-config.label.customerhash"></span></label>
       <input type="text" id="node-config-input-customerhash" placeholder="">
     </div>
-    <div class="form-row">
-      <label for="node-config-input-customerkeyinput"><span data-i18n="remote-config.label.customerkey"></span></label>
-      <input type="password" id="node-config-input-customerkeyinput" placeholder="">
+    <div id="customerkeyRow">
+      <div class="form-row">
+        <label for="node-config-input-customerkeyinput"><span data-i18n="remote-config.label.customerkey"></span></label>
+        <input type="password" id="node-config-input-customerkeyinput" placeholder="">
+      </div>
+      <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.customerkey_desc"></label>
+      <br>
     </div>
-    <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.customerkey_desc"></label>
-    <br>
-    <div class="form-row">
-      <label for="node-config-input-customerreferenceinput"><span data-i18n="remote-config.label.customerreference"></span></label>
-      <input type="text" id="node-config-input-customerreferenceinput" placeholder="" maxlength="100">
+    <div id="customerreferenceRow">
+      <div class="form-row">
+        <label for="node-config-input-customerreferenceinput"><span data-i18n="remote-config.label.customerreference"></span></label>
+        <input type="text" id="node-config-input-customerreferenceinput" placeholder="" maxlength="100">
+      </div>
+      <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.customerreference_desc"></label>
+      <br>
     </div>
-    <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.customerreference_desc"></label>
-    <br>
   </div>
 
   <br>
