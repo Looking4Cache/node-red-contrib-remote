@@ -29,12 +29,26 @@ There is a help page describing how the the nodes work together and how to conne
 [Hilfe in Deutsch](https://www.remote-red.com/de/hilfe/)
 
 
+## Remote-RED Partner Programm
+
+If you want to scale up, have a look at the Remote-RED Partner Programm. It is made for everyone who does not only use Node-RED for themselves, but builds solutions for others:
+
+- developers of own IoT projects (Node-RED and also pure Linux projects)
+- installers of smart home and control systems
+- manufacturers and platforms looking for a white label solution
+
+As a partner you offer your customers encrypted access to their dashboards, push notifications and geofencing triggers - without developing your own app and without running your own server infrastructure.
+
+
 ## Contact
 
 You will find more information on [www.remote-red-com](https://www.remote-red.com). You can contact me by mail through info@remote-red.com.
 
 
 ## Version History
+
+Version 3.0.0
+- Support for the Remote-RED Partner Programm
 
 Version 2.0.5
 - Improved reconnect for Starlink users
