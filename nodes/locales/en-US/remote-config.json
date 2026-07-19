@@ -43,6 +43,7 @@
         "partner": {
           "title": "Remote-RED Partner Program",
           "info1": "The Remote-RED Partner Program is aimed at manufacturers and integrators who embed Remote-RED into their own products and manage and bill their own instance quotas via the Remote-RED Partner Portal. If you are a participant, you can enter your CustomerHash and CustomerKey here to assign this instance to your partner account. ",
+          "info1_readonly": "This instance is already registered and assigned to a partner account. The assignment cannot be changed afterwards. The instance is managed in the Remote-RED Partner Portal. ",
           "link": "Go to the Remote-RED Partner Portal"
         },
         "help": {

@@ -43,6 +43,7 @@
         "partner": {
           "title": "Remote-RED Partner Programm",
           "info1": "Das Remote-RED Partner Programm richtet sich an Hersteller und Integratoren, die Remote-RED in eigene Produkte einbetten und über das Remote-RED Partner Portal eigene Kontingente an Instanzen verwalten und abrechnen. Falls Du Teilnehmer bist, kannst Du hier Deinen CustomerHash und CustomerKey eintragen, um diese Instanz Deinem Partner-Konto zuzuordnen. ",
+          "info1_readonly": "Diese Instanz ist bereits registriert und einem Partner-Konto zugeordnet. Die Zuordnung kann nachträglich nicht mehr geändert werden. Verwaltet wird die Instanz im Remote-RED Partner Portal. ",
           "link": "Zum Remote-RED Partner Portal"
         },
         "help": {

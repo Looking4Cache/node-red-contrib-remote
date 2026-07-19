@@ -47,6 +47,8 @@
         document.getElementById('node-config-input-customerhash').disabled = true;
         document.getElementById('customerkeyRow').style.display = 'none';
         document.getElementById('customerreferenceRow').style.display = 'none';
+        document.getElementById('partnerInfoEditable').style.display = 'none';
+        document.getElementById('partnerInfoReadonly').style.display = '';
       }
 
       // Insert legal link urls
@@ -318,7 +320,8 @@
   <div id="partnerSection" style="visibility: collapse; max-height: 0px;">
     <div id="partnerInfo" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-bottom: 10px;">
       <label data-i18n="remote-config.partner.title" style="font-weight: bold;"></label>
-      <label data-i18n="remote-config.partner.info1"></label>
+      <label id="partnerInfoEditable" data-i18n="remote-config.partner.info1"></label>
+      <label id="partnerInfoReadonly" data-i18n="remote-config.partner.info1_readonly" style="display: none;"></label>
       <a id="partnerPortalLink" href="https://portal.remote-red.com" target="_blank"><i><label data-i18n="remote-config.partner.link" style="display: inline; color: #AD1626;"></label></i></a>
     </div>
     <div class="form-row">
