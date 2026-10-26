@@ -22,7 +22,10 @@
           "customerkey": "CustomerKey",
           "customerkey_desc": "The CustomerKey is only used once during registration and is not stored.",
           "customerreference": "Customer reference (optional)",
-          "customerreference_desc": "E.g. serial number or end customer number, max. 100 characters. Used to identify this instance in the Partner Portal and cannot be changed afterwards."
+          "customerreference_desc": "E.g. serial number or end customer number, max. 100 characters. Used to identify this instance in the Partner Portal and cannot be changed afterwards.",
+          "p2p": "Direct",
+          "p2p_field": "Allow direct connection (WebRTC)",
+          "p2p_desc": "If possible, the app connects directly and encrypted to Node-RED. If this option is turned off, all remote access goes through the Remote-RED server."
         },
         "actions" : {
           "register_app": "Connect Remote-RED App",
@@ -55,6 +58,7 @@
           "field4": "Serving Port: The port that will be forwarded. For Node-RED this is usually 1880, for other websites usually 80.",
           "field5": "Base URL: The initial page to be called.",
           "para2": "You can only edit the “Server location” once. Here you can specify in which corner of the world the server is located, which will be used for routing your website. For a fast connection choose the location that is closest to you.",
+          "para2b": "Direct connection: If possible, the app establishes a direct, end-to-end encrypted connection (WebRTC) to Node-RED, without port forwarding or router settings. If this fails, access goes through the Remote-RED server as before. If the option is turned off, all remote access goes through the server.",
           "para3": "Once you have defined these settings and installed the iOS or Android app, you can connect to an app by clicking the “Connect Remote-RED App” button."
         },
         "apphelp": {

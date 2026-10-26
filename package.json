@@ -1,9 +1,12 @@
 {
   "name": "node-red-contrib-remote",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Remote-RED is an ecosystem to bring remote access, push notification and geofencing to Node-RED. There are also additional functions like directly answer on a notification and homescreen widgets.",
   "author": "Thorsten Heilmann",
   "license": "GPL-3.0",
+  "files": [
+    "nodes"
+  ],
   "node-red": {
     "nodes": {
       "remote-config": "nodes/remote-config.js",
@@ -20,9 +23,16 @@
     "ping": "^0.4.4",
     "qrcode": "^1.4.4"
   },
+  "optionalDependencies": {
+    "werift": "~0.24.4"
+  },
+  "devDependencies": {
+    "express": "^4.21.2",
+    "ws": "^8.18.0"
+  },
   "main": "remote-config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/p2p-test.js"
   },
   "repository": {
     "type": "git",

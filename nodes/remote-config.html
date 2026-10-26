@@ -11,13 +11,19 @@
       instancehash: {value:""},
       server: {value:""},
       region: {value:"de"},
-      customerhash: {value:""}
+      customerhash: {value:""},
+      p2p: {value:true}
     },
     credentials: {
       instanceauth: {type:"text"}
     },
     internalIpV4: '',
     oneditprepare: function() {
+      // Direct connection: config nodes created before the field existed count as enabled
+      if (this.p2p === undefined) {
+        document.getElementById('node-config-input-p2p').checked = true;
+      }
+
       // Hide instance-variables
       document.getElementById('node-config-input-instancehash').disabled = true;
       document.getElementById('node-config-input-instanceauth').disabled = true;
@@ -310,6 +316,14 @@
     </select>
   </div>
   <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.region_desc"></label>
+  <br>
+
+  <div class="form-row">
+    <label for="node-config-input-p2p"><i class="fa fa-exchange"></i> <span data-i18n="remote-config.label.p2p"></span></label>
+    <input type="checkbox" id="node-config-input-p2p" style="display:inline-block; width:22px; vertical-align:top;">
+    <span data-i18n="remote-config.label.p2p_field"></span>
+  </div>
+  <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.p2p_desc"></span></label>
 
   <br>
   <br>
@@ -408,6 +422,7 @@
       <li data-i18n="remote-config.help.field5"></li>
     </ul>
     <label data-i18n="remote-config.help.para2"></label>
+    <label data-i18n="remote-config.help.para2b"></label>
     <label data-i18n="remote-config.help.para3"></label>
   </div>
   <button id="openSupportMailButton" type="button" class="red-ui-button" onclick="openSupportMailButtonClicked()">

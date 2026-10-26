@@ -3,10 +3,19 @@ module.exports = function(RED) {
   const child_process = require('child_process');
   const os = require("os");
   const internalIp = require('internal-ip');
+  const p2p = require('./remote-p2p');
   const instancehashToAccessNode = {};
 
   async function startSSH(node, server, port) {
     try {
+      // Test setups (test/p2p-test.js) run without a real tunnel
+      if ( process.env.REMOTERED_NO_SSH === '1' ) {
+        node.log("ssh disabled by REMOTERED_NO_SSH");
+        setStatus(node, {fill:"green",shape:"dot",text:"remote-access.status.serving"});
+        node.serving = true;
+        return;
+      }
+
       node.log("starting ssh process");
 
       // Is there a old node.sshprocess object?
@@ -91,11 +100,27 @@ module.exports = function(RED) {
   }
 
   function setStatus(node, options) {
-    // Set the status, remember text
+    // Set the status, remember text (locale key) and the options for renderStatus
     if ( options !== undefined && options.text !== undefined ) {
       node.statustext = options.text
     }
-    node.status(options);
+    node.statusoptions = options;
+    renderStatus(node);
+  }
+
+  function renderStatus(node) {
+    // Shows the remembered status, extended by the number of active direct connections.
+    // Without direct connections the locale key is passed unchanged as before.
+    const options = node.statusoptions;
+    if ( options === undefined ) return;
+    const directCount = node.p2p ? node.p2p.getDirectCount() : 0;
+    if ( directCount > 0 && options.text !== undefined ) {
+      node.status(Object.assign({}, options, {
+        text: RED._(options.text) + ' · ' + RED._('remote-access.status.direct', {count: directCount})
+      }));
+    } else {
+      node.status(options);
+    }
   }
 
   function requestInstanceSlot(node) {
@@ -135,6 +160,11 @@ module.exports = function(RED) {
         'version': commons.getNodeVersion()
       })
       .then(response => {
+        // P2P settings of the server (missing on old servers)
+        if ( node.p2p ) {
+          node.p2p.setServerConfig(response.data.p2p);
+        }
+
         // Start SSH
         const port = response.data.port;
         node.log(`Using ${node.confignode.server} on port ${port}`);
@@ -220,14 +250,25 @@ module.exports = function(RED) {
     // Performs a heartbeat: Ask to the server if ssh is available
     if ( node.serving ) {
       const axiosInstance = commons.createAxiosInstance();
-      axiosInstance.post(`https://api-${node.confignode.server}/heartbeat`, {
+      const heartbeatData = {
         'instancehash': node.confignode.instancehash,
         'instanceauth': node.confignode.instanceauth,
         'version': commons.getNodeVersion()
-      }, {
+      };
+      // P2P counters since the last heartbeat (WEBRTCICE-KONZEPT 9.4)
+      const p2pTelemetry = node.p2p ? node.p2p.getTelemetry() : undefined;
+      if ( p2pTelemetry !== undefined ) {
+        heartbeatData.p2p = p2pTelemetry;
+      }
+      axiosInstance.post(`https://api-${node.confignode.server}/heartbeat`, heartbeatData, {
         'timeout': 60*1000
       })
       .then(response => {
+        // Counters were delivered, reset them
+        if ( p2pTelemetry !== undefined ) {
+          node.p2p.commitTelemetry(p2pTelemetry);
+        }
+
         // Remember the status
         node.lastHeartbeatStatus = response.data.status
 
@@ -378,6 +419,19 @@ module.exports = function(RED) {
       instancehashToAccessNode[node.confignode.instancehash] = { id: node.id, name: node.name }
     }
         
+    // Direct connections (WebRTC), status shows the number of active ones
+    node.p2p = p2p.createManager(node, {
+      onDirectCountChange: function() { renderStatus(node); }
+    });
+    if ( node.confignode.p2p !== false ) {
+      // Load werift in the background, so the first offer is not slowed down by it
+      node.p2pprewarmtimeout = setTimeout(function() {
+        if ( !p2p.loadWerift() ) {
+          node.log(`Direct connection (WebRTC) not available: ${String(p2p.getWeriftError()).split('\n')[0]}`);
+        }
+      }, 5*1000);
+    }
+
     // Init heartbeat
     node.configurationValidated = false;  // Was the configuration EVER successfully validated?
     node.lastHeartbeatStatus = '';
@@ -440,10 +494,28 @@ module.exports = function(RED) {
       res.json(contextData);
     });
 
+    // Post URL for direct connection offers (WebRTC signalling, WEBRTCICE-KONZEPT appendix A.2)
+    const postUrlWebrtcOffer = `/contrib-remote/webrtc/offer/${node.confignode.instancehash}`;
+    RED.httpNode.post(postUrlWebrtcOffer, function(req,res) {
+      node.p2p.handleOffer(req, res).catch(function(error) {
+        node.error(`Error handling webrtc offer: ${error}`);
+        if ( !res.headersSent ) {
+          res.status(500).json({ 'error': 'p2p_error' });
+        }
+      });
+    });
+
     // Clean up on close
     node.on('close', function(removed, done) {
       // Set status
       setStatus(node, {fill:"red",shape:"dot",text:"remote-access.status.stopping"});
+
+      // Close all direct connections
+      try {
+        node.p2p.shutdown();
+      } catch (error) {
+        node.error(`Error in close > p2p shutdown: ${error}`);
+      }
 
       // Kill process (don't wait as Node-RED has a timeout for close handlers)
       killSSHProcess(node).catch(err => node.error(`Error killing SSH process on close: ${err}`))
@@ -453,6 +525,7 @@ module.exports = function(RED) {
         clearTimeout(node.checkservingtimeout);
         clearTimeout(node.tryconnecttimeout);
         clearInterval(node.heartbeatinterval);
+        clearTimeout(node.p2pprewarmtimeout);
       } catch (error) {
         node.error(`Error in close > clearTimeout: ${error}`);
       }
@@ -473,6 +546,12 @@ module.exports = function(RED) {
         });
         RED.httpNode._router.stack.forEach(function(route,i,routes) {
           if (route.route && route.route.path === getUrl) {
+            node.log(` -> Remove Route '${route.route.path}'`);
+            routes.splice(i,1);
+          }
+        });
+        RED.httpNode._router.stack.forEach(function(route,i,routes) {
+          if (route.route && route.route.path === postUrlWebrtcOffer) {
             node.log(` -> Remove Route '${route.route.path}'`);
             routes.splice(i,1);
           }

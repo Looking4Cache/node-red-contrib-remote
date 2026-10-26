@@ -20,6 +20,8 @@ module.exports = function(RED) {
     this.instanceauth = this.credentials.instanceauth;
     this.region = n.region;
     this.customerhash = n.customerhash;
+    // Direct connection (WebRTC), existing config nodes without the field count as enabled
+    this.p2p = (n.p2p === undefined) ? true : n.p2p;
   }
 
   RED.nodes.registerType("remote-config",RemoteConfigNode, {
