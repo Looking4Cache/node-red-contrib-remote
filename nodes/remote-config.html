@@ -55,6 +55,10 @@
         document.getElementById('customerreferenceRow').style.display = 'none';
         document.getElementById('partnerInfoEditable').style.display = 'none';
         document.getElementById('partnerInfoReadonly').style.display = '';
+        // Registered without partner: the disabled toggle has no purpose, hide it
+        if (!hasCustomerhash) {
+          document.getElementById('partnerToggleRow').style.display = 'none';
+        }
       }
 
       // Insert legal link urls
@@ -318,18 +322,20 @@
   <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.region_desc"></label>
   <br>
 
-  <div class="form-row">
+  <div class="form-row" style="margin-top: 20px;">
     <label for="node-config-input-p2p"><i class="fa fa-exchange"></i> <span data-i18n="remote-config.label.p2p"></span></label>
     <input type="checkbox" id="node-config-input-p2p" style="display:inline-block; width:22px; vertical-align:top;">
     <span data-i18n="remote-config.label.p2p_field"></span>
   </div>
   <label><i class="fa fa-info-circle"></i> <span data-i18n="remote-config.label.p2p_desc"></span></label>
 
+  <div id="partnerToggleRow">
   <br>
   <br>
   <div class="form-row">
     <input type="checkbox" id="node-config-input-showpartner" style="display:inline-block; width:22px; vertical-align:top;">
     <label for="node-config-input-showpartner" style="width:auto;" data-i18n="remote-config.label.partner_toggle"></label>
+  </div>
   </div>
   <div id="partnerSection" style="visibility: collapse; max-height: 0px;">
     <div id="partnerInfo" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-bottom: 10px;">

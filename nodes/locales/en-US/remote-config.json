@@ -24,8 +24,8 @@
           "customerreference": "Customer reference (optional)",
           "customerreference_desc": "E.g. serial number or end customer number, max. 100 characters. Used to identify this instance in the Partner Portal and cannot be changed afterwards.",
           "p2p": "Direct",
-          "p2p_field": "Allow direct connection (WebRTC)",
-          "p2p_desc": "If possible, the app connects directly and encrypted to Node-RED. If this option is turned off, all remote access goes through the Remote-RED server."
+          "p2p_field": "Use direct connection when possible",
+          "p2p_desc": "If possible, the app connects directly to Node-RED via WebRTC. The route via the Remote-RED server remains in place and is used when WebRTC is not available or the option is turned off."
         },
         "actions" : {
           "register_app": "Connect Remote-RED App",
