@@ -9,7 +9,10 @@
           "sound_possible": "Possible values: bikebell, bingbong, chime, crow, dingdingding, dudeldidudel, enthusiastaudience, gong, monkeys, peterundderwolf, pristine, roostercalling, siren, success",
           "output": "Output",
           "output_forward": "Forward msg",
-          "output_status": "Status (true=success / false=error)"
+          "output_status": "Status (true=success / false=error)",
+          "priority": "Priority",
+          "priority_high": "High priority",
+          "priority_info": "Also gets through Do Not Disturb or an active Focus, as far as the device allows it. Use msg.payload.priority (\"high\" or \"normal\") to override this setting per message."
         },
         "sounds": {
           "nosound": "No sound",
@@ -34,7 +37,8 @@
           "title": "Help",
           "para1": "With this node you can send a push notification to the devices connected to the selected config node. Select a config node that you already use in an access node. You can use the same config node in several notification nodes.",
           "para2": "Configure the title and the text of the notification. The default values assume that the payload of the incoming message contains the strings “title” and “body”. You can also enter fixed texts or use flow or global variables.",
-          "para3": "Whenever a message arrives at the notification node, a notification is sent to your devices. No send is performed if msg.payload.send contains the boolean value 'false'."
+          "para3": "Whenever a message arrives at the notification node, a notification is sent to your devices. No send is performed if msg.payload.send contains the boolean value 'false'.",
+          "para4": "High priority: The notification also gets through Do Not Disturb or an active Focus. On iOS it is delivered as a Time Sensitive notification, which can be controlled in the iOS settings under Notifications › Remote-RED and in the Focus settings. The ring/silent switch of the iPhone still applies. On Android it is delivered as an alarm and the sound is played at alarm volume. It gets through as long as alarms are allowed in Do Not Disturb (default) and can then also be heard in silent mode. You can override the setting per message with msg.payload.priority: \"high\" or true for high, \"normal\" or false for normal priority. Use high priority only for really important messages, for example from smoke or water leak detectors."
         }
     }
 }

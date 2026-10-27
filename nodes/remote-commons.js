@@ -61,6 +61,22 @@ module.exports = {
     return evalValue;
   },
 
+  getNotificationPriority: function(configHighPriority, node, msg) {
+    // Priority from the checkbox, overruled by msg.payload.priority ("high" / "normal" or true / false)
+    let priority = (configHighPriority === true) ? 'high' : 'normal';
+    if (msg.payload !== null && typeof msg.payload === 'object' && msg.payload.priority !== undefined) {
+      const payloadPriority = String(msg.payload.priority).toLowerCase();
+      if (payloadPriority === 'high' || payloadPriority === 'true') {
+        priority = 'high';
+      } else if (payloadPriority === 'normal' || payloadPriority === 'false') {
+        priority = 'normal';
+      } else {
+        node.warn(`Unknown msg.payload.priority '${msg.payload.priority}' (possible values: high, normal). Using '${priority}'.`);
+      }
+    }
+    return priority;
+  },
+
   getNetworkErrorString: function(error) {
     // Trys to get a error message
     let errorString = `` + error;

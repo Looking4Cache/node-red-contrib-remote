@@ -11,7 +11,10 @@
           "answer_two": "Answer 2",
           "answer_three": "Answer 3",
           "answer_text": "Text",
-          "answer_value": "Value"
+          "answer_value": "Value",
+          "priority": "Priority",
+          "priority_high": "High priority",
+          "priority_info": "Also gets through Do Not Disturb or an active Focus, as far as the device allows it. Use msg.payload.priority (\"high\" or \"normal\") to override this setting per message."
         },
         "sounds": {
           "nosound": "No sound",
@@ -38,7 +41,8 @@
           "para2": "It is important that the confg node points to your local Node-RED computer and that an access node is active with it. The base URL is irrelevant.",
           "para3": "Configure the title and the text of the notification. The default values assume that the payload of the incoming message contains the strings “title” and “body”. You can also enter fixed texts or use flow or global variables.",
           "para4": "You can specify up to three answers. The text of the answers can be entered directly as an string or taken from the incoming message. If the text is empty, the answer is not displayed. You can use the value to specify what the node outputs in msg.payload when you select this answer.",
-          "para5": "Whenever a message arrives at the question node, a notification is sent to your devices. No send is performed if msg.payload.send contains the boolean value 'false'."
+          "para5": "Whenever a message arrives at the question node, a notification is sent to your devices. No send is performed if msg.payload.send contains the boolean value 'false'.",
+          "para6": "High priority: The question also gets through Do Not Disturb or an active Focus. On iOS it is delivered as a Time Sensitive notification, which can be controlled in the iOS settings under Notifications › Remote-RED and in the Focus settings. The ring/silent switch of the iPhone still applies. On Android it is delivered as an alarm and the sound is played at alarm volume. It gets through as long as alarms are allowed in Do Not Disturb (default) and can then also be heard in silent mode. You can override the setting per message with msg.payload.priority: \"high\" or true for high, \"normal\" or false for normal priority. Use high priority only for really important messages, for example from smoke or water leak detectors."
         }
     }
 }

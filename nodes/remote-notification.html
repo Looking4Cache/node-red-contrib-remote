@@ -12,6 +12,7 @@
       notificationSound: {value:"default"},
       notificationSoundComputed: {value:"payload.sound"},
       notificationSoundComputedType: {value:"msg"},
+      notificationHighPriority: {value:false},
       output: {value:1}
     },
     inputs: 1,
@@ -204,6 +205,15 @@
   </div>
 
   <div class="form-row">
+    <label for="node-input-notificationHighPriority"><i class="fa fa-exclamation-circle"></i> <span data-i18n="remote-notification.label.priority"></span></label>
+    <input type="checkbox" id="node-input-notificationHighPriority" style="display: inline-block; width: auto; vertical-align: top;">
+    <label for="node-input-notificationHighPriority" style="width: auto;" data-i18n="remote-notification.label.priority_high"></label>
+  </div>
+  <div class="form-row">
+    <label data-i18n="remote-notification.label.priority_info" style="max-width: 460px;"></label>
+  </div>
+  <br>
+  <div class="form-row">
     <label for="node-input-output"><i class="fa fa-tag"></i> <span data-i18n="remote-notification.label.output"></span></label>
     <select id="node-input-output">
       <option value=1 data-i18n="remote-notification.label.output_forward"></option>
@@ -216,6 +226,7 @@
     <label data-i18n="remote-notification.help.para1"></label>
     <label data-i18n="remote-notification.help.para2"></label>
     <label data-i18n="remote-notification.help.para3"></label>
+    <label data-i18n="remote-notification.help.para4"></label>
   </div>
   <br>
 </script>

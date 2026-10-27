@@ -11,6 +11,7 @@
       questionSound: {value:"default"},
       questionSoundComputed: {value:"payload.sound"},
       questionSoundComputedType: {value:"msg"},
+      questionHighPriority: {value:false},
       questionBodyType: {value:"msg"},
       questionAnswerOne: {value:""},
       questionAnswerOneType: {value:"str"},
@@ -244,6 +245,15 @@
     </div>
   </div>
 
+  <div class="form-row">
+    <label for="node-input-questionHighPriority"><i class="fa fa-exclamation-circle"></i> <span data-i18n="remote-question.label.priority"></span></label>
+    <input type="checkbox" id="node-input-questionHighPriority" style="display: inline-block; width: auto; vertical-align: top;">
+    <label for="node-input-questionHighPriority" style="width: auto;" data-i18n="remote-question.label.priority_high"></label>
+  </div>
+  <div class="form-row">
+    <label data-i18n="remote-question.label.priority_info" style="max-width: 460px;"></label>
+  </div>
+  <br>
   <label><i class="fa fa-pencil-square-o"></i> <span data-i18n="remote-question.label.answer_one"></span></label>
   <div class="form-row">
     <label for="node-input-questionAnswerOne" style="padding-left: 25px; margin-right: -25px"><i class="fa fa-font"></i> <span data-i18n="remote-question.label.answer_text"></label>
@@ -287,6 +297,7 @@
     <label data-i18n="remote-question.help.para3"></label>
     <label data-i18n="remote-question.help.para4"></label>
     <label data-i18n="remote-question.help.para5"></label>
+    <label data-i18n="remote-question.help.para6"></label>
   </div>
   <br>
 </script>

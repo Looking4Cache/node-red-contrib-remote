@@ -50,6 +50,7 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 Version 3.1.0
 - Direct connection (WebRTC) between app and Node-RED, without port forwarding. Falls back to the Remote-RED server automatically. Can be turned off in the config node.
+- Notifications and Questions with high priority possible.
 - Connection test inside the config node.
 
 Version 3.0.0

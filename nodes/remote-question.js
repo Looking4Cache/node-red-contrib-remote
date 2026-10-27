@@ -61,6 +61,9 @@ module.exports = function(RED) {
                   sound = commons.evaluateValue(RED, config.questionSoundComputed, config.questionSoundComputedType, node, msg, true);
                 }
 
+                // High priority (breaks through Do Not Disturb)?
+                const priority = commons.getNotificationPriority(config.questionHighPriority, node, msg);
+
                 // Call API to send notification
                 const axiosInstance = commons.createAxiosInstance();
                 axiosInstance.post(`https://api-${node.confignode.server}/sendNotification`, {
@@ -70,6 +73,7 @@ module.exports = function(RED) {
                   'notificationbody': body,
                   'notificationsound': sound,
                   'questiondata': JSON.stringify(questionData),
+                  'notificationpriority': priority,
                   'version': commons.getNodeVersion()
                 })
                 .then(response => {
