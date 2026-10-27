@@ -4,6 +4,7 @@ Remote-RED is an ecosystem to bring remote access, push notification and geofenc
 - node-red-contrib-remote: The Node-RED nodes of Remote-RED. Published in this repro.
 - Remote-RED servers: Several servers used for proxying the remote access traffic and sending push notifications.
 - Remote-RED apps: Apps to access the services published by the Remote-RED remote-access node and receiving the push notifications of the remote-notification node. Available or Android, iOS and iPadOS.
+- Remote-RED Linux agent: Alternativ to the Node-RED nodes, binging Remote-RED functions to all Linux based systems.
 
 
 ## Installation of Node-RED nodes
@@ -49,6 +50,7 @@ You will find more information on [www.remote-red-com](https://www.remote-red.co
 
 Version 3.1.0
 - Direct connection (WebRTC) between app and Node-RED, without port forwarding. Falls back to the Remote-RED server automatically. Can be turned off in the config node.
+- Connection test inside the config node.
 
 Version 3.0.0
 - Support for the Remote-RED Partner Programm
