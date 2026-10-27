@@ -222,6 +222,11 @@ function createManager(node, options) {
     }
   }
 
+  function getStunList() {
+    // Used by the connection test (remote-nettest.js)
+    return stunList.slice();
+  }
+
   function getDirectCount() {
     let count = 0;
     sessions.forEach((session) => {
@@ -646,6 +651,7 @@ function createManager(node, options) {
   return {
     handleOffer: handleOffer,
     setServerConfig: setServerConfig,
+    getStunList: getStunList,
     getDirectCount: getDirectCount,
     getTelemetry: getTelemetry,
     commitTelemetry: commitTelemetry,

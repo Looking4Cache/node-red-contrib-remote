@@ -30,7 +30,7 @@
         "actions" : {
           "register_app": "Remote-RED App verbinden",
           "register_app_next": "Weitere Remote-RED App verbinden",
-          "test_network": "Netzwerk testen",
+          "test_network": "Verbindung testen",
           "support_mail": "Mail an Support öffnen"
         },
         "legal": {
@@ -69,6 +69,185 @@
           "title": "Alternative: Per Link hinzufügen",
           "para1": "Öffne diesen Link auf Deinem iOS oder Android Gerät, nachdem Du die Remote-RED App installiert hast:",
           "link": "Link zum hinzufügen"
+        },
+        "nettest" : {
+          "title": "Verbindungstest",
+          "intro": "Prüft, ob dieser Node-RED Rechner alles erreicht, was Remote-RED braucht: DNS, Remote-RED Server, SSH-Tunnel, STUN und Dein lokales Ziel. Getestet werden die Werte im Formular, auch wenn sie noch nicht deployed sind.",
+          "helplink": "Firewall-Tabelle in der Hilfe",
+          "helpurl": "https://www.remote-red.com/de/node-red/hilfe/#firewall",
+          "running": "Test läuft, das dauert nur wenige Sekunden ...",
+          "failed": "Der Test konnte nicht ausgeführt werden: __error__",
+          "busy": "Es läuft bereits ein Test. Bitte versuche es gleich noch einmal.",
+          "invalid": "Bitte prüfe die Eingaben (Host, Port, Basis URL): __error__",
+          "copy": "Ergebnis kopieren",
+          "copied": "Kopiert",
+          "undeployed": "Du hast Änderungen, die noch nicht deployed sind. Der Test „Zugriff durch den Tunnel“ nutzt die zuletzt deployte Konfiguration.",
+          "verdict": {
+            "ok": "Alles in Ordnung",
+            "warn": "Funktioniert, aber es gibt Hinweise",
+            "error": "Es gibt Probleme, die Du beheben solltest"
+          },
+          "summary": {
+            "register": "App verbinden",
+            "tunnel": "Fernzugriff",
+            "direct": "Direktverbindung"
+          },
+          "state": {
+            "ok": "funktioniert",
+            "likely": "Voraussetzungen erfüllt",
+            "warn": "eingeschränkt",
+            "error": "gestört",
+            "unknown": "noch nicht prüfbar",
+            "disabled": "abgeschaltet"
+          },
+          "group": {
+            "system": "Node-RED Rechner",
+            "local": "Lokales Ziel",
+            "internet": "Internet und Remote-RED Server",
+            "remote": "Ende zu Ende"
+          },
+          "check": {
+            "node": "Node.js",
+            "proxyenv": "Proxy-Einstellungen",
+            "ssh": "SSH-Client",
+            "webrtc": "WebRTC-Bibliothek",
+            "target": "Erreichbarkeit des Ziels",
+            "dns": "Namensauflösung (DNS)",
+            "contact": "Registrierungsserver (HTTPS)",
+            "api": "API-Server (HTTPS)",
+            "sshport": "Tunnel-Server (SSH, Port 22)",
+            "stun": "STUN-Server (UDP 3478)",
+            "tunnel": "Zugriff durch den Tunnel"
+          },
+          "short": {
+            "timeout": "Timeout",
+            "refused": "abgelehnt",
+            "reset": "abgebrochen",
+            "unreachable": "keine Route",
+            "blocked": "blockiert",
+            "tls": "TLS-Fehler",
+            "dns": "DNS",
+            "protocol": "Protokoll",
+            "unexpected": "unerwartet",
+            "nobanner": "kein SSH",
+            "other": "Fehler",
+            "nat": "NAT",
+            "nonat": "ohne NAT"
+          },
+          "common": {
+            "partial": "Über __working__ erreichbar, über __failed__ nicht.",
+            "nodns": "Nicht getestet, da __host__ nicht aufgelöst werden konnte.",
+            "notregistered": "Wird getestet, sobald eine App verbunden ist (dabei wird der Server festgelegt).",
+            "timeout": "Der Test hat zu lange gedauert und wurde abgebrochen.",
+            "failed": "Test fehlgeschlagen: __message__"
+          },
+          "err": {
+            "timeout": "Keine Antwort von __host__ (Zeitüberschreitung).",
+            "refused": "Die Verbindung zu __host__ wurde abgelehnt.",
+            "reset": "Die Verbindung zu __host__ wurde unterwegs abgebrochen.",
+            "unreachable": "__host__ ist von diesem Rechner aus nicht erreichbar (keine Route).",
+            "blocked": "Das Betriebssystem hat die Verbindung zu __host__ blockiert.",
+            "tls": "Die verschlüsselte Verbindung zu __host__ wurde abgefangen oder verändert.",
+            "dns": "__host__ konnte nicht aufgelöst werden.",
+            "protocol": "Protokollfehler bei der Verbindung zu __host__.",
+            "unexpected": "__host__ hat unerwartet geantwortet.",
+            "other": "Fehler bei der Verbindung zu __host__: __message__"
+          },
+          "hint": {
+            "timeout": "Meist blockiert eine Firewall ausgehende Verbindungen. Erlaube ausgehend __proto__ __port__ zu __host__. Alle Adressen und Ports stehen in der Firewall-Tabelle der Hilfe.",
+            "refused": "Eine Firewall oder ein Proxy weist die Verbindung aktiv zurück. Erlaube ausgehend __proto__ __port__ zu __host__ (siehe Firewall-Tabelle der Hilfe). Lehnt nur ein einzelner Remote-RED Server ab, ist Deine IP-Adresse eventuell nach vielen fehlerhaften Anfragen für 10 Minuten gesperrt.",
+            "reset": "Häufig steckt eine Firewall mit Paketinspektion oder ein Proxy dahinter. Erlaube ausgehend __proto__ __port__ zu __host__ ohne Inspektion.",
+            "unreachable": "Für diese Adresse gibt es keinen Weg ins Internet. Prüfe Netzwerkverbindung, Gateway und Netzwerkeinstellungen des Node-RED Rechners bzw. des Docker-Netzwerks.",
+            "blocked": "Eine Firewall auf dem Node-RED Rechner selbst (z.B. ufw, iptables, Windows-Firewall) verhindert die Verbindung. Erlaube dort ausgehend __proto__ __port__ zu __host__.",
+            "tls": "Vermutlich prüft eine Firewall oder ein Virenscanner HTTPS-Verbindungen (SSL-Inspection) und tauscht das Zertifikat aus. Nimm *.remote-red.com von der Inspektion aus. Remote-RED akzeptiert aus Sicherheitsgründen nur sein eigenes Zertifikat.",
+            "dns": "Prüfe die DNS-Einstellungen des Node-RED Rechners.",
+            "protocol": "Zwischen Node-RED und __host__ antwortet etwas anderes als der Remote-RED Server, z.B. ein Proxy oder ein Captive Portal. Erlaube die direkte Verbindung.",
+            "unexpected": "Eventuell leitet ein Proxy die Anfrage um. Erlaube die direkte Verbindung zu __host__.",
+            "other": "Prüfe Internetverbindung und Firewall des Node-RED Rechners.",
+            "partial6": "IPv6 ist auf diesem Rechner eingerichtet, kommt aber nicht bis zum Server durch. Dadurch werden Verbindungen langsamer aufgebaut oder scheitern zeitweise. Repariere IPv6 (Router, Firewall) oder deaktiviere IPv6 am Node-RED Rechner.",
+            "partial4": "IPv4 kommt nicht bis zum Server durch, IPv6 schon. Das kann Verbindungen verzögern. Prüfe IPv4-Einstellungen und Firewall."
+          },
+          "node": {
+            "ok": "__version__ auf __platform__",
+            "old": "__version__ auf __platform__ ist sehr alt.",
+            "hint_old": "Die Direktverbindung (WebRTC) braucht mindestens Node.js 16. Der Fernzugriff über den Tunnel funktioniert weiterhin. Aktualisiere Node.js, am besten auf eine aktuelle LTS-Version."
+          },
+          "proxyenv": {
+            "set": "Proxy-Variablen gesetzt: __names__",
+            "hint_set": "HTTPS-Aufrufe laufen über diesen Proxy, der SSH-Tunnel (Port 22) und STUN (UDP 3478) aber nicht. Beide brauchen eine direkte Verbindung ins Internet."
+          },
+          "ssh": {
+            "ok": "Vorhanden: __version__",
+            "missing": "Kein SSH-Client gefunden. Ohne ihn kann die Access-Node keinen Tunnel aufbauen.",
+            "error": "Der SSH-Client konnte nicht gestartet werden: __message__",
+            "hint_missing": "Installiere einen OpenSSH-Client auf dem Node-RED Rechner: Debian, Ubuntu und Raspberry Pi OS mit „sudo apt install openssh-client“, im Docker-Container (Alpine) mit „apk add openssh-client“, unter Windows über „Optionale Features“ › „OpenSSH-Client“."
+          },
+          "webrtc": {
+            "ok": "Geladen, Direktverbindungen sind möglich.",
+            "disabled": "Die Direktverbindung ist in dieser Config-Node abgeschaltet.",
+            "unavailable": "Die WebRTC-Bibliothek (werift) konnte nicht geladen werden: __message__",
+            "hint_unavailable": "Die Direktverbindung braucht Node.js 16 oder neuer (hier __version__) und das optionale Paket werift. Installiere node-red-contrib-remote über „Palette verwalten“ neu. Der Fernzugriff über den Tunnel funktioniert auch ohne."
+          },
+          "target": {
+            "ok": "__url__ antwortet (HTTP __status__).",
+            "auth": "__url__ antwortet und ist durch eine Anmeldung geschützt (HTTP __status__). Das ist in Ordnung.",
+            "notfound": "__url__ antwortet mit 404 (nicht gefunden).",
+            "httperror": "__url__ antwortet mit HTTP __status__.",
+            "hint_notfound": "Host und Port stimmen, aber die Basis URL __baseurl__ gibt es nicht. Ist das Dashboard installiert? Dashboard 2 liegt meist unter /dashboard, Dashboard 1 unter /ui.",
+            "hint_httperror": "Der Webserver meldet einen Fehler. Öffne die Seite im Browser und prüfe das Node-RED Log.",
+            "hint_refused": "Unter __host__:__port__ läuft kein Webserver. Prüfe Host und Port (Node-RED nutzt normalerweise 1880).",
+            "hint_timeout": "__host__ antwortet nicht. Stimmt die IP-Adresse, ist das Gerät eingeschaltet und lässt seine Firewall Port __port__ zu?",
+            "hint_unreachable": "__host__ ist aus diesem Netz nicht erreichbar. Prüfe die IP-Adresse und ob beide Geräte im selben Netz sind.",
+            "hint_protocol": "Das Protokoll passt nicht zum Webserver. Stelle in der Config-Node „__other__“ ein.",
+            "hint_dns": "Der Hostname __host__ ist unbekannt. Verwende am besten die IP-Adresse.",
+            "hint_reset": "Der Webserver hat die Verbindung geschlossen. Eventuell passt das Protokoll nicht, versuche „__other__“.",
+            "hint_other": "Prüfe Host, Port und Protokoll in der Config-Node.",
+            "hint_docker": "Node-RED läuft in Docker: „localhost“ ist dort der Container selbst. Für andere Geräte oder den Docker-Host trage deren IP-Adresse ein."
+          },
+          "dns": {
+            "ok": "__count__ Remote-RED Namen aufgelöst (__families__).",
+            "failed": "Nicht auflösbar: __names__",
+            "blocked": "Von einem DNS-Filter blockiert: __names__",
+            "hint_local": "Öffentliche DNS-Server (__servers__) kennen den Namen, der DNS-Server dieses Rechners nicht. Prüfe die DNS-Einstellungen des Node-RED Rechners (/etc/resolv.conf, bei Docker die Option --dns) und des Routers. Lässt die Firewall DNS durch (Port 53 und 853)?",
+            "hint_offline": "Auch öffentliche DNS-Server (__servers__) sind nicht erreichbar. Hat der Node-RED Rechner Internet? Blockiert eine Firewall DNS (UDP und TCP 53)?",
+            "hint_unknown": "Den Namen kennen auch öffentliche DNS-Server nicht. Bitte wende Dich an den Support.",
+            "hint_blocked": "Ein DNS-Filter wie Pi-hole oder AdGuard Home blockiert die Remote-RED Server. Nimm remote-red.com in die Allowlist auf.",
+            "hint_stun": "Nur der STUN-Server für die Direktverbindung ist nicht auflösbar. Der Fernzugriff über den Tunnel funktioniert trotzdem."
+          },
+          "https": {
+            "ok": "Erreichbar, Zertifikat geprüft."
+          },
+          "sshport": {
+            "ok": "Erreichbar, der SSH-Server antwortet.",
+            "nobanner": "Port 22 ist offen, aber es antwortet kein SSH-Server.",
+            "hint_nobanner": "Vermutlich fängt eine Firewall oder ein Proxy Port 22 ab. Erlaube ausgehend TCP 22 direkt zu __host__."
+          },
+          "stun": {
+            "ok": "Erreichbar. Öffentliche Adresse: __addresses__",
+            "hint_blocked": "Ohne STUN ist keine Direktverbindung von unterwegs möglich. Erlaube ausgehend UDP 3478 zu __host__ und ausgehendes UDP allgemein (Ports 1024 bis 65535). Der Fernzugriff über den Tunnel funktioniert trotzdem."
+          },
+          "tunnel": {
+            "ok": "Der Remote-RED Server erreicht __target__ durch den Tunnel.",
+            "ok_direct": "Der Remote-RED Server erreicht __target__ durch den Tunnel. Aktive Direktverbindungen: __direct__",
+            "notdeployed": "Wird getestet, sobald diese Config-Node deployed ist.",
+            "backup": "Dieser Config-Node fehlen die Zugangsdaten, sie wurde aus einem Backup wiederhergestellt.",
+            "hint_backup": "Lege eine neue Config-Node an und verbinde die Apps neu, siehe Hinweis oben.",
+            "noaccess": "Keine Access-Node verwendet diese Config-Node, daher läuft kein Tunnel.",
+            "accessinactive": "Die Access-Node zu dieser Config-Node ist deaktiviert.",
+            "hint_noaccess": "Für den Fernzugriff braucht es eine aktive Access-Node mit dieser Config-Node. Benachrichtigungen funktionieren auch ohne.",
+            "notserving": "Die Access-Node hat keinen laufenden Tunnel. Status: __status__",
+            "hint_notserving": "Behebe zuerst die Fehler oben (SSH-Client, Port 22). Details stehen im Node-RED Log, ein Deploy startet den Tunnel neu.",
+            "hint_commerror": "Die Access-Node konnte beim API-Server keinen Tunnel anfordern. Ist der API-Server oben erreichbar, steht die Ursache im Node-RED Log (z.B. „Unknown instancehash“: verbinde die App mit einer neuen Config-Node). Die Access-Node versucht es automatisch erneut.",
+            "auth": "Der Server hat die Zugangsdaten dieser Instanz abgelehnt (__message__).",
+            "hint_auth": "Die Instanz ist gesperrt oder ungültig. Wende Dich an den Support (Schaltfläche unten).",
+            "notfound": "Der Tunnel funktioniert, aber __baseurl__ antwortet mit 404.",
+            "hint_notfound": "Prüfe die Basis URL in der Config-Node und deploye danach.",
+            "notconnected": "Der SSH-Prozess läuft, aber am Server ist kein Tunnel angekommen.",
+            "hint_notconnected": "Meist ist Port 22 gesperrt oder die Verbindung wurde gerade getrennt. Prüfe den Test „Tunnel-Server“ oben und das Node-RED Log. Ein Deploy baut den Tunnel neu auf.",
+            "target": "Der Tunnel steht, aber der Server erreicht __target__ darüber nicht.",
+            "hint_forward": "Node-RED selbst ist erreichbar, aber der Tunnel leitet nicht weiter. Meist baut der SSH-Prozess die Verbindung gerade noch auf oder hängt. Teste in einer Minute erneut. Bleibt der Fehler, starte den Tunnel mit einem Deploy neu und prüfe das Node-RED Log (Option „verbose“ der Access-Node).",
+            "hint_target": "Vom Node-RED Rechner aus ist __target__ nicht erreichbar. Prüfe Host, Port und Protokoll in der Config-Node (siehe „Erreichbarkeit des Ziels“) und deploye danach."
+          }
         }
     }
 }

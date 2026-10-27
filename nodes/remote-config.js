@@ -1,9 +1,7 @@
 module.exports = function(RED) {
   const commons = require('./remote-commons');
   const internalIp = require('internal-ip');
-  const ping = require('ping');
-  const dns = require('dns'); 
-  const dnsPromises = dns.promises;
+  const nettest = require('./remote-nettest');
   const fs = require('fs');
   const path = require('path');
   var QRCode = require('qrcode');
@@ -30,70 +28,19 @@ module.exports = function(RED) {
     }
   });
 
-  function getErrorMessage(error) {
-    let errorMessage = error.message;
-    if ( error.response && error.response.data && error.response.data.message ) {
-      errorMessage = errorMessage + " / " + error.response.data.message;
-    }
-    if ( commons.getNetworkErrorCustomString(error) !== undefined) {
-      errorMessage = commons.getNetworkErrorCustomString(error);
-    }
-    return errorMessage;
-  }
-
-  RED.httpAdmin.get("/contrib-remote/testNetwork", RED.auth.needsPermission('remote-config.read'), async function(req,res) {
-    // Test the network conditions
-
-    const testResults = [];
-
-    const axiosInstance = commons.createAxiosInstance();
-
-    // All servers to check
-    const serversToCheck = ['contact-dev.remote-red.comx', 'contact-de.remote-red.com'];
-
-    // DNS probe
-    const promisesDns = serversToCheck.map(host => {
-      return dnsPromises.lookup(host, {all: true})
-            .then(res => {
-              const v4 = res.some(e => e.family === 4);
-              const v6 = res.some(e => e.family === 6);
-              testResults.push({type: 'DNS', test: `DNS lookup ${host}`, result: `OK (${v4 ? 'IPv4' : ''}${v4 && v6 ? ', ' : ''}${v6 ? 'IPv6' : ''})`});
-              console.log(res);
-            })
-            .catch(error => {
-              console.log(error);
-              console.log(`dns resolve ${host}: ${getErrorMessage(error)}`);
-              testResults.push({type: 'DNS', test: `DNS lookup ${host}`, result: getErrorMessage(error)});
-            });
+  RED.httpAdmin.get("/contrib-remote/testNetwork", RED.auth.needsPermission('remote-config.read'), function(req,res) {
+    // Connection test from the config node editor, checks see remote-nettest.js
+    nettest.run(RED, req.query)
+    .then(result => {
+      res.json(result);
+    })
+    .catch((error) => {
+      if ( error.status === undefined ) {
+        console.log("ERROR: testNetwork: " + error);
+        console.error(error);
+      }
+      res.status(error.status || 500).json({ 'error': error.message });
     });
-    await Promise.all(promisesDns);
-
-    // Ping hosts
-    const additionalPingHosts = ['google.com', '173.212.245.41', '2a02:c207:3006:3079::1'];
-    const promisesPings = [...serversToCheck, ...additionalPingHosts].map(host => {
-      return ping.promise.probe(host)
-            .then(res => {
-              testResults.push({type: 'PING', test: `ping ${host}`, result: res.alive ? `${res.time}ms` : 'Error'});
-            });
-    });
-    await Promise.all(promisesPings);
-
-    // Make https test call
-    const promisesHttpsCalls = serversToCheck.map(url => {
-      return axiosInstance.get(`https://${url}/testNetwork`)
-      .then(response => {
-        testResults.push({test: `https call to ${url}`, result: 'OK'});
-      })
-      .catch(error => {
-        console.log(`https call to ${url}: ${getErrorMessage(error)}`);
-        // console.log(error);
-        testResults.push({type: 'HTTPS', test: `https call to ${url}`, result: getErrorMessage(error)});
-      });
-    });
-    await Promise.all(promisesHttpsCalls);
-    
-    console.log(testResults);
-    res.json(testResults);
   });
 
   RED.httpAdmin.get("/contrib-remote/connectionData", RED.auth.needsPermission('remote-config.read'), async function(req,res) {

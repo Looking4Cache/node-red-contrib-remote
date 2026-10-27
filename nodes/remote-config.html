@@ -1,3 +1,34 @@
+<style>
+  .rr-nettest { max-width: 460px; margin-top: 30px; }
+  .rr-nettest-intro { margin-top: 6px; font-size: 12px; color: var(--red-ui-secondary-text-color, #555); }
+  .rr-nettest-result { margin-top: 12px; font-size: 13px; }
+  .rr-nettest-running { padding: 8px 0; color: var(--red-ui-secondary-text-color, #555); }
+  .rr-nettest-verdict { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid; border-radius: 4px; font-weight: bold; }
+  .rr-nettest-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+  .rr-nettest-tile { padding: 6px 8px; border: 1px solid; border-radius: 4px; }
+  .rr-nettest-tile-title { font-size: 11px; color: var(--red-ui-secondary-text-color, #555); }
+  .rr-nettest-tile-state { font-weight: bold; }
+  .rr-nettest-group { margin: 14px 0 4px 0; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.04em; color: var(--red-ui-secondary-text-color, #555); }
+  .rr-nettest-row { display: flex; gap: 8px; padding: 5px 0; border-top: 1px solid var(--red-ui-secondary-border-color, #ddd); }
+  .rr-nettest-row > .fa { width: 14px; margin-top: 2px; text-align: center; }
+  .rr-nettest-body { flex: 1; min-width: 0; }
+  .rr-nettest-head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+  .rr-nettest-title { font-weight: bold; margin-right: 2px; }
+  .rr-nettest-badge { padding: 0 6px; border: 1px solid; border-radius: 9px; font-size: 11px; line-height: 16px; white-space: nowrap; }
+  .rr-nettest-msg { overflow-wrap: anywhere; }
+  .rr-nettest-hint { margin-top: 4px; padding: 5px 8px; border-left: 3px solid; background: rgba(128,128,128,0.08); overflow-wrap: anywhere; }
+  .rr-nettest-note { margin-top: 10px; font-size: 12px; color: var(--red-ui-secondary-text-color, #555); }
+  .rr-nettest-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; font-size: 11px; color: var(--red-ui-secondary-text-color, #555); }
+  .rr-nettest-ok { color: #3c8a2e; border-color: rgba(60,138,46,0.45); }
+  .rr-nettest-warn { color: #c77700; border-color: rgba(230,140,0,0.5); }
+  .rr-nettest-error { color: #c62828; border-color: rgba(198,40,40,0.45); }
+  .rr-nettest-skip, .rr-nettest-info { color: var(--red-ui-secondary-text-color, #777); border-color: rgba(128,128,128,0.35); }
+  .rr-nettest-verdict.rr-nettest-ok { background: rgba(60,138,46,0.10); }
+  .rr-nettest-verdict.rr-nettest-warn { background: rgba(230,140,0,0.12); }
+  .rr-nettest-verdict.rr-nettest-error { background: rgba(198,40,40,0.10); }
+  .rr-nettest-result .rr-nettest-hint { color: var(--red-ui-primary-text-color, #333); }
+</style>
+
 <script type="text/javascript">
   RED.nodes.registerType('remote-config',{
     category: 'config',
@@ -64,6 +95,12 @@
       // Insert legal link urls
       setTimeout(insertLinkUrls, 250);
 
+      // Connection test with the current (maybe not yet deployed) form values
+      const node = this;
+      document.getElementById('nettestButton').onclick = function() {
+        remoteNettestRun(node);
+      };
+
       // Get internal IP, fill localhost infos, get baseUrl
       $.getJSON('contrib-remote/connectionData',function(data) {
         internalIpV4 = data.ipv4;
@@ -111,6 +148,7 @@
     // Insert legal link urls
     document.getElementById('legalPrivacypolicyLink').setAttribute('href', document.getElementById('privacypolicy_url_template').innerHTML);
     document.getElementById('legalTermsLink').setAttribute('href', document.getElementById('terms_url_template').innerHTML);
+    document.getElementById('nettestHelpLink').setAttribute('href', document.getElementById('nettest_helpurl_template').innerHTML);
   }
 
   function togglePartnerSection(show) {
@@ -265,7 +303,189 @@
     const instanceHash = document.getElementById('node-config-input-instancehash').value;
     const server = document.getElementById('node-config-input-server').value;
     var link = 'mailto:info@remote-red.com?subject=Remote-RED%20Support%20-%20InstanceHash:%20' + instanceHash + '%20Server:%20' + server;
+    // Attach the last connection test (mail clients cut long mailto links)
+    if (remoteNettestReport !== '') {
+      link += '&body=' + encodeURIComponent(remoteNettestReport.substring(0, 1800));
+    }
     location.href = link;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Connection test ("Verbindung testen"), the checks run in remote-nettest.js
+
+  var REMOTE_NETTEST_I18N = 'node-red-contrib-remote/remote-config:remote-config.nettest.';
+  var REMOTE_NETTEST_GROUPS = ['system', 'local', 'internet', 'remote'];
+  var REMOTE_NETTEST_ICONS = {
+    ok: 'fa-check-circle', warn: 'fa-exclamation-triangle', error: 'fa-times-circle', skip: 'fa-minus-circle', info: 'fa-info-circle'
+  };
+  // Summary states of the tiles mapped to the status colors
+  var REMOTE_NETTEST_STATES = { ok: 'ok', likely: 'ok', warn: 'warn', error: 'error', unknown: 'skip', disabled: 'skip' };
+  var remoteNettestReport = '';
+
+  function remoteNettestText(key, params) {
+    return RED._(REMOTE_NETTEST_I18N + key, params || {});
+  }
+
+  function remoteNettestRun(node) {
+    const button = $('#nettestButton');
+    const result = $('#nettestResult');
+    button.prop('disabled', true);
+    $('#nettestButtonIcon').removeClass('fa-stethoscope').addClass('fa-spinner fa-spin');
+    result.show().empty().append(
+      $('<div class="rr-nettest-running">').append($('<i class="fa fa-spinner fa-spin">')).append(' ' + remoteNettestText('running'))
+    );
+
+    const query = {
+      id: node.id,
+      region: $('#node-config-input-region').val(),
+      server: $('#node-config-input-server').val(),
+      host: $('#node-config-input-host').val(),
+      port: $('#node-config-input-port').val(),
+      protocol: $('#node-config-input-protocol').val(),
+      baseurl: $('#node-config-input-baseurl').val(),
+      p2p: $('#node-config-input-p2p').is(':checked') ? 'true' : 'false'
+    };
+    $.ajax({ url: 'contrib-remote/testNetwork', data: query, dataType: 'json', timeout: 60000 })
+    .done(function(data) {
+      remoteNettestRender(data);
+    })
+    .fail(function(xhr) {
+      const error = (xhr.responseJSON && xhr.responseJSON.error) || xhr.statusText || 'error';
+      const key = (xhr.status === 409) ? 'busy' : ((xhr.status === 400) ? 'invalid' : 'failed');
+      result.empty().append($('<div class="rr-nettest-hint rr-nettest-error">').text(remoteNettestText(key, { error: error })));
+    })
+    .always(function() {
+      button.prop('disabled', false);
+      $('#nettestButtonIcon').removeClass('fa-spinner fa-spin').addClass('fa-stethoscope');
+    });
+  }
+
+  function remoteNettestParams(check) {
+    // Parameters for the texts, the status of the access node is a locale key of remote-access
+    const params = Object.assign({}, check.params);
+    if (params.statuskey !== undefined) {
+      params.status = params.statuskey ? RED._('node-red-contrib-remote/remote-access:' + params.statuskey) : '-';
+    }
+    return params;
+  }
+
+  function remoteNettestFamilies(check) {
+    // Badges per IP family, e.g. "IPv4 · 23 ms · NAT" or "IPv6 · Timeout"
+    return (check.families || []).map(function(f) {
+      let text = (f.family === 6 ? 'IPv6' : 'IPv4') + ' · ';
+      text += f.ok ? (f.ms + ' ms') : remoteNettestText('short.' + (f.err || 'other'));
+      if (f.ok && f.nat !== undefined) {
+        text += ' · ' + remoteNettestText(f.nat ? 'short.nat' : 'short.nonat');
+      }
+      return { ok: f.ok, text: text };
+    });
+  }
+
+  function remoteNettestHints(check, params) {
+    const hints = [];
+    if (check.hint) hints.push(remoteNettestText(check.hint, params));
+    if (check.id === 'target' && params.docker && check.status !== 'ok') hints.push(remoteNettestText('target.hint_docker', params));
+    return hints;
+  }
+
+  function remoteNettestRender(data) {
+    const result = $('#nettestResult').empty();
+
+    // Overall verdict: the worst status of all checks
+    let worst = 'ok';
+    data.checks.forEach(function(check) {
+      if (check.status === 'error') worst = 'error';
+      if (check.status === 'warn' && worst !== 'error') worst = 'warn';
+    });
+    result.append($('<div class="rr-nettest-verdict">').addClass('rr-nettest-' + worst)
+      .append($('<i class="fa">').addClass(REMOTE_NETTEST_ICONS[worst]))
+      .append($('<span>').text(remoteNettestText('verdict.' + worst))));
+
+    // What works: connect an app, remote access, direct connection
+    const tiles = $('<div class="rr-nettest-tiles">').appendTo(result);
+    ['register', 'tunnel', 'direct'].forEach(function(key) {
+      const state = data.summary[key];
+      const color = REMOTE_NETTEST_STATES[state] || 'skip';
+      tiles.append($('<div class="rr-nettest-tile">').addClass('rr-nettest-' + color)
+        .append($('<div class="rr-nettest-tile-title">').text(remoteNettestText('summary.' + key)))
+        .append($('<div class="rr-nettest-tile-state">')
+          .append($('<i class="fa">').addClass(REMOTE_NETTEST_ICONS[color]))
+          .append(' ' + remoteNettestText('state.' + state))));
+    });
+
+    // All checks, grouped
+    REMOTE_NETTEST_GROUPS.forEach(function(group) {
+      const checks = data.checks.filter(function(check) { return check.group === group; });
+      if (checks.length === 0) return;
+      result.append($('<div class="rr-nettest-group">').text(remoteNettestText('group.' + group)));
+      checks.forEach(function(check) {
+        const params = remoteNettestParams(check);
+        const row = $('<div class="rr-nettest-row">').appendTo(result);
+        row.append($('<i class="fa">').addClass(REMOTE_NETTEST_ICONS[check.status]).addClass('rr-nettest-' + check.status));
+        const body = $('<div class="rr-nettest-body">').appendTo(row);
+        const head = $('<div class="rr-nettest-head">').appendTo(body);
+        head.append($('<span class="rr-nettest-title">').text(remoteNettestText('check.' + check.id)));
+        remoteNettestFamilies(check).forEach(function(badge) {
+          head.append($('<span class="rr-nettest-badge">').addClass(badge.ok ? 'rr-nettest-ok' : 'rr-nettest-error').text(badge.text));
+        });
+        body.append($('<div class="rr-nettest-msg">').text(remoteNettestText(check.msg, params)));
+        remoteNettestHints(check, params).forEach(function(hint) {
+          body.append($('<div class="rr-nettest-hint">').addClass('rr-nettest-' + check.status)
+            .append($('<i class="fa fa-lightbulb-o">')).append(document.createTextNode(' ' + hint)));
+        });
+      });
+    });
+
+    if (data.undeployed) {
+      result.append($('<div class="rr-nettest-note">').append($('<i class="fa fa-info-circle">')).append(' ' + remoteNettestText('undeployed')));
+    }
+
+    // Report as plain text for the clipboard and the support mail
+    remoteNettestReport = remoteNettestBuildReport(data);
+    const copyButton = $('<button type="button" class="red-ui-button red-ui-button-small">')
+      .append($('<i class="fa fa-clipboard">')).append(' ' + remoteNettestText('copy'));
+    copyButton.on('click', function() {
+      remoteNettestCopy(remoteNettestReport, function() {
+        copyButton.empty().append($('<i class="fa fa-check">')).append(' ' + remoteNettestText('copied'));
+      });
+    });
+    result.append($('<div class="rr-nettest-footer">')
+      .append($('<span>').text(new Date(data.timestamp).toLocaleString()))
+      .append(copyButton));
+  }
+
+  function remoteNettestBuildReport(data) {
+    const lines = [];
+    lines.push(`Remote-RED ${remoteNettestText('title')} · ${data.timestamp}`);
+    lines.push(`node-red-contrib-remote ${data.version} · Region ${data.region} · Server ${data.server || '-'}`);
+    ['register', 'tunnel', 'direct'].forEach(function(key) {
+      lines.push(`${remoteNettestText('summary.' + key)}: ${remoteNettestText('state.' + data.summary[key])}`);
+    });
+    data.checks.forEach(function(check) {
+      const params = remoteNettestParams(check);
+      const families = remoteNettestFamilies(check).map(function(badge) { return badge.text; }).join(', ');
+      lines.push('');
+      lines.push(`[${check.status.toUpperCase()}] ${remoteNettestText('check.' + check.id)}${families ? ' (' + families + ')' : ''}`);
+      lines.push('  ' + remoteNettestText(check.msg, params));
+      remoteNettestHints(check, params).forEach(function(hint) { lines.push('  > ' + hint); });
+    });
+    return lines.join('\n');
+  }
+
+  function remoteNettestCopy(text, onCopied) {
+    // The Clipboard API needs a secure context, Node-RED often runs on plain http in the LAN
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(onCopied).catch(function() {});
+      return;
+    }
+    const textarea = $('<textarea>').val(text).css({ position: 'fixed', top: 0, left: 0, opacity: 0 }).appendTo('body');
+    textarea[0].select();
+    try {
+      if (document.execCommand('copy')) onCopied();
+    } catch (error) {
+      // Copy not possible, the user can still select the text
+    }
+    textarea.remove();
   }
 </script>
 
@@ -411,11 +631,18 @@
     </div>
   </div>
 
-  <!-- 
-  <button id="testNetworkButton" type="button" class="red-ui-button" onclick="testNetworkButtonClicked()">
-    <span id="testNetworkButtonText" data-i18n="remote-config.actions.test_network">
-  </button>
-  -->
+  <div class="rr-nettest">
+    <button id="nettestButton" type="button" class="red-ui-button">
+      <i id="nettestButtonIcon" class="fa fa-stethoscope"></i> <span data-i18n="remote-config.actions.test_network"></span>
+    </button>
+    <div class="rr-nettest-intro">
+      <span data-i18n="remote-config.nettest.intro"></span>
+      <br>
+      <a id="nettestHelpLink" href="https://www.remote-red.com/en/node-red/help/#firewall" target="_blank" style="color: #AD1626;"><span data-i18n="remote-config.nettest.helplink"></span></a>
+    </div>
+    <div id="nettestResult" class="rr-nettest-result" style="display: none;"></div>
+  </div>
+  <span id='nettest_helpurl_template' data-i18n="remote-config.nettest.helpurl" style="display: none;"></span>
 
   <div id="help" style="max-width: 460px; border-width: 1px; border-style: dashed; border-color: #666; padding: 10px; margin-top: 40px; margin-bottom: 20px;">
     <label data-i18n="remote-config.help.title" style="font-weight: bold;"></label>
