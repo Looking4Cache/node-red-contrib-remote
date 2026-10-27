@@ -14,7 +14,7 @@
           "answer_value": "Wert",
           "priority": "Priorität",
           "priority_high": "Hohe Priorität",
-          "priority_info": "Kommt auch bei „Nicht stören“ bzw. aktivem Fokus durch, sofern das Gerät es zulässt. Mit msg.payload.priority (\"high\" oder \"normal\") kannst Du die Einstellung pro Nachricht überschreiben."
+          "priority_info": "Kommt auch bei „Nicht stören“ bzw. aktivem Fokus durch, sofern das Gerät es zulässt. Details in der Hilfe unten."
         },
         "sounds": {
           "nosound": "Kein Ton",

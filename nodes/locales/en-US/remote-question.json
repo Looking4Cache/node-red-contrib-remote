@@ -14,7 +14,7 @@
           "answer_value": "Value",
           "priority": "Priority",
           "priority_high": "High priority",
-          "priority_info": "Also gets through Do Not Disturb or an active Focus, as far as the device allows it. Use msg.payload.priority (\"high\" or \"normal\") to override this setting per message."
+          "priority_info": "Also gets through Do Not Disturb or an active Focus, as far as the device allows it. Details in the help below."
         },
         "sounds": {
           "nosound": "No sound",
